@@ -3,14 +3,14 @@ import React from "react";
 
 export default function SignupScreen({ navigation }) {
   //Redirige vers le scan screen
-  function scan() {
+  function scanCard() {
     navigation.navigate("ScanScreen");
   }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => scan()}>
-        <Text>ScanScreen</Text>
+      <TouchableOpacity onPress={() => scanCard()}>
+        <Text>Go to scan screen</Text>
       </TouchableOpacity>
     </View>
   );

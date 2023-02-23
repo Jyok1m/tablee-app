@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native";
 import React from "react";
 
 export default function LandingScreen({ navigation }) {
@@ -9,6 +16,8 @@ export default function LandingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Image source={require("../public/logo.jpg")} />
+      <TextInput placeholder="Pseudo" />
       <TouchableOpacity onPress={() => signup()}>
         <Text>LandingScreen</Text>
       </TouchableOpacity>
