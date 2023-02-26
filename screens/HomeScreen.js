@@ -1,16 +1,12 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 
-export default function SignupScreen({ navigation }) {
-  //Redirige vers le scan screen
-  function scanCard() {
-    navigation.navigate("Scan");
-  }
-
+export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => scanCard()}>
-        <Text style={{ color: "white" }}>Go to scan screen</Text>
+      <Text style={{ color: "white" }}>HomeScreen</Text>
+      <TouchableOpacity onPress={() => navigation.navigate("Restaurant")}>
+        <Text style={{ color: "white" }}>RestaurantScreen</Text>
       </TouchableOpacity>
     </View>
   );
@@ -19,8 +15,9 @@ export default function SignupScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 20,
+    backgroundColor: "#1D2C3B",
   },
 });

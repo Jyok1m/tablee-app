@@ -65,7 +65,7 @@ export default function LandingScreen({ navigation }) {
 
   //Redirige vers la signup screen
   function signup() {
-    navigation.navigate("SignupScreen");
+    navigation.navigate("TabNavigator");
   }
 
   let errorMessage = <View />;
