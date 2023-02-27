@@ -25,6 +25,19 @@ export default function SnapScreen() {
   async function takePicture() {
     const photo = await cameraRef.takePictureAsync({ quality: 0.3 });
     console.log(photo);
+    const formData = new FormData();
+    formData.append("photoFromFront", {
+      uri: photo.uri,
+      name: "photo.jpg",
+      type: "image/jpeg",
+    });
+
+    fetch("http://tablee-backend.vercel.app/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {});
   }
 
   // Return an empty component if the user has not allowed the camera nor is focused on it.
