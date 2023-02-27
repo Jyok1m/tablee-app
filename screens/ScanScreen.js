@@ -45,6 +45,7 @@ export default function SnapScreen({ navigation }) {
       });
       const data = await response.json();
       dispatch(addPhoto(data.url));
+      console.log("Photo Saved !");
     } catch (error) {
       console.log(error);
     }
