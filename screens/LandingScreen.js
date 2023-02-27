@@ -30,7 +30,7 @@ export default function LandingScreen({ navigation }) {
     error: "",
   });
 
-  //Fonction signin pour login le user
+  // Fonction signin pour login le user
   async function signin() {
     const username = usernameInput.value;
     const password = passwordInput.value;
@@ -40,6 +40,7 @@ export default function LandingScreen({ navigation }) {
     setPasswordInput({ ...passwordInput, isValid: true, error: "" });
     setField({ isMissing: false, error: "" });
 
+    // Fetch la route signin:
     const response = await fetch(
       "https://tablee-backend.vercel.app/users/signin",
       {
@@ -49,6 +50,8 @@ export default function LandingScreen({ navigation }) {
       }
     );
     const data = await response.json();
+
+    // Gérer la réponse + les alertes du fetch
     if (data.result === true) {
       dispatch(signinUser({ username, token: data.token }));
       setUsernameInput({ value: "", isValid: true, error: "" });
@@ -56,31 +59,24 @@ export default function LandingScreen({ navigation }) {
       setField({ isMissing: false, error: "" });
     } else if (data.errorSrc === "username") {
       setUsernameInput({ ...usernameInput, isValid: false, error: data.error });
+      alert(usernameInput.error);
     } else if (data.errorSrc === "password") {
       setPasswordInput({ ...passwordInput, isValid: false, error: data.error });
+      alert(passwordInput.error);
     } else {
       setField({ isMissing: true, error: data.error });
+      alert(field.error);
     }
   }
 
-  //Redirige vers la signup screen
+  // Redirige vers la signup screen
   function signup() {
     navigation.navigate("Signup");
-  }
-
-  let errorMessage = <View />;
-  if (field.isMissing) {
-    errorMessage = <Text style={styles.errorText}>{field.error}</Text>;
-  } else if (usernameInput.isValid === false) {
-    errorMessage = <Text style={styles.errorText}>{usernameInput.error}</Text>;
-  } else if (passwordInput.isValid === false) {
-    errorMessage = <Text style={styles.errorText}>{passwordInput.error}</Text>;
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <Image source={require("../assets/logo.jpg")} style={styles.logo} />
-      {errorMessage}
       <TextInput
         placeholder="Nom d'utilisateur"
         value={usernameInput}
@@ -89,7 +85,6 @@ export default function LandingScreen({ navigation }) {
           usernameInput.isValid ? styles.validInputBox : styles.invalidInputBox
         }
         onChangeText={(value) => setUsernameInput({ ...usernameInput, value })}
-        onFocus={() => setField({ isMissing: false, error: "data.error" })}
       />
       <TextInput
         placeholder="Mot de passe"
@@ -100,7 +95,6 @@ export default function LandingScreen({ navigation }) {
           passwordInput.isValid ? styles.validInputBox : styles.invalidInputBox
         }
         onChangeText={(value) => setPasswordInput({ ...passwordInput, value })}
-        onFocus={() => setField({ isMissing: false, error: "data.error" })}
       />
       <TouchableOpacity onPress={() => signin()} style={styles.button}>
         <Text style={styles.text}>Connection</Text>
@@ -108,7 +102,7 @@ export default function LandingScreen({ navigation }) {
       <TouchableOpacity onPress={() => signup()} style={styles.button}>
         <Text style={styles.text}>S'enregistrer</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("TabNavigator")}>
+      <TouchableOpacity>
         <Text style={styles.pressableText}>Mot de passe oublié</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -129,13 +123,6 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 5,
     marginTop: 20,
-  },
-  textContainer: {
-    width: "100%",
-    height: "40%",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    backgroundColor: "#1D2C3B",
   },
   validInputBox: {
     paddingHorizontal: 20,
