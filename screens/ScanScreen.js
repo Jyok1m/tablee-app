@@ -79,7 +79,8 @@ export default function SnapScreen() {
           />
         </TouchableOpacity>
       </View>
-
+<View style={styles.cardContour}>
+</View>
       <View style={styles.snapContainer}>
         <TouchableOpacity onPress={() => cameraRef && takePicture()}>
           <FontAwesome name="circle-thin" size={95} color="#ffffff" />
@@ -92,9 +93,12 @@ export default function SnapScreen() {
 const styles = StyleSheet.create({
   camera: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   buttonsContainer: {
-    flex: 0.1,
+    marginTop: 30,
+    width: '100%',
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",
@@ -111,9 +115,16 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   snapContainer: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: 25,
   },
+  cardContour: {
+    height: '25%',
+    width: '80%',
+    borderWidth: 3,
+    borderColor: 'white',
+    opacity: 0.7,
+    borderRadius: 10
+  }
 });
