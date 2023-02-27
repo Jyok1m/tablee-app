@@ -65,7 +65,7 @@ export default function LandingScreen({ navigation }) {
 
   //Redirige vers la signup screen
   function signup() {
-    navigation.navigate("TabNavigator");
+    navigation.navigate("Signup");
   }
 
   let errorMessage = <View />;
@@ -108,7 +108,7 @@ export default function LandingScreen({ navigation }) {
       <TouchableOpacity onPress={() => signup()} style={styles.button}>
         <Text style={styles.text}>S'enregistrer</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("TabNavigator")}>
         <Text style={styles.pressableText}>Mot de passe oublié</Text>
       </TouchableOpacity>
     </SafeAreaView>
