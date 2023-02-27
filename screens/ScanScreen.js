@@ -39,7 +39,7 @@ export default function SnapScreen({ navigation }) {
       type: "image/jpeg",
     });
 
-    fetch("http://192.168.10.156:3000/users/upload", {
+    fetch("https://tablee-backend.vercel.app/users/upload", {
       method: "POST",
       body: formData,
     })
@@ -64,41 +64,40 @@ export default function SnapScreen({ navigation }) {
   }
 
   //Upload une photo depuis la librairie du telephone
-   const handleImportPhoto = async () => {
-     let photo = await ImagePicker.launchImageLibraryAsync({
-       allowsEditing: true,
-       quality: 1,
-     });
+  const handleImportPhoto = async () => {
+    let photo = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
 
-     if (!photo.canceled) {
-       setSelectedImage(photo.assets[0].uri);
-       //console.log(result.assets[0].uri);
-       //-------------------------------------------------------
-       const formData = new FormData();
-       formData.append("photoFromFront", {
-         uri: photo.assets[0].uri,
-         name: "photo.jpg",
-         type: "image/jpeg",
-       });
+    if (!photo.canceled) {
+      setSelectedImage(photo.assets[0].uri);
+      //console.log(result.assets[0].uri);
+      //-------------------------------------------------------
+      const formData = new FormData();
+      formData.append("photoFromFront", {
+        uri: photo.assets[0].uri,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      });
 
-       fetch("http://192.168.10.156:3000/users/upload", {
-         method: "POST",
-         body: formData,
-       })
-         .then((response) => response.json())
-         .then((data) => {
-           dispatch(addPhoto(data.url));
-           console.log(user);
-         })
-         .catch((error) => console.log(error));
-       //Affiche le modal de validation
-       setModalVisible(true);
-       //-----------------------------------------------------------------------------
-     } else {
-       alert("You did not select any image.");
-     }
-   };
-
+      fetch("https://tablee-backend.vercel.app/users/upload", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          dispatch(addPhoto(data.url));
+          console.log(user);
+        })
+        .catch((error) => console.log(error));
+      //Affiche le modal de validation
+      setModalVisible(true);
+      //-----------------------------------------------------------------------------
+    } else {
+      alert("You did not select any image.");
+    }
+  };
 
   // Return an empty component if the user has not allowed the camera nor is focused on it.
   if (!hasPermission || !isFocused) {
@@ -110,20 +109,23 @@ export default function SnapScreen({ navigation }) {
       type={type}
       flashMode={flashMode}
       ref={(ref) => (cameraRef = ref)}
-      style={styles.camera}>
+      style={styles.camera}
+    >
       <Modal visible={modalVisible} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TouchableOpacity
               onPress={() => handleValide()}
               style={styles.modalButton}
-              activeOpacity={0.8}>
+              activeOpacity={0.8}
+            >
               <Text style={styles.modalTextButton}>Valider</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => handleRetake()}
               style={styles.modalButton}
-              activeOpacity={0.8}>
+              activeOpacity={0.8}
+            >
               <Text style={styles.modalTextButton}>Reprendre la photo</Text>
             </TouchableOpacity>
           </View>
@@ -137,7 +139,8 @@ export default function SnapScreen({ navigation }) {
               type === CameraType.back ? CameraType.front : CameraType.back
             )
           }
-          style={styles.button}>
+          style={styles.button}
+        >
           <FontAwesome name="rotate-right" size={25} color="#ffffff" />
         </TouchableOpacity>
 
@@ -147,7 +150,8 @@ export default function SnapScreen({ navigation }) {
               flashMode === FlashMode.off ? FlashMode.torch : FlashMode.off
             )
           }
-          style={styles.button}>
+          style={styles.button}
+        >
           <FontAwesome
             name="flash"
             size={25}
@@ -159,7 +163,8 @@ export default function SnapScreen({ navigation }) {
       <TouchableOpacity
         onPress={() => handleImportPhoto()}
         style={styles.importButton}
-        activeOpacity={0.8}>
+        activeOpacity={0.8}
+      >
         <Text style={styles.modalTextButton}>Importer depuis mes photos</Text>
       </TouchableOpacity>
       <View style={styles.snapContainer}>
