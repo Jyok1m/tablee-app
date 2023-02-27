@@ -3,9 +3,10 @@ import { StyleSheet, TouchableOpacity, View, Modal, Text } from "react-native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useIsFocused } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addPhoto } from "../reducers/user";
 import * as ImagePicker from "expo-image-picker";
+import { BACKEND_URL } from "../backend_url";
 
 export default function SnapScreen({ navigation }) {
   // Define the states:
@@ -18,7 +19,6 @@ export default function SnapScreen({ navigation }) {
   const isFocused = useIsFocused();
   let cameraRef = useRef(null);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.value);
 
   // Popup to ask for camera access.
   useEffect(() => {
@@ -31,7 +31,6 @@ export default function SnapScreen({ navigation }) {
   // Handle the take picture button.
   const takePicture = async () => {
     const photo = await cameraRef.takePictureAsync({ quality: 0.3 });
-
     const formData = new FormData();
     formData.append("photoFromFront", {
       uri: photo.uri,
@@ -39,16 +38,17 @@ export default function SnapScreen({ navigation }) {
       type: "image/jpeg",
     });
 
-    fetch("https://tablee-backend.vercel.app/users/upload", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(addPhoto(data.url));
-        console.log(user);
-      })
-      .catch((error) => console.log(error));
+    try {
+      const response = await fetch(`${BACKEND_URL}/users/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      dispatch(addPhoto(data.url));
+    } catch (error) {
+      console.log(error);
+    }
+
     //Affiche le modal de validation
     setModalVisible(true);
   };
@@ -81,21 +81,20 @@ export default function SnapScreen({ navigation }) {
         type: "image/jpeg",
       });
 
-      fetch("https://tablee-backend.vercel.app/users/upload", {
+      fetch(`${BACKEND_URL}/users/upload`, {
         method: "POST",
         body: formData,
       })
         .then((response) => response.json())
         .then((data) => {
           dispatch(addPhoto(data.url));
-          console.log(user);
         })
         .catch((error) => console.log(error));
       //Affiche le modal de validation
       setModalVisible(true);
       //-----------------------------------------------------------------------------
     } else {
-      alert("You did not select any image.");
+      alert("Aucune image n'a été selectionnée !");
     }
   };
 

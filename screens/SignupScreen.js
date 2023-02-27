@@ -1,39 +1,24 @@
 import {
   StyleSheet,
   Text,
-  View,
   Image,
   TouchableOpacity,
   TextInput,
-  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { signinUser } from "../reducers/user";
+import { useDispatch, useSelector } from "react-redux";
+import { signinUser, removePhoto } from "../reducers/user";
+import { BACKEND_URL } from "../backend_url";
 
 export default function SignupScreen({ navigation }) {
+  const [username, setUsername] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const dispatch = useDispatch();
-  const [usernameInput, setUsernameInput] = useState({
-    value: "",
-    isValid: true,
-  });
-  const [firstnameInput, setFirstnameInput] = useState({
-    value: "",
-    isValid: true,
-  });
-  const [emailInput, setEmailInput] = useState({
-    value: "",
-    isValid: true,
-  });
-  const [passwordInput, setPasswordInput] = useState({
-    value: "",
-    isValid: true,
-  });
-  const [studentCardInput, setStudentCardInput] = useState({
-    value: "Test",
-    isValid: true,
-  });
+  const user = useSelector((state) => state.user.value);
 
   //Redirige vers le scan screen
   function scanCard() {
@@ -42,52 +27,32 @@ export default function SignupScreen({ navigation }) {
 
   // Fonction signup
   async function signup() {
-    const username = usernameInput.value;
-    const firstname = firstnameInput.value;
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    const studentCard = studentCardInput.value;
-    const userData = { username, firstname, email, password, studentCard };
-
     // Fetch la route signup:
-    const response = await fetch("http://192.168.10.125:3000/users/signup", {
+    const studentCard = user.photos;
+    const userData = { username, firstname, email, password, studentCard };
+    const response = await fetch(`${BACKEND_URL}/users/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
     });
     const data = await response.json();
 
-    // Reset fields on save
-    setUsernameInput({ ...usernameInput, isValid: true });
-    setFirstnameInput({ ...firstnameInput, isValid: true });
-    setEmailInput({ ...emailInput, isValid: true });
-    setPasswordInput({ ...passwordInput, isValid: true });
-
     // Gérer la réponse + les alertes du fetch
     if (data.result === true) {
       dispatch(signinUser({ username, token: data.token }));
+      setUsername("");
+      setFirstname("");
+      setEmail("");
+      setPassword("");
+      dispatch(removePhoto());
+      alert("Connexion réussie !");
       navigation.navigate("TabNavigator");
-
-      // Reset fields
-      setUsernameInput({ value: "", isValid: true });
-      setFirstnameInput({ value: "", isValid: true });
-      setEmailInput({ value: "", isValid: true });
-      setPasswordInput({ value: "", isValid: true });
-    } else if (data.errorSrc === "username") {
-      setUsernameInput({ ...usernameInput, isValid: false });
-      alert(data.error);
-    } else if (data.errorSrc === "password") {
-      setPasswordInput({ ...passwordInput, isValid: false });
-      alert(data.error);
-    } else if (data.errorSrc === "email") {
-      setEmailInput({ ...emailInput, isValid: false });
-      alert(data.error);
-    } else if (data.errorSrc === "studentCard") {
-      setPasswordInput({ ...passwordInput, isValid: false });
-      alert(data.error);
-    } else if (data.errorSrc === "field") {
+    } else {
       alert(data.error);
     }
+
+    // dispatch(removePhoto());
+    // dispatch(logoutUser());
   }
 
   return (
@@ -99,36 +64,31 @@ export default function SignupScreen({ navigation }) {
       <TextInput
         placeholder="Nom d'utilisateur"
         textContentType="username"
-        style={
-          usernameInput.isValid ? styles.validInputBox : styles.invalidInputBox
-        }
-        onChangeText={(value) => setUsernameInput({ isValid: true, value })}
-        value={usernameInput}
+        style={styles.inputBox}
+        onChangeText={(value) => setUsername(value)}
+        value={username}
       />
       <TextInput
         placeholder="Prénom"
         textContentType="givenName"
-        style={styles.validInputBox}
-        onChangeText={(value) => setFirstnameInput({ isValid: true, value })}
-        value={firstnameInput}
+        style={styles.inputBox}
+        onChangeText={(value) => setFirstname(value)}
+        value={firstname}
       />
       <TextInput
         placeholder="Email universitaire"
         textContentType="emailAddress"
-        style={
-          emailInput.isValid ? styles.validInputBox : styles.invalidInputBox
-        }
-        onChangeText={(value) => setEmailInput({ isValid: true, value })}
-        value={emailInput}
+        style={styles.inputBox}
+        onChangeText={(value) => setEmail(value)}
+        value={email}
       />
       <TextInput
         placeholder="Mot de passe"
         textContentType="newPassword"
-        style={
-          passwordInput.isValid ? styles.validInputBox : styles.invalidInputBox
-        }
-        onChangeText={(value) => setPasswordInput({ isValid: true, value })}
-        value={passwordInput}
+        secureTextEntry={true}
+        style={styles.inputBox}
+        onChangeText={(value) => setPassword(value)}
+        value={password}
       />
 
       <TouchableOpacity onPress={() => scanCard()} style={styles.button}>
@@ -153,23 +113,12 @@ const styles = StyleSheet.create({
     maxHeight: "10%",
     marginTop: 20,
   },
-  validInputBox: {
+  inputBox: {
     paddingHorizontal: 20,
     width: "100%",
     minHeight: "7%",
     backgroundColor: "#fff",
     borderColor: "#CDAB82",
-    borderWidth: 3,
-    borderRadius: 5,
-    marginTop: 20,
-    fontSize: 16,
-  },
-  invalidInputBox: {
-    paddingHorizontal: 20,
-    width: "100%",
-    minHeight: "7%",
-    backgroundColor: "#fff",
-    borderColor: "red",
     borderWidth: 3,
     borderRadius: 5,
     marginTop: 20,
@@ -186,12 +135,6 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 5,
     marginTop: 20,
-  },
-  errorText: {
-    color: "red",
-    fontWeight: "bold",
-    marginTop: 20,
-    fontSize: 16,
   },
   text: {
     fontSize: 16,
