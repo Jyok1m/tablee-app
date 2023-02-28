@@ -6,16 +6,21 @@ import {
   TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signinUser } from "../reducers/user";
 import { BACKEND_URL } from "../backend_url";
 
 export default function LandingScreen({ navigation }) {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (user.token) navigation.navigate("TabNavigator");
+  }, []);
 
   // Fonction signin pour login le user
   async function signin() {
