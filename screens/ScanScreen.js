@@ -277,8 +277,9 @@ const styles = StyleSheet.create({
     width: 250,
     alignItems: "center",
     justifyContent: "center",
-    
+
     marginTop: 20,
+    paddingBottom: 4,
     paddingTop: 10,
     backgroundColor: "#1D2C3B",
     borderRadius: 10,
