@@ -119,30 +119,29 @@ export default function SnapScreen({ navigation }) {
         edgeHeight={"100%"}
         edgeBorderWidth={1}
         showAnimatedLine={true}
-        animatedLineWidth={'100%'}
+        animatedLineWidth={"100%"}
         lineAnimationDuration={1500}
         outerMaskOpacity={0.7}
       />
-      <BlurView intensity={80} tint="light" style={styles.blurContainer}>
-        <Modal visible={modalVisible} animationType="fade" transparent>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                onPress={() => handleValide()}
-                style={styles.modalButton}
-                activeOpacity={0.8}>
-                <Text style={styles.modalTextButton}>Valider</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleRetake()}
-                style={styles.modalButton}
-                activeOpacity={0.8}>
-                <Text style={styles.modalTextButton}>Reprendre la photo</Text>
-              </TouchableOpacity>
-            </View>
+
+      <Modal visible={modalVisible} animationType="fade" transparent={true}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity
+              onPress={() => handleValide()}
+              style={styles.modalButton}
+              activeOpacity={0.8}>
+              <Text style={styles.modalTextButton}>Valider</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleRetake()}
+              style={styles.modalButton}
+              activeOpacity={0.8}>
+              <Text style={styles.modalTextButton}>Reprendre la photo</Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
-      </BlurView>
+        </View>
+      </Modal>
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -194,7 +193,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   buttonsContainer: {
-    position: 'absolute',
+    // position: 'absolute',
     marginTop: 70,
     width: "100%",
     flexDirection: "row",
@@ -211,32 +210,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     borderRadius: 50,
-  
   },
   snapContainer: {
-
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: 25,
   },
   photoButton: {
-    marginTop: 50
-  },
-  cardContour: {
-    height: "25%",
-    width: "80%",
-    borderWidth: 3,
-    borderColor: "white",
-    opacity: 0.7,
-    borderRadius: 10,
-  },
-  blurContainer: {
-width: '100%'
+    marginTop: 50,
   },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
   },
   modalView: {
     backgroundColor: "white",
@@ -255,8 +242,10 @@ width: '100%'
   modalButton: {
     width: 150,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 20,
     paddingTop: 10,
+
     backgroundColor: "#1D2C3B",
     borderRadius: 10,
   },
@@ -269,6 +258,8 @@ width: '100%'
   importButton: {
     width: 250,
     alignItems: "center",
+    justifyContent: "center",
+    
     marginTop: 20,
     paddingTop: 10,
     backgroundColor: "#1D2C3B",
