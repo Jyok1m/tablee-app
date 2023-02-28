@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function Header() {
   const [isBack, setIsBack] = useState(false);
+  const [isHome, setIsHome] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -19,6 +20,11 @@ export default function Header() {
       setIsBack(true);
     } else {
       setIsBack(false);
+    }
+    if (route.name === "Home") {
+      setIsHome(true);
+    } else {
+      setIsHome(false);
     }
   }, []);
 
@@ -44,7 +50,23 @@ export default function Header() {
   }
 
   return (
-    <View style={styles.header}>
+    <View
+      style={
+        isHome
+          ? {
+              flexDirection: "row",
+              width: "100%",
+              height: "10%",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "absolute",
+              top: 0,
+              left: 20,
+              zIndex: 1,
+            }
+          : styles.header
+      }
+    >
       {goBackIcon}
       <Image
         source={require("../assets/header_logo.png")}
