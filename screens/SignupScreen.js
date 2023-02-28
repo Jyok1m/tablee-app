@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
   logo: {
     width: "100%",
     maxHeight: "10%",
-    marginTop: 20,
   },
   inputBox: {
     paddingHorizontal: 20,
