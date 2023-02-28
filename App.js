@@ -31,6 +31,12 @@ import {
   faHeart,
   faCalendarCheck,
   faCircleUser,
+  faInfoCircle,
+  faCheck,
+  faBook,
+  faBookAtlas,
+  faBookOpen,
+  faCalendarDays,
 } from "@fortawesome/free-solid-svg-icons";
 
 // Import store persistance modules:
@@ -59,7 +65,7 @@ function TabNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName = "";
+          let iconName;
 
           if (route.name === "Home") {
             iconName = faHouse;
@@ -73,16 +79,58 @@ function TabNavigator() {
             iconName = faCircleUser;
           }
 
-          return <FontAwesomeIcon icon={iconName} size={30} color={color} />;
+          return (
+            <FontAwesomeIcon icon={iconName} size={20} color={"#CDAB82"} />
+          );
         },
-        tabBarActiveTintColor: "#1D2C3B",
-        tabBarInactiveTintColor: "#CDAB82",
-        tabBarActiveBackgroundColor: "#CDAB82",
+        tabBarLabel: ({ focused }) => {
+          let bottomWidth, bottomColor, labelName;
+
+          if (route.name === "Home") {
+            labelName = "Accueil";
+          } else if (route.name === "Messages") {
+            labelName = "Messages";
+          } else if (route.name === "Favorites") {
+            labelName = "Favoris";
+          } else if (route.name === "Agenda") {
+            labelName = "À venir";
+          } else if (route.name === "Profile") {
+            labelName = "Profil";
+          }
+
+          if (focused) {
+            bottomWidth = 2;
+            bottomColor = "#CDAB82";
+          } else {
+            bottomWidth = 2;
+            bottomColor = "#1D2C3B";
+          }
+
+          return (
+            <Text
+              style={{
+                color: "#CDAB82",
+                fontSize: 12,
+                textAlign: "center",
+                borderBottomWidth: bottomWidth,
+                borderBottomColor: bottomColor,
+                paddingBottom: 3,
+                width: "80%",
+              }}
+            >
+              {labelName}
+            </Text>
+          );
+        },
+
         headerShown: false,
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: "#1D2C3B",
-          borderTopWidth: 0,
+          borderTopWidth: null,
+          height: "7%",
+          paddingBottom: 5,
+          paddingTop: 5,
         },
       })}
     >
@@ -99,44 +147,49 @@ function RestaurantTabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ color }) => {
-          let iconName = "";
+        tabBarIcon: () => {
+          let iconName;
+          let iconColor = "#CDAB82";
 
           if (route.name === "Restaurant") {
-            iconName = faHouse;
+            iconName = faInfoCircle;
           } else if (route.name === "Reviews") {
-            iconName = faEnvelope;
+            iconName = faCheck;
           } else if (route.name === "Menu") {
-            iconName = faHeart;
+            iconName = faBookOpen;
           } else if (route.name === "Bookings") {
-            iconName = faCalendarCheck;
+            iconName = faCalendarDays;
+            iconColor = "#ff7500";
           }
 
-          return <FontAwesomeIcon icon={iconName} size={30} color={color} />;
+          return (
+            <FontAwesomeIcon icon={iconName} size={20} color={iconColor} />
+          );
         },
-        tabBarLabel: ({ focused, color }) => {
-          let labelColor;
-          let bottomWidth;
-          let bottomColor;
+        tabBarLabel: ({ focused }) => {
+          let bottomWidth, bottomColor, labelName;
+          let labelColor = "#CDAB82";
 
-          /*
           if (route.name === "Restaurant") {
-            iconColor = focused ? "yellow" : "#CDAB82";
+            labelName = "Infos";
           } else if (route.name === "Reviews") {
-            iconName = faEnvelope;
+            labelName = "Avis";
           } else if (route.name === "Menu") {
-            iconName = faHeart;
+            labelName = "Menu";
           } else if (route.name === "Bookings") {
-            iconName = faCalendarCheck;
+            labelName = "Réserver";
+            labelColor = "#ff7500";
           }
-          */
 
-          if (focused) {
-            labelColor = "yellow";
+          if (focused && route.name === "Bookings") {
+            bottomWidth = 2;
+            bottomColor = "#ff7500";
+          } else if (focused) {
             bottomWidth = 2;
             bottomColor = "#CDAB82";
           } else {
-            labelColor = "#CDAB82";
+            bottomWidth = 2;
+            bottomColor = "#1D2C3B";
           }
 
           return (
@@ -145,25 +198,25 @@ function RestaurantTabNavigator() {
                 color: labelColor,
                 fontSize: 12,
                 textAlign: "center",
-                marginTop: 0,
                 borderBottomWidth: bottomWidth,
                 borderBottomColor: bottomColor,
+                paddingBottom: 3,
+                width: "80%",
               }}
             >
-              {route.name}
+              {labelName}
             </Text>
           );
         },
 
-        tabBarActiveTintColor: "#1D2C3B",
-        tabBarInactiveTintColor: "#CDAB82",
-        // tabBarActiveBackgroundColor: "#CDAB82",
         headerShown: false,
         tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: "#1D2C3B",
-          borderTopWidth: 0,
-          height: 75,
+          borderTopWidth: null,
+          height: "7%",
+          paddingBottom: 5,
+          paddingTop: 5,
         },
       })}
     >
