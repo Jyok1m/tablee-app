@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-export default function RestaurantScreen({ navigation }) {
+export default function MenuScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={{ color: "white" }}>RestaurantScreen</Text>
+      <Text style={{ color: "white" }}>Menu</Text>
     </View>
   );
 }

@@ -70,6 +70,9 @@ export default function LandingScreen({ navigation }) {
       <TouchableOpacity>
         <Text style={styles.pressableText}>Mot de passe oublié</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("TabNavigator")}>
+        <Text style={styles.pressableText}>Test</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

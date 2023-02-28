@@ -5,7 +5,9 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={{ color: "white" }}>HomeScreen</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("Restaurant")}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("RestaurantTabNavigator")}
+      >
         <Text style={{ color: "white" }}>RestaurantScreen</Text>
       </TouchableOpacity>
     </View>
