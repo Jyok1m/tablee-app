@@ -1,7 +1,15 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { removePhoto } from "../reducers/user";
 
 export default function HomeScreen({ navigation }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(removePhoto());
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={{ color: "white" }}>HomeScreen</Text>

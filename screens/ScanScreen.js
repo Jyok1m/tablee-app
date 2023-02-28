@@ -4,7 +4,7 @@ import { Camera, CameraType, FlashMode } from "expo-camera";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useIsFocused } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { addPhoto } from "../reducers/user";
+import { addPhoto, removePhoto } from "../reducers/user";
 import * as ImagePicker from "expo-image-picker";
 import { BlurView } from "expo-blur";
 import BarcodeMask from "react-native-barcode-mask";
@@ -64,6 +64,7 @@ export default function SnapScreen({ navigation }) {
 
   //Si il veut reprendre la photo, ferme le modal
   function handleRetake() {
+    dispatch(removePhoto());
     setModalVisible(false);
   }
 
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
     width: 250,
     alignItems: "center",
     justifyContent: "center",
-    
+
     marginTop: 20,
     paddingTop: 10,
     backgroundColor: "#1D2C3B",
