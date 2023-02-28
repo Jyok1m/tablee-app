@@ -6,6 +6,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { addPhoto } from "../reducers/user";
 import * as ImagePicker from "expo-image-picker";
+import { BlurView } from "expo-blur";
+import BarcodeMask from "react-native-barcode-mask";
 
 export default function SnapScreen({ navigation }) {
   // Define the states:
@@ -72,8 +74,7 @@ export default function SnapScreen({ navigation }) {
 
     if (!photo.canceled) {
       setSelectedImage(photo.assets[0].uri);
-      //console.log(result.assets[0].uri);
-      //-------------------------------------------------------
+
       const formData = new FormData();
       formData.append("photoFromFront", {
         uri: photo.assets[0].uri,
@@ -93,7 +94,7 @@ export default function SnapScreen({ navigation }) {
         .catch((error) => console.log(error));
       //Affiche le modal de validation
       setModalVisible(true);
-      //-----------------------------------------------------------------------------
+
     } else {
       alert("You did not select any image.");
     }
@@ -109,28 +110,38 @@ export default function SnapScreen({ navigation }) {
       type={type}
       flashMode={flashMode}
       ref={(ref) => (cameraRef = ref)}
-      style={styles.camera}
-    >
-      <Modal visible={modalVisible} animationType="fade" transparent>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TouchableOpacity
-              onPress={() => handleValide()}
-              style={styles.modalButton}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modalTextButton}>Valider</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleRetake()}
-              style={styles.modalButton}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modalTextButton}>Reprendre la photo</Text>
-            </TouchableOpacity>
+      style={styles.camera}>
+      <BarcodeMask
+        width={"84%"}
+        height={"25%"}
+        edgeWidth={"100%"}
+        edgeHeight={"100%"}
+        edgeBorderWidth={1}
+        showAnimatedLine={true}
+        animatedLineWidth={'100%'}
+        lineAnimationDuration={1500}
+        outerMaskOpacity={0.7}
+      />
+      <BlurView intensity={80} tint="light" style={styles.blurContainer}>
+        <Modal visible={modalVisible} animationType="fade" transparent>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={() => handleValide()}
+                style={styles.modalButton}
+                activeOpacity={0.8}>
+                <Text style={styles.modalTextButton}>Valider</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleRetake()}
+                style={styles.modalButton}
+                activeOpacity={0.8}>
+                <Text style={styles.modalTextButton}>Reprendre la photo</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </BlurView>
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -139,8 +150,7 @@ export default function SnapScreen({ navigation }) {
               type === CameraType.back ? CameraType.front : CameraType.back
             )
           }
-          style={styles.button}
-        >
+          style={styles.button}>
           <FontAwesome name="rotate-right" size={25} color="#ffffff" />
         </TouchableOpacity>
 
@@ -150,8 +160,7 @@ export default function SnapScreen({ navigation }) {
               flashMode === FlashMode.off ? FlashMode.torch : FlashMode.off
             )
           }
-          style={styles.button}
-        >
+          style={styles.button}>
           <FontAwesome
             name="flash"
             size={25}
@@ -159,16 +168,17 @@ export default function SnapScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.cardContour}></View>
-      <TouchableOpacity
-        onPress={() => handleImportPhoto()}
-        style={styles.importButton}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.modalTextButton}>Importer depuis mes photos</Text>
-      </TouchableOpacity>
+
       <View style={styles.snapContainer}>
-        <TouchableOpacity onPress={() => cameraRef && takePicture()}>
+        <TouchableOpacity
+          onPress={() => handleImportPhoto()}
+          style={styles.importButton}
+          activeOpacity={0.8}>
+          <Text style={styles.modalTextButton}>Importer depuis mes photos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => cameraRef && takePicture()}
+          style={styles.photoButton}>
           <FontAwesome name="circle-thin" size={95} color="#ffffff" />
         </TouchableOpacity>
       </View>
@@ -183,7 +193,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   buttonsContainer: {
-    marginTop: 30,
+    position: 'absolute',
+    marginTop: 70,
     width: "100%",
     flexDirection: "row",
     alignItems: "flex-end",
@@ -199,11 +210,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     borderRadius: 50,
+  
   },
   snapContainer: {
+
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: 25,
+  },
+  photoButton: {
+    marginTop: 50
   },
   cardContour: {
     height: "25%",
@@ -212,6 +228,9 @@ const styles = StyleSheet.create({
     borderColor: "white",
     opacity: 0.7,
     borderRadius: 10,
+  },
+  blurContainer: {
+width: '100%'
   },
   centeredView: {
     flex: 1,
