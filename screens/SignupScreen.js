@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { useDispatch, useSelector } from "react-redux";
 import { signinUser, removePhoto } from "../reducers/user";
 import { BACKEND_URL } from "../backend_url";
@@ -121,8 +122,8 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 3,
     borderRadius: 5,
-    marginTop: 20,
-    fontSize: 16,
+    marginTop: "5%",
+    fontSize: RFPercentage(2.3),
   },
   button: {
     alignItems: "center",
@@ -134,10 +135,10 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 3,
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: "5%",
   },
   text: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: RFPercentage(2.3),
+    fontWeight: "500",
   },
 });
