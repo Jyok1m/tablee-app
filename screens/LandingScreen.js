@@ -6,15 +6,21 @@ import {
   TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { RFPercentage } from "react-native-responsive-fontsize";
+import { useDispatch, useSelector } from "react-redux";
 import { signinUser } from "../reducers/user";
 import { BACKEND_URL } from "../backend_url";
 
 export default function LandingScreen({ navigation }) {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (user.token) navigation.navigate("TabNavigator");
+  }, []);
 
   // Fonction signin pour login le user
   async function signin() {
@@ -100,8 +106,8 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 3,
     borderRadius: 5,
-    marginTop: 20,
-    fontSize: 16,
+    marginTop: "5%",
+    fontSize: RFPercentage(2.3),
   },
   button: {
     alignItems: "center",
@@ -113,16 +119,16 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 3,
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: "5%",
   },
   pressableText: {
     textDecorationLine: "underline",
     color: "#CDAB82",
-    marginTop: 20,
-    fontSize: 16,
+    marginTop: "5%",
+    fontSize: RFPercentage(2.3),
   },
   text: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: RFPercentage(2.3),
+    fontWeight: "500",
   },
 });

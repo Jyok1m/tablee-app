@@ -1,5 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -33,8 +34,6 @@ import {
   faCircleUser,
   faInfoCircle,
   faCheck,
-  faBook,
-  faBookAtlas,
   faBookOpen,
   faCalendarDays,
 } from "@fortawesome/free-solid-svg-icons";
@@ -65,7 +64,7 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
+        tabBarIcon: () => {
           let iconName;
 
           if (route.name === "Home") {
@@ -86,6 +85,7 @@ function TabNavigator() {
         },
         tabBarLabel: ({ focused }) => {
           let bottomWidth, bottomColor, labelName;
+          let weight = "400";
 
           if (route.name === "Home") {
             labelName = "Accueil";
@@ -102,6 +102,7 @@ function TabNavigator() {
           if (focused) {
             bottomWidth = 2;
             bottomColor = "#CDAB82";
+            weight = "800";
           } else {
             bottomWidth = 2;
             bottomColor = "#1D2C3B";
@@ -111,12 +112,13 @@ function TabNavigator() {
             <Text
               style={{
                 color: "#CDAB82",
-                fontSize: 12,
+                fontSize: RFPercentage(1.6),
+                fontWeight: weight,
                 textAlign: "center",
                 borderBottomWidth: bottomWidth,
                 borderBottomColor: bottomColor,
                 paddingBottom: 3,
-                width: "80%",
+                width: "90%",
               }}
             >
               {labelName}
@@ -129,9 +131,9 @@ function TabNavigator() {
         tabBarStyle: {
           backgroundColor: "#1D2C3B",
           borderTopWidth: null,
-          height: "7%",
-          paddingBottom: 5,
-          paddingTop: 5,
+          height: RFPercentage(8),
+          paddingBottom: RFPercentage(0.5),
+          paddingTop: RFPercentage(0.6),
         },
       })}
     >
@@ -170,6 +172,7 @@ function RestaurantTabNavigator() {
         tabBarLabel: ({ focused }) => {
           let bottomWidth, bottomColor, labelName;
           let labelColor = "#CDAB82";
+          let weight = "400";
 
           if (route.name === "Restaurant") {
             labelName = "Infos";
@@ -185,9 +188,11 @@ function RestaurantTabNavigator() {
           if (focused && route.name === "Bookings") {
             bottomWidth = 2;
             bottomColor = "#ff7500";
+            weight = "800";
           } else if (focused) {
             bottomWidth = 2;
             bottomColor = "#CDAB82";
+            weight = "800";
           } else {
             bottomWidth = 2;
             bottomColor = "#1D2C3B";
@@ -197,12 +202,13 @@ function RestaurantTabNavigator() {
             <Text
               style={{
                 color: labelColor,
-                fontSize: 12,
+                fontSize: RFPercentage(1.6),
+                fontWeight: weight,
                 textAlign: "center",
                 borderBottomWidth: bottomWidth,
                 borderBottomColor: bottomColor,
                 paddingBottom: 3,
-                width: "80%",
+                width: "90%",
               }}
             >
               {labelName}
@@ -215,9 +221,9 @@ function RestaurantTabNavigator() {
         tabBarStyle: {
           backgroundColor: "#1D2C3B",
           borderTopWidth: null,
-          height: "7%",
-          paddingBottom: 5,
-          paddingTop: 5,
+          height: RFPercentage(8),
+          paddingBottom: RFPercentage(0.5),
+          paddingTop: RFPercentage(0.6),
         },
       })}
     >
