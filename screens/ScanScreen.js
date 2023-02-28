@@ -6,6 +6,10 @@ import { useIsFocused } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { addPhoto } from "../reducers/user";
 import * as ImagePicker from "expo-image-picker";
+import { BlurView } from "expo-blur";
+import BarcodeMask from "react-native-barcode-mask";
+
+import { BACKEND_URL } from "../backend_url";
 
 export default function SnapScreen({ navigation }) {
   // Define the states:
