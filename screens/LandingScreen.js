@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";

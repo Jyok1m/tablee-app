@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Marker } from "react-native-maps";
@@ -76,6 +77,7 @@ export default function RestaurantScreen({ navigation }) {
   });
   return (
     <SafeAreaView>
+      <Header />
       <View style={styles.container}>
         <MapView style={styles.map}>
           {currentPosition && (
