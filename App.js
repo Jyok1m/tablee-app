@@ -43,12 +43,13 @@ import {
 import { Provider } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import user from "./reducers/user";
+import restaurant from "./reducers/restaurant";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Configure the store:
-const reducers = combineReducers({ user });
+const reducers = combineReducers({ user, restaurant });
 const persistConfig = { key: "face-up", storage: AsyncStorage };
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
