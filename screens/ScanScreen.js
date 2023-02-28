@@ -95,7 +95,6 @@ export default function SnapScreen({ navigation }) {
         .catch((error) => console.log(error));
       //Affiche le modal de validation
       setModalVisible(true);
-
     } else {
       alert("Aucune image n'a été selectionnée !");
     }
@@ -111,7 +110,8 @@ export default function SnapScreen({ navigation }) {
       type={type}
       flashMode={flashMode}
       ref={(ref) => (cameraRef = ref)}
-      style={styles.camera}>
+      style={styles.camera}
+    >
       <BarcodeMask
         width={"84%"}
         height={"25%"}
@@ -123,25 +123,28 @@ export default function SnapScreen({ navigation }) {
         lineAnimationDuration={1500}
         outerMaskOpacity={0.7}
       />
-
-      <Modal visible={modalVisible} animationType="fade" transparent={true}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TouchableOpacity
-              onPress={() => handleValide()}
-              style={styles.modalButton}
-              activeOpacity={0.8}>
-              <Text style={styles.modalTextButton}>Valider</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleRetake()}
-              style={styles.modalButton}
-              activeOpacity={0.8}>
-              <Text style={styles.modalTextButton}>Reprendre la photo</Text>
-            </TouchableOpacity>
+      <BlurView intensity={80} tint="light" style={styles.blurContainer}>
+        <Modal visible={modalVisible} animationType="fade" transparent>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={() => handleValide()}
+                style={styles.modalButton}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.modalTextButton}>Valider</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleRetake()}
+                style={styles.modalButton}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.modalTextButton}>Reprendre la photo</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </BlurView>
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -150,7 +153,8 @@ export default function SnapScreen({ navigation }) {
               type === CameraType.back ? CameraType.front : CameraType.back
             )
           }
-          style={styles.button}>
+          style={styles.button}
+        >
           <FontAwesome name="rotate-right" size={25} color="#ffffff" />
         </TouchableOpacity>
 
@@ -160,7 +164,8 @@ export default function SnapScreen({ navigation }) {
               flashMode === FlashMode.off ? FlashMode.torch : FlashMode.off
             )
           }
-          style={styles.button}>
+          style={styles.button}
+        >
           <FontAwesome
             name="flash"
             size={25}
@@ -173,12 +178,14 @@ export default function SnapScreen({ navigation }) {
         <TouchableOpacity
           onPress={() => handleImportPhoto()}
           style={styles.importButton}
-          activeOpacity={0.8}>
+          activeOpacity={0.8}
+        >
           <Text style={styles.modalTextButton}>Importer depuis mes photos</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => cameraRef && takePicture()}
-          style={styles.photoButton}>
+          style={styles.photoButton}
+        >
           <FontAwesome name="circle-thin" size={95} color="#ffffff" />
         </TouchableOpacity>
       </View>
@@ -193,7 +200,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   buttonsContainer: {
-    // position: 'absolute',
+    position: "absolute",
     marginTop: 70,
     width: "100%",
     flexDirection: "row",
@@ -218,6 +225,17 @@ const styles = StyleSheet.create({
   },
   photoButton: {
     marginTop: 50,
+  },
+  cardContour: {
+    height: "25%",
+    width: "80%",
+    borderWidth: 3,
+    borderColor: "white",
+    opacity: 0.7,
+    borderRadius: 10,
+  },
+  blurContainer: {
+    width: "100%",
   },
   centeredView: {
     flex: 1,
