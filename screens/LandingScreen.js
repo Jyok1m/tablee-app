@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 5,
     marginTop: "5%",
-    fontSize: RFPercentage(2.3),
+    fontSize: RFPercentage(2),
   },
   button: {
     alignItems: "center",
@@ -126,10 +126,10 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     color: "#CDAB82",
     marginTop: "5%",
-    fontSize: RFPercentage(2.3),
+    fontSize: RFPercentage(2),
   },
   text: {
-    fontSize: RFPercentage(2.3),
+    fontSize: RFPercentage(2),
     fontWeight: "500",
   },
 });

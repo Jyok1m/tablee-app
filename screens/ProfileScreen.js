@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Modal,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, removePhoto } from "../reducers/user";
@@ -7,108 +15,182 @@ import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
 
 export default function ProfileScreen({ navigation }) {
-  const [email, setEmail] = useState(null);
-  const [username, setUsername] = useState(null);
+  /* -------------------------------------------------------------------------- */
+  /*                                    Logic                                   */
+  /* -------------------------------------------------------------------------- */
+
   const [profilePhoto, setProfilePhoto] = useState(null);
+  const [username, setUsername] = useState(null);
+  const [bio, setBio] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [history, setHistory] = useState([]);
+
+  const [bioInput, setBioInput] = useState("");
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const { token } = user;
 
-  // Get all the data and update the state
+  /* ---------------- Get all the data and update the state ---------------- */
+
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/users/${token}`);
       const data = await response.json();
       const { result } = data;
+      const { studentCard, bio, username, email, password, history } =
+        data.user;
 
-      if (result === true) {
-        setEmail(data.user.email);
-        setUsername(data.user.username);
-        setProfilePhoto(data.user.studentCard);
-      } else {
-        console.log("Error: no user connected");
+      if (result) {
+        setProfilePhoto(studentCard);
+        setBio(bio);
+        setUsername(username);
+        setEmail(email);
+        setPassword(password);
+        setHistory(history);
       }
     })();
   }, []);
 
-  // Logout
+  /* ------------------------------- Show Modal ------------------------------ */
+
+  const showModal = () => {
+    setModalVisible(true);
+  };
+
+  /* ------------------------------- Handle Edit ------------------------------ */
+
+  const editField = () => {
+    setModalVisible(true);
+  };
+
+  /* --------------------------------- Logout --------------------------------- */
+
   function logout() {
     dispatch(logoutUser());
     dispatch(removePhoto());
     navigation.navigate("Landing");
   }
 
-  let emailContent, usernameContent, photoContent;
-  if (email) {
-    emailContent = <Text style={styles.subtitle}>{email}</Text>;
-  } else {
-    emailContent = <Text style={styles.subtitle}>Description...</Text>;
-  }
-  if (username) {
-    usernameContent = <Text style={styles.subtitle}>{username}</Text>;
-  } else {
-    usernameContent = <Text style={styles.subtitle}>Description...</Text>;
-  }
-
-  if (profilePhoto) {
-    photoContent = (
-      <Image style={styles.profilePic} source={{ uri: profilePhoto }} />
+  const restaurantHistory = history.map((data, i) => {
+    return (
+      <ScrollView style={styles.scrollView}>
+        <Text key={i} style={styles.content}>
+          {`\u2022 ${data.restaurant.name}`}
+        </Text>
+      </ScrollView>
     );
-  } else {
-    photoContent = <Text style={styles.subtitle}>No Photo...</Text>;
-  }
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Return                                   */
+  /* -------------------------------------------------------------------------- */
 
   return (
     <View style={styles.container}>
+      {/* Header */}
+
       <Header />
-      {photoContent}
-      <View style={styles.inputCard}>
-        <View style={styles.cardTop}>
-          <Text style={styles.title}>Nom d'utilisateur</Text>
-          <TouchableOpacity>
+
+      {/* Title container*/}
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.screenTitle}>
+          Bienvenue, {username && <Text>{username} !</Text>}
+        </Text>
+      </View>
+
+      {/* User container */}
+
+      <View style={styles.userContainer}>
+        <View style={styles.photoContainer}>
+          {profilePhoto && (
+            <Image style={styles.profilePic} source={{ uri: profilePhoto }} />
+          )}
+          <TouchableOpacity style={styles.editPhoto}>
             <Text style={styles.edit}>Modifier</Text>
           </TouchableOpacity>
         </View>
-        {usernameContent}
-      </View>
-      <View style={styles.inputCard}>
-        <Text style={styles.title}>Bio</Text>
-        <Text style={styles.subtitle}>Description...</Text>
-      </View>
-      <View style={styles.inputCard}>
-        <View style={styles.cardTop}>
-          <Text style={styles.title}>Email</Text>
-          <TouchableOpacity>
-            <Text style={styles.edit}>Modifier</Text>
-          </TouchableOpacity>
+        <View style={styles.bioContainer}>
+          <View style={styles.inputCard}>
+            <View style={styles.cardTop}>
+              <Text style={styles.title}>Bio</Text>
+              <TouchableOpacity>
+                <Text style={styles.edit}>Modifier</Text>
+              </TouchableOpacity>
+            </View>
+            {bio ? (
+              <ScrollView style={styles.scrollView}>
+                <Text style={styles.content}>{bio}</Text>
+              </ScrollView>
+            ) : (
+              <Text style={styles.noContent}>Racontez votre histoire...</Text>
+            )}
+          </View>
         </View>
-        {emailContent}
       </View>
-      <View style={styles.inputCard}>
-        <Text style={styles.title}>Mot de passe</Text>
-        <Text style={styles.subtitle}>Description...</Text>
+
+      {/* Main container */}
+
+      <View style={styles.mainContainer}>
+        <View style={styles.inputCard}>
+          <View style={styles.cardTop}>
+            <Text style={styles.title}>Email</Text>
+            <TouchableOpacity>
+              <Text style={styles.edit}>Modifier</Text>
+            </TouchableOpacity>
+          </View>
+          {email && <Text style={styles.content}>{email}</Text>}
+        </View>
+        <View style={styles.inputCard}>
+          <View style={styles.cardTop}>
+            <Text style={styles.title}>Mot de passe</Text>
+            <TouchableOpacity>
+              <Text style={styles.edit}>Modifier</Text>
+            </TouchableOpacity>
+          </View>
+          {password && <Text style={styles.content}>********</Text>}
+        </View>
+        <View style={styles.inputCard}>
+          <View style={styles.cardTop}>
+            <Text style={styles.title}>Moyen de paiement</Text>
+            <TouchableOpacity>
+              <Text style={styles.edit}>Modifier</Text>
+            </TouchableOpacity>
+          </View>
+          {password && <Text style={styles.content}>********</Text>}
+        </View>
+        <View style={styles.inputCard}>
+          <View style={styles.cardTop}>
+            <Text style={styles.title}>Historique</Text>
+          </View>
+          {history.length ? (
+            restaurantHistory
+          ) : (
+            <ScrollView style={styles.scrollView}>
+              <Text style={styles.noContent}>Pas encore de restaurant...</Text>
+            </ScrollView>
+          )}
+        </View>
       </View>
-      <View style={styles.inputCard}>
-        <Text style={styles.title}>Moyen de paiement</Text>
-        <Text style={styles.subtitle}>Description...</Text>
+
+      {/* Bot container = boutons */}
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => logout()}>
+          <Text style={styles.pressableText}>Déconnexion</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.inputCard}>
-        <Text style={styles.title}>Historique</Text>
-        <Text style={styles.subtitle}>Description...</Text>
-      </View>
-      <TouchableOpacity style={styles.button} onPress={() => logout()}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("RestaurantTabNavigator")}
-      >
-        <Text style={styles.buttonText}>Go to restaurant screen</Text>
-      </TouchableOpacity>
     </View>
   );
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                    Style                                   */
+/* -------------------------------------------------------------------------- */
 
 const styles = StyleSheet.create({
   container: {
@@ -117,28 +199,80 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#1D2C3B",
   },
-  profilePic: {
-    height: 100,
-    width: 100,
+
+  /* ----------------------------- Title Container ----------------------------- */
+
+  titleContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: "5%",
+  },
+  screenTitle: {
+    fontSize: RFPercentage(3.5),
+    color: "#CDAB82",
+    fontWeight: "500",
+  },
+
+  /* ------------------------------ User container ----------------------------- */
+
+  userContainer: {
+    flexDirection: "row",
+    width: "100%",
+    height: "20%",
+    alignItems: "center",
+    marginBottom: "5%",
+  },
+  photoContainer: {
+    width: "30%",
+    height: "100%",
+    marginRight: "5%",
+  },
+  profilePic: {
+    height: "70%",
+    width: "100%",
     borderRadius: 50,
     borderColor: "#CDAB82",
     borderWidth: 1,
   },
-  inputCard: {
+  editPhoto: {
     width: "100%",
-    minHeight: "2%",
-    backgroundColor: "transparent",
+    height: "30%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bioContainer: {
+    justifyContent: "space-between",
+    width: "65%",
+    height: "100%",
     borderColor: "#CDAB82",
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: "5%",
-    padding: 5,
   },
 
+  /* ----------------------------- Main container ----------------------------- */
+
+  mainContainer: {
+    width: "100%",
+    height: "55%",
+
+    marginBottom: "3%",
+    padding: 5,
+  },
+  inputCard: {
+    width: "100%",
+    backgroundColor: "transparent",
+    borderColor: "#CDAB82",
+    marginBottom: "2%",
+    padding: 5,
+  },
   cardTop: {
     flexDirection: "row",
     justifyContent: "space-between",
+    borderColor: "#CDAB82",
+    borderBottomWidth: 1,
+    marginBottom: "2%",
   },
   title: {
     fontSize: RFPercentage(2),
@@ -152,24 +286,33 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontStyle: "italic",
   },
-  subtitle: {
+  content: {
     fontSize: RFPercentage(1.6),
     fontWeight: "400",
     color: "#FFF",
   },
-  button: {
+  noContent: {
+    fontSize: RFPercentage(1.6),
+    fontWeight: "400",
+    color: "grey",
+    fontStyle: "italic",
+  },
+  scrollView: {
+    height: "40%",
+  },
+
+  /* ----------------------------- Button container ----------------------------- */
+
+  buttonContainer: {
+    width: "100%",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,
-    width: "100%",
-    minHeight: "7%",
-    backgroundColor: "#b42133",
-    borderColor: "#b42133",
-    borderWidth: 3,
-    borderRadius: 5,
   },
-  buttonText: {
+  pressableText: {
+    textDecorationLine: "underline",
     fontSize: RFPercentage(2),
     fontWeight: "500",
+    color: "#CDAB82",
   },
 });
