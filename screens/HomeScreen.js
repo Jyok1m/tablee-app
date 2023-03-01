@@ -7,119 +7,76 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location";
 import React from "react";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { Dimensions } from "react-native";
+import { mapStyle } from "../components/MapStyle";
+import * as Location from "expo-location";
+
+import { useDispatch, useSelector } from "react-redux";
 import { addRestaurant } from "../reducers/restaurant";
 import { BACKEND_URL } from "../backend_url";
-import { Dimensions } from "react-native";
+import Header from "../components/Header";
 
 export default function HomeScreen({ navigation }) {
-  /*useEffect(() => {
-    dispatch(removePhoto());
-  }, []);*/
-
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.value);
-  const restaurant = useSelector((state) => state.restaurant.value);
-
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [tempCoordinates, setTempCoordinates] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [newPlace, setNewPlace] = useState("");
-  const [allRestaurant, setAllRestaurant] = useState([]);
-  const [restaurantPosition, setRestaurantPosition] = useState([]);
+  const [allRestaurants, setAllRestaurants] = useState([]);
 
+  // Demande de l'autorisation et fetch de la route pour avoir les coordonnées de tous les restaurants
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-
       if (status === "granted") {
         Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
           setCurrentPosition(location.coords);
-          fetch(`${BACKEND_URL}/restaurants`)
-            .then((response) => response.json())
-            .then((data) => {
-              //console.log(data.allRestaurants[0].address);
-              data.result && setAllRestaurant(data);
-              dispatch(addRestaurant(data.allRestaurants));
-              //console.log(restaurant);
-            });
-          //-------------------------------
-          let restoAddresses = restaurant.map((data, i) => {
-            let name = data.name;
-            const addresses = `${data.address.streetNumber} ${data.address.streetName} ${data.address.postCode}`;
-            fetch(`https://api-adresse.data.gouv.fr/search/?q=${addresses}`)
-              .then((response) => response.json())
-              .then((data) => {
-                const restau = data.features[0];
-                setRestaurantPosition([
-                  ...restaurantPosition,
-                  {
-                    name: name,
-                    lat: restau.geometry.coordinates[1],
-                    lon: restau.geometry.coordinates[0],
-                  },
-                ]);
-              });
-          });
-          //--------------------------------------------------
         });
       }
+      // Modification de l'état allRestaurants en fonction de la réponse du backend
+      const response = await fetch(`${BACKEND_URL}/restaurants/all`);
+      const data = await response.json();
+      if (data.result) setAllRestaurants(data.allRestaurants);
     })();
   }, []);
 
-  /*useEffect(() => {
-    let restoAddresses = restaurant.map((data, i) => {
-      let name = data.name
-      const addresses = `${data.address.streetNumber} ${data.address.streetName} ${data.address.postCode}`;
-      fetch(`https://api-adresse.data.gouv.fr/search/?q=${addresses}`).then(
-        (response) => response.json())
-        .then(data => {
-          const restau = data.features[0];
-          setRestaurantPosition([...restaurantPosition, {
-            name: name,
-            lat: restau.geometry.coordinates[1],
-            lon: restau.geometry.coordinates[0],
-          }]);
-        })
-    })
-  }, [allRestaurant]);*/
-
-  //console.log(restaurantPosition)
-  let markers = restaurantPosition.map((data, i) => {
-    console.log(data.name);
-    return (
-      <Marker
-        key={i}
-        coordinate={{ latitude: data.lat, longitude: data.lon }}
-        title={data.name}
-      />
-    );
+  // Map des coordonnées des markers en fonction du résultat du fetch
+  const restaurantMarkers = allRestaurants.map((data, i) => {
+    const { name, latitude, longitude } = data;
+    return <Marker key={i} coordinate={{ latitude, longitude }} title={name} />;
   });
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map}>
+      <Header />
+      <MapView
+        style={styles.map}
+        provider={PROVIDER_GOOGLE}
+        customMapStyle={mapStyle}
+        region={{
+          latitude: currentPosition ? currentPosition.latitude : 48.866667,
+          longitude: currentPosition ? currentPosition.longitude : 2.333333,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+      >
         {currentPosition && (
           <Marker
             coordinate={currentPosition}
-            title="My position"
+            title="Ma position"
             pinColor="#fecb2d"
           />
         )}
-        {markers}
+        {restaurantMarkers}
       </MapView>
+
+      <View style={styles.container}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RestaurantTabNavigator")}
+        >
+          <Text style={{ color: "white" }}>RestaurantScreen</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-  <View style={styles.container}>
-    <TouchableOpacity
-      onPress={() => navigation.navigate("RestaurantTabNavigator")}>
-      <Text style={{ color: "white" }}>RestaurantScreen</Text>
-    </TouchableOpacity>
-  </View>;
 }
 
 const styles = StyleSheet.create({
@@ -132,5 +89,6 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+    borderRadius: 50,
   },
 });
