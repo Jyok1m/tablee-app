@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Modal,
+  TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, removePhoto } from "../reducers/user";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -26,9 +26,10 @@ export default function ProfileScreen({ navigation }) {
   const [password, setPassword] = useState(null);
   const [history, setHistory] = useState([]);
 
-  const [bioInput, setBioInput] = useState("");
-
-  const [modalVisible, setModalVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [isFocused, setIsFocused] = useState("");
+  const [inputType, setInputType] = useState("");
+  const [sendState, setSendState] = useState(false);
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
@@ -53,19 +54,36 @@ export default function ProfileScreen({ navigation }) {
         setHistory(history);
       }
     })();
-  }, []);
+  }, [sendState]);
 
   /* ------------------------------- Show Modal ------------------------------ */
 
-  const showModal = () => {
-    setModalVisible(true);
+  const displayInputField = (inputType) => {
+    setInputType(inputType);
+    setIsFocused(inputType);
+  };
+
+  const closeInputField = () => {
+    setIsFocused("");
+    setInputValue("");
+    setInputType("");
   };
 
   /* ------------------------------- Handle Edit ------------------------------ */
 
-  const editField = () => {
-    setModalVisible(true);
-  };
+  async function saveInput() {
+    const response = await fetch(`${BACKEND_URL}/users/${token}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [inputType]: inputValue }),
+    });
+    const data = await response.json();
+    if (data) alert("Entrée sauvegardée !");
+    setSendState(!sendState);
+    setIsFocused("");
+    setInputValue("");
+    setInputType("");
+  }
 
   /* --------------------------------- Logout --------------------------------- */
 
@@ -74,6 +92,8 @@ export default function ProfileScreen({ navigation }) {
     dispatch(removePhoto());
     navigation.navigate("Landing");
   }
+
+  /* --------------------------------- Handle restaurant history --------------------------------- */
 
   const restaurantHistory = history.map((data, i) => {
     return (
@@ -118,11 +138,35 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.inputCard}>
             <View style={styles.cardTop}>
               <Text style={styles.title}>Bio</Text>
-              <TouchableOpacity>
-                <Text style={styles.edit}>Modifier</Text>
-              </TouchableOpacity>
+              {isFocused === "bio" ? (
+                <View style={styles.editFocused}>
+                  <TouchableOpacity onPress={() => closeInputField()}>
+                    <Text style={styles.edit}>Annuler</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => saveInput()}>
+                    <Text style={styles.edit}>Sauvegarder</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    displayInputField("bio");
+                  }}
+                >
+                  <Text style={styles.edit}>Modifier</Text>
+                </TouchableOpacity>
+              )}
             </View>
-            {bio ? (
+            {isFocused === "bio" ? (
+              <ScrollView style={styles.editViewTop}>
+                <TextInput
+                  style={styles.editContent}
+                  onChangeText={(value) => setInputValue(value)}
+                  value={inputValue}
+                  multiline={true}
+                />
+              </ScrollView>
+            ) : bio ? (
               <ScrollView style={styles.scrollView}>
                 <Text style={styles.content}>{bio}</Text>
               </ScrollView>
@@ -139,20 +183,73 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Email</Text>
-            <TouchableOpacity>
-              <Text style={styles.edit}>Modifier</Text>
-            </TouchableOpacity>
+            {isFocused === "email" ? (
+              <View style={styles.editFocusedMain}>
+                <TouchableOpacity onPress={() => closeInputField()}>
+                  <Text style={styles.edit}>Annuler</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => saveInput()}>
+                  <Text style={styles.edit}>Sauvegarder</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  displayInputField("email");
+                }}
+              >
+                <Text style={styles.edit}>Modifier</Text>
+              </TouchableOpacity>
+            )}
           </View>
-          {email && <Text style={styles.content}>{email}</Text>}
+          {isFocused === "email" ? (
+            <ScrollView style={styles.editViewTop}>
+              <TextInput
+                style={styles.editContent}
+                onChangeText={(value) => setInputValue(value)}
+                value={inputValue}
+                multiline={true}
+              />
+            </ScrollView>
+          ) : (
+            email && <Text style={styles.content}>{email}</Text>
+          )}
         </View>
+
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Mot de passe</Text>
-            <TouchableOpacity>
-              <Text style={styles.edit}>Modifier</Text>
-            </TouchableOpacity>
+            {isFocused === "password" ? (
+              <View style={styles.editFocusedMain}>
+                <TouchableOpacity onPress={() => closeInputField()}>
+                  <Text style={styles.edit}>Annuler</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => saveInput()}>
+                  <Text style={styles.edit}>Sauvegarder</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  displayInputField("password");
+                }}
+              >
+                <Text style={styles.edit}>Modifier</Text>
+              </TouchableOpacity>
+            )}
           </View>
-          {password && <Text style={styles.content}>********</Text>}
+          {isFocused === "password" ? (
+            <ScrollView style={styles.editViewTop}>
+              <TextInput
+                style={styles.editContent}
+                onChangeText={(value) => setInputValue(value)}
+                value={inputValue}
+                multiline={true}
+              />
+            </ScrollView>
+          ) : (
+            password && <Text style={styles.content}>********</Text>
+          )}
         </View>
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
@@ -285,6 +382,27 @@ const styles = StyleSheet.create({
     color: "#CDAB82",
     textDecorationLine: "underline",
     fontStyle: "italic",
+  },
+  editFocused: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "60%",
+  },
+  editFocusedMain: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: "20%",
+    width: "60%",
+  },
+  editContent: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#CDAB82",
+    fontSize: RFPercentage(1.6),
+    fontWeight: "400",
+    color: "#FFF",
+  },
+  editViewTop: {
+    maxHeight: "80%",
   },
   content: {
     fontSize: RFPercentage(1.6),
