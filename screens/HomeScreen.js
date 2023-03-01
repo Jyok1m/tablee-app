@@ -17,14 +17,11 @@ import { BACKEND_URL } from "../backend_url";
 import { Dimensions } from "react-native";
 
 export default function HomeScreen({ navigation }) {
-
-
   /*useEffect(() => {
     dispatch(removePhoto());
   }, []);*/
 
-    
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const restaurant = useSelector((state) => state.restaurant.value);
 
@@ -48,32 +45,31 @@ export default function HomeScreen({ navigation }) {
               //console.log(data.allRestaurants[0].address);
               data.result && setAllRestaurant(data);
               dispatch(addRestaurant(data.allRestaurants));
-                //console.log(restaurant);
+              //console.log(restaurant);
             });
-            //-------------------------------
-    let restoAddresses = restaurant.map((data, i) => {
-      let name = data.name;
-      const addresses = `${data.address.streetNumber} ${data.address.streetName} ${data.address.postCode}`;
-      fetch(`https://api-adresse.data.gouv.fr/search/?q=${addresses}`)
-        .then((response) => response.json())
-        .then((data) => {
-          const restau = data.features[0];
-          setRestaurantPosition([
-            ...restaurantPosition,
-            {
-              name: name,
-              lat: restau.geometry.coordinates[1],
-              lon: restau.geometry.coordinates[0],
-            },
-          ]);
-        });
-    });
-    //--------------------------------------------------
+          //-------------------------------
+          let restoAddresses = restaurant.map((data, i) => {
+            let name = data.name;
+            const addresses = `${data.address.streetNumber} ${data.address.streetName} ${data.address.postCode}`;
+            fetch(`https://api-adresse.data.gouv.fr/search/?q=${addresses}`)
+              .then((response) => response.json())
+              .then((data) => {
+                const restau = data.features[0];
+                setRestaurantPosition([
+                  ...restaurantPosition,
+                  {
+                    name: name,
+                    lat: restau.geometry.coordinates[1],
+                    lon: restau.geometry.coordinates[0],
+                  },
+                ]);
+              });
+          });
+          //--------------------------------------------------
         });
       }
     })();
   }, []);
-
 
   /*useEffect(() => {
     let restoAddresses = restaurant.map((data, i) => {
@@ -93,8 +89,8 @@ export default function HomeScreen({ navigation }) {
   }, [allRestaurant]);*/
 
   //console.log(restaurantPosition)
- let markers = restaurantPosition.map((data, i) => {
-console.log(data.name)
+  let markers = restaurantPosition.map((data, i) => {
+    console.log(data.name);
     return (
       <Marker
         key={i}
@@ -104,31 +100,26 @@ console.log(data.name)
     );
   });
 
-
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <MapView style={styles.map}>
-          {currentPosition && (
-            <Marker
-              coordinate={currentPosition}
-              title="My position"
-              pinColor="#fecb2d"
-            />
-          )}
-          {markers}
-        </MapView>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <MapView style={styles.map}>
+        {currentPosition && (
+          <Marker
+            coordinate={currentPosition}
+            title="My position"
+            pinColor="#fecb2d"
+          />
+        )}
+        {markers}
+      </MapView>
+    </View>
   );
   <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("RestaurantTabNavigator")}
-      >
-        <Text style={{ color: "white" }}>RestaurantScreen</Text>
-      </TouchableOpacity>
-      
-    </View>
+    <TouchableOpacity
+      onPress={() => navigation.navigate("RestaurantTabNavigator")}>
+      <Text style={{ color: "white" }}>RestaurantScreen</Text>
+    </TouchableOpacity>
+  </View>;
 }
 
 const styles = StyleSheet.create({
