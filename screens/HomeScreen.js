@@ -7,20 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import * as Location from "expo-location";
 import React from "react";
-import { addRestaurant } from "../reducers/restaurant";
-import { BACKEND_URL } from "../backend_url";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { mapStyle } from "../components/MapStyle";
+import * as Location from "expo-location";
+
+import { useDispatch, useSelector } from "react-redux";
+import { addRestaurant } from "../reducers/restaurant";
+import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
 
 export default function HomeScreen({ navigation }) {
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [coordinates, setCoordinates] = useState([]);
+  const [allRestaurants, setAllRestaurants] = useState([]);
 
   // Demande de l'autorisation et fetch de la route pour avoir les coordonnées de tous les restaurants
   useEffect(() => {
@@ -31,23 +31,17 @@ export default function HomeScreen({ navigation }) {
           setCurrentPosition(location.coords);
         });
       }
-      // Modification de l'état Coordinates en fonction de la réponse du backend
+      // Modification de l'état allRestaurants en fonction de la réponse du backend
       const response = await fetch(`${BACKEND_URL}/restaurants/all`);
       const data = await response.json();
-      if (data.result) setCoordinates(data.allRestaurants);
+      if (data.result) setAllRestaurants(data.allRestaurants);
     })();
   }, []);
 
   // Map des coordonnées des markers en fonction du résultat du fetch
-  const restaurantMarkers = coordinates.map((data, i) => {
-    const { restaurantName, latitude, longitude } = data;
-    return (
-      <Marker
-        key={i}
-        coordinate={{ latitude, longitude }}
-        title={restaurantName}
-      />
-    );
+  const restaurantMarkers = allRestaurants.map((data, i) => {
+    const { name, latitude, longitude } = data;
+    return <Marker key={i} coordinate={{ latitude, longitude }} title={name} />;
   });
 
   return (
