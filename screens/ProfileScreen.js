@@ -50,6 +50,7 @@ export default function ProfileScreen({ navigation }) {
   } else {
     usernameContent = <Text style={styles.subtitle}>Description...</Text>;
   }
+
   if (profilePhoto) {
     photoContent = (
       <Image style={styles.profilePic} source={{ uri: profilePhoto }} />
@@ -98,6 +99,12 @@ export default function ProfileScreen({ navigation }) {
       </View>
       <TouchableOpacity style={styles.button} onPress={() => logout()}>
         <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("RestaurantTabNavigator")}
+      >
+        <Text style={styles.buttonText}>Go to restaurant screen</Text>
       </TouchableOpacity>
     </View>
   );
