@@ -8,12 +8,7 @@ import {
   View,
 } from "react-native";
 import React from "react";
-import MapView, {
-  Marker,
-  PROVIDER_GOOGLE,
-  Callout,
-  CalloutSubview,
-} from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE, Callout } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { mapStyle } from "../components/MapStyle";
 import * as Location from "expo-location";
@@ -22,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addRestaurant } from "../reducers/restaurant";
 import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 export default function HomeScreen({ navigation }) {
   const [currentPosition, setCurrentPosition] = useState(null);
@@ -46,23 +42,18 @@ export default function HomeScreen({ navigation }) {
     })();
   }, []);
 
-  // Map des coordonnées des markers en fonction du résultat du fetch
-  /*const restaurantMarkers = allRestaurants.map((data, i) => {
-    const { name, latitude, longitude } = data;
-    return <Marker key={i} coordinate={{ latitude, longitude }} title={name} />;
-  });*/
-
   //Bouton recherche qui apparait quand l'input n'est pas vide
   function searchButton() {
     if (rechercheInput.length > 0) {
       return (
         <TouchableOpacity
           style={styles.boutonRecherche}
-          onPress={() => handleSearch(rechercheInput)}>
+          onPress={() => handleSearch(rechercheInput)}
+        >
           <Text>Rechercher</Text>
         </TouchableOpacity>
       );
-    } else if (rechercheInput.length == 0) {
+    } else if (rechercheInput.length === 0) {
       return (
         <TouchableOpacity style={styles.boutonRechercheVide}></TouchableOpacity>
       );
@@ -113,12 +104,13 @@ export default function HomeScreen({ navigation }) {
             <Text style={[styles.calloutDescription, styles.whiteText]}>
               {description}
             </Text>
-            <CalloutSubview
-              onPress={() => navigation.navigate("RestaurantTabNavigator")}>
+            <Pressable
+              onPress={() => navigation.navigate("RestaurantTabNavigator")}
+            >
               <TouchableOpacity style={styles.calloutLink}>
                 <Text style={styles.calloutLinkText}>En savoir plus</Text>
               </TouchableOpacity>
-            </CalloutSubview>
+            </Pressable>
           </Callout>
         </Marker>
       );
@@ -154,12 +146,13 @@ export default function HomeScreen({ navigation }) {
             <Text style={[styles.calloutDescription, styles.whiteText]}>
               {description}
             </Text>
-            <CalloutSubview
-              onPress={() => navigation.navigate("RestaurantTabNavigator")}>
+            <Pressable
+              onPress={() => navigation.navigate("RestaurantTabNavigator")}
+            >
               <TouchableOpacity style={styles.calloutLink}>
                 <Text style={styles.calloutLinkText}>En savoir plus</Text>
               </TouchableOpacity>
-            </CalloutSubview>
+            </Pressable>
           </Callout>
         </Marker>
       );
@@ -169,6 +162,15 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Header />
+      <View style={styles.inputContainer}>
+        <TextInput
+          placeholder="De quoi avez-vous envie ?"
+          style={styles.recherche}
+          onChangeText={(value) => setRechercheInput(value)}
+        />
+        {searchButton()}
+      </View>
+
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -178,13 +180,8 @@ export default function HomeScreen({ navigation }) {
           longitude: currentPosition ? currentPosition.longitude : 2.333333,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }}>
-        <TextInput
-          placeholder="De quoi avez-vous envie ?"
-          style={styles.recherche}
-          onChangeText={(value) => setRechercheInput(value)}
-        />
-        {searchButton()}
+        }}
+      >
         {currentPosition && (
           <Marker
             coordinate={currentPosition}
@@ -194,13 +191,6 @@ export default function HomeScreen({ navigation }) {
         )}
         {restaurantMarkers}
       </MapView>
-
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RestaurantTabNavigator")}>
-          <Text style={{ color: "white" }}>RestaurantScreen</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -218,16 +208,25 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: "center",
   },
+  inputContainer: {
+    width: "100%",
+    position: "absolute",
+    top: "5%",
+    left: "5%",
+    zIndex: 1,
+    alignItems: "center",
+  },
   recherche: {
     backgroundColor: "white",
     marginTop: "25%",
     width: "80%",
-    height: "5%",
+    minHeight: "3%",
     borderWidth: 2,
     borderColor: "#CDAB82",
     borderRadius: 3,
     padding: 5,
   },
+
   boutonRecherche: {
     backgroundColor: "#CDAB82",
     marginTop: 10,
@@ -235,6 +234,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     color: "#1D2C3B",
     transition: 1,
+    width: "50%",
+    alignItems: "center",
   },
   boutonRechercheVide: {
     display: "none",
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
   imgPlaceholder: {
     width: 50,
     height: 50,
-    borderRadius: "100%",
+    borderRadius: 100,
     backgroundColor: "grey",
     alignItems: "center",
     justifyContent: "center",
