@@ -10,6 +10,7 @@ export const restaurantSlice = createSlice({
   reducers: {
     addRestaurant: (state, action) => {
       state.value = action.payload;
+      state.value.token = action.payload.token;
     },
   },
 });
