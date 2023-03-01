@@ -33,20 +33,20 @@ export default function Header() {
   if (isBack) {
     goBackIcon = (
       <TouchableOpacity
-        style={styles.sideContainer}
+        style={styles.sideContainerBack}
         onPress={() => navigation.navigate("TabNavigator")}
       >
         <FontAwesomeIcon icon={faArrowLeftLong} color="#CDAB82" size={24} />
       </TouchableOpacity>
     );
     favoriteIcon = (
-      <TouchableOpacity style={styles.sideContainer} onPress={() => goBack()}>
+      <TouchableOpacity style={styles.sideContainerLeft}>
         <FontAwesomeIcon icon={faHeartCirclePlus} color="#CDAB82" size={24} />
       </TouchableOpacity>
     );
   } else {
-    goBackIcon = <View style={styles.sideContainer} />;
-    favoriteIcon = <View style={styles.sideContainer} />;
+    goBackIcon = <View style={styles.sideContainerBack} />;
+    favoriteIcon = <View style={styles.sideContainerLeft} />;
   }
 
   return (
@@ -83,14 +83,30 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "10%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
   logo: {
-    width: "90%",
+    width: "100%",
     height: "100%",
-    marginHorizontal: -8,
   },
-  sideContainer: {
-    width: "5%",
+  sideContainerBack: {
+    width: "15%",
+    height: "100%",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    position: "absolute",
+    top: 0,
+    left: "2%",
+    zIndex: 1,
+  },
+  sideContainerLeft: {
+    width: "15%",
+    height: "100%",
+    alignItems: "flex-end",
+    justifyContent: "center",
+    position: "absolute",
+    top: 0,
+    left: "83%",
+    zIndex: 1,
   },
 });
