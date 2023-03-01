@@ -1,35 +1,40 @@
 import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
+import { addRestaurant } from "../reducers/restaurant";
 
 export default function RestaurantScreen({ navigation }) {
+  const dispatch = useDispatch();
   const [name, setName] = useState(null);
   const [cuisineTypes, setCuisineTypes] = useState(null);
   const [description, setDescription] = useState(null);
   const [perks, setPerks] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [phone, setPhone] = useState(null);
-  const [availabilities, setavailabilities] = useState();
+  const [availabilities, setAvailabilities] = useState();
   const [address, setAddress] = useState(null);
 
   const restaurant = useSelector((state) => state.restaurant.value);
+  console.log(restaurant);
   const { token } = restaurant;
 
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/restaurants/${token}`);
+      console.log(token);
       const data = await response.json();
       const { result } = data;
+      console.log(data);
       if (result === true) {
         setName(data.restaurant.name);
         setCuisineTypes(data.restaurant.cuisineTypes);
         setPhotos(data.restaurant.photos[0]);
         setDescription(data.restaurant.description);
         setPerks(data.restaurant.perks);
-        setavailabilities(data.restaurant.availabilities);
+        setAvailabilities(data.restaurant.availabilities);
         setPhone(data.restaurant.phone);
         const { streetNumber, streetName, postCode, city } =
           data.restaurant.address;
@@ -45,42 +50,30 @@ export default function RestaurantScreen({ navigation }) {
     <View style={styles.container}>
       <Header />
       <View style={styles.header}>
-        <Text style={styles.name}>MAXIMS{name}</Text>
-        <Text style={styles.cuisine}>Française{cuisineTypes}</Text>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.cuisine}>{cuisineTypes}</Text>
         <Image style={styles.pictures} source={require("../assets/plat.jpg")} />
       </View>
       <ScrollView>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Description</Text>
-          <Text style={styles.subtitle}>
-            {description}
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-            mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-            voluptatum laborum numquam blanditiis harum
-          </Text>
+          <Text style={styles.subtitle}>{description}</Text>
         </View>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Avantages</Text>
-          <Text style={styles.subtitle}>
-            {perks}Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Maxime mollitia, molestiae quas vel sint commodi repudiandae
-            consequuntur voluptatum laborum numquam blanditiis harum
-          </Text>
+          <Text style={styles.subtitle}>{perks}</Text>
         </View>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Validité</Text>
-          <Text style={styles.subtitle}>
-            {availabilities}Lorem ipsum dolor sit amet consectetur adipisicing
-            elit.
-          </Text>
+          <Text style={styles.subtitle}>{availabilities}</Text>
         </View>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Phone</Text>
-          <Text style={styles.subtitle}>0144826310{phone}</Text>
+          <Text style={styles.subtitle}>{phone}</Text>
         </View>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Adresse</Text>
-          <Text style={styles.subtitle}>3 rue Royale 75008 Paris{address}</Text>
+          <Text style={styles.subtitle}>{address}</Text>
         </View>
       </ScrollView>
     </View>
