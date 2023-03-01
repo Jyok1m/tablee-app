@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, removePhoto } from "../reducers/user";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { BACKEND_URL } from "../backend_url";
+import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
 
 export default function ProfileScreen({ navigation }) {
@@ -30,6 +31,8 @@ export default function ProfileScreen({ navigation }) {
   const [isFocused, setIsFocused] = useState("");
   const [inputType, setInputType] = useState("");
   const [sendState, setSendState] = useState(false);
+
+  const navigate = useNavigation();
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
@@ -280,6 +283,11 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity onPress={() => logout()}>
           <Text style={styles.pressableText}>Déconnexion</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RestaurantTabNavigator")}
+        >
+          <Text style={styles.pressableText}>Test page restaurant</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -425,7 +433,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
   },
   pressableText: {
     textDecorationLine: "underline",
