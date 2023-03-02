@@ -3,6 +3,7 @@ import { Text } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { RootSiblingParent } from "react-native-root-siblings";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Navigation:
@@ -47,13 +48,14 @@ import restaurant from "./reducers/restaurant";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SnapScreen from "./screens/SnapScreen";
 
 // Configure the store:
 const reducers = combineReducers({ user, restaurant });
 const persistConfig = {
   key: "face-up",
   storage: AsyncStorage,
-  blacklist: ['token'],
+  blacklist: ["token"],
 };
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
@@ -246,23 +248,26 @@ function RestaurantTabNavigator() {
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#1D2C3B" }}>
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="Landing" component={LandingScreen} />
-              <Stack.Screen name="Signup" component={SignupScreen} />
-              <Stack.Screen name="Scan" component={ScanScreen} />
-              <Stack.Screen name="TabNavigator" component={TabNavigator} />
-              <Stack.Screen
-                name="RestaurantTabNavigator"
-                component={RestaurantTabNavigator}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </SafeAreaView>
-      </PersistGate>
-    </Provider>
+    <RootSiblingParent>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: "#1D2C3B" }}>
+            <NavigationContainer>
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Landing" component={LandingScreen} />
+                <Stack.Screen name="Signup" component={SignupScreen} />
+                <Stack.Screen name="Scan" component={ScanScreen} />
+                <Stack.Screen name="Snap" component={SnapScreen} />
+                <Stack.Screen name="TabNavigator" component={TabNavigator} />
+                <Stack.Screen
+                  name="RestaurantTabNavigator"
+                  component={RestaurantTabNavigator}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </SafeAreaView>
+        </PersistGate>
+      </Provider>
+    </RootSiblingParent>
   );
 }
