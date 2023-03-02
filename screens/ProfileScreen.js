@@ -198,22 +198,26 @@ export default function ProfileScreen({ navigation }) {
                 </TouchableOpacity>
               </View>
             </View>
-            <TextInput
-              style={styles.content}
-              editable={isEditable}
-              onChangeText={(value) => setInputValue(value)}
-              placeholder={
-                isEditable && fieldToDisplay === "bio"
-                  ? "Racontez votre histoire"
-                  : bio
-              }
-              placeholderTextColor={
-                isEditable && fieldToDisplay === "bio" ? "grey" : "#FFF"
-              }
-              value={isEditable && fieldToDisplay === "bio" ? inputValue : ""}
-              multiline={true}
-              ref={bioRef}
-            />
+            <ScrollView>
+              <TextInput
+                style={styles.content}
+                editable={isEditable}
+                onChangeText={(value) => setInputValue(value)}
+                multiline={true}
+                textAlign="left"
+                textAlignVertical="top"
+                placeholder={
+                  isEditable && fieldToDisplay === "bio"
+                    ? "Racontez votre histoire"
+                    : bio
+                }
+                placeholderTextColor={
+                  isEditable && fieldToDisplay === "bio" ? "grey" : "#FFF"
+                }
+                value={isEditable && fieldToDisplay === "bio" ? inputValue : ""}
+                ref={bioRef}
+              />
+            </ScrollView>
           </View>
         </View>
       </View>
