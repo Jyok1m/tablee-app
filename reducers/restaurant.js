@@ -1,18 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: [],
+  value: {token: null},
 };
 
 export const restaurantSlice = createSlice({
   name: "restaurant",
   initialState,
   reducers: {
-    addRestaurant: (state, action) => {
+    /*addRestaurant: (state, action) => {
       state.value = [];
-    },
+    },*/
+    sendToken: (state, action) => {
+      state.value.token = action.payload
+    }
   },
 });
 
-export const { addRestaurant } = restaurantSlice.actions;
+export const { addRestaurant, sendToken } = restaurantSlice.actions;
 export default restaurantSlice.reducer;

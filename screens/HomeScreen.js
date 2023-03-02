@@ -14,7 +14,7 @@ import { mapStyle } from "../components/MapStyle";
 import * as Location from "expo-location";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addRestaurant } from "../reducers/restaurant";
+import { addRestaurant, sendToken } from "../reducers/restaurant";
 import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
@@ -25,6 +25,10 @@ export default function HomeScreen({ navigation }) {
   const [filtreRestaurant, setFiltreRestaurant] = useState([]);
   const [rechercheInput, setRechercheInput] = useState("");
   const [visible, setVisible] = useState(false);
+
+  const dispatch = useDispatch();
+  //const restoToken = useSelector((state) => state.restaurant.value);
+  //console.log(restoToken)
 
   // Demande de l'autorisation et fetch de la route pour avoir les coordonnées de tous les restaurants
   useEffect(() => {
@@ -71,6 +75,13 @@ export default function HomeScreen({ navigation }) {
     setFiltreRestaurant(filtered);
   }
 
+  // Redirige vers la page du resto lors du click sur le modal
+  function handleRestaurantPage(restoToken) {
+   dispatch(sendToken(restoToken))
+    navigation.navigate("RestaurantTabNavigator");
+    
+  }
+
   // Affiche les markeurs en fonction de la recherche
   let restaurantMarkers;
   if (rechercheInput.length == 0) {
@@ -82,10 +93,11 @@ export default function HomeScreen({ navigation }) {
         description,
         cuisineTypes,
         averagePrice,
+        token
       } = data;
       return (
         <Marker key={i} coordinate={{ latitude, longitude }} title={name}>
-          <Callout style={styles.calloutContainer} tooltip={true} onPress={() => navigation.navigate("RestaurantTabNavigator")}>
+          <Callout style={styles.calloutContainer} tooltip={true} onPress={() => handleRestaurantPage(token)}>
             <View style={styles.calloutTop}>
               <View style={styles.imgPlaceholder}>
                 <Text>Photo</Text>
@@ -113,7 +125,7 @@ export default function HomeScreen({ navigation }) {
             </Pressable>
           </Callout>
         </Marker>
-      );
+      )
     });
   } else {
     restaurantMarkers = filtreRestaurant.map((data, i) => {
@@ -175,20 +187,20 @@ export default function HomeScreen({ navigation }) {
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         customMapStyle={mapStyle}
+        showsUserLocation={true}
         region={{
           latitude: currentPosition ? currentPosition.latitude : 48.866667,
           longitude: currentPosition ? currentPosition.longitude : 2.333333,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }}
-      >
-        {currentPosition && (
+        }}>
+        {/*{currentPosition && (
           <Marker
             coordinate={currentPosition}
             title="Ma position"
             pinColor="#fecb2d"
           />
-        )}
+        )}*/}
         {restaurantMarkers}
       </MapView>
     </View>

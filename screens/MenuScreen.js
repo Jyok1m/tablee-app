@@ -1,24 +1,66 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import Header from "../components/Header";
+import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { BACKEND_URL } from "../backend_url";
+import Header from "../components/Header";
+import { addRestaurant } from "../reducers/restaurant";
 
 export default function MenuScreen({ navigation }) {
+  const dispatch = useDispatch();
+  const [name, setName] = useState(null);
+  const [cuisineTypes, setCuisineTypes] = useState(null);
+  const [menu, setMenu] = useState(null);
+
+  const restaurant = useSelector((state) => state.restaurant.value);
+  console.log(restaurant);
+  const { token } = restaurant;
+
+  let Menu;
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(
+        `${BACKEND_URL}/restaurants/${token}`
+      );
+      console.log(token);
+      const data = await response.json();
+      const { result } = data;
+      console.log(data);
+      if (result === true) {
+        setName(data.restaurant.name);
+        setCuisineTypes(data.restaurant.cuisineTypes);
+        Menu = data.restaurant.menuItems.map((data, i) => {
+          return (
+            <View key={i} style={styles.card}>
+              <View>
+                <View style={styles.inputCard}>
+                  <View style={styles.menuPrice}>
+                    <Text style={styles.title}>{data.name}</Text>
+                    <Text style={styles.title}>`${data.price}`€</Text>
+                  </View>
+                  <Text style={styles.subtitle}>{data.description}</Text>
+                </View>
+              </View>
+            </View>
+          );
+        });
+        setMenu(Menu);
+      } else {
+        console.log("Error: restaurant not found");
+      }
+    })();
+  }, []);
   return (
     <View style={styles.container}>
       <Header />
-      <View style={styles.inputCard}>
-        <View>
-          <Text style={styles.title}>Menu 1</Text>
-          <Text style={styles.title}>10€</Text>
-        </View>
-
-        <Text style={styles.subtitle}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-          mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-          voluptatum laborum numquam blanditiis harum
-        </Text>
+      <View style={styles.header}>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.cuisine}>{cuisineTypes}</Text>
       </View>
+      <ScrollView style={styles.inputCard}>
+        {Menu}
+      </ScrollView>
     </View>
   );
 }
@@ -49,5 +91,26 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: "5%",
     padding: 5,
+  },
+  header: {
+    alignItems: "center",
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+  menuPrice: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  name: {
+    fontSize: RFPercentage(5),
+    fontWeight: "600",
+    color: "#CDAB82",
+  },
+  cuisine: {
+    fontSize: RFPercentage(3),
+    fontStyle: "italic",
+    fontWeight: "500",
+    color: "#ffffff",
   },
 });
