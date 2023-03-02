@@ -85,7 +85,7 @@ export default function HomeScreen({ navigation }) {
       } = data;
       return (
         <Marker key={i} coordinate={{ latitude, longitude }} title={name}>
-          <Callout style={styles.calloutContainer} tooltip={true}>
+          <Callout style={styles.calloutContainer} tooltip={true} onPress={() => navigation.navigate("RestaurantTabNavigator")}>
             <View style={styles.calloutTop}>
               <View style={styles.imgPlaceholder}>
                 <Text>Photo</Text>
