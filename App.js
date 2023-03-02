@@ -50,7 +50,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Configure the store:
 const reducers = combineReducers({ user, restaurant });
-const persistConfig = { key: "face-up", storage: AsyncStorage };
+const persistConfig = {
+  key: "face-up",
+  storage: AsyncStorage,
+  blacklist: ['token'],
+};
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
   middleware: (getDefaultMiddleware) =>
