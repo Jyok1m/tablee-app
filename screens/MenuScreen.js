@@ -10,23 +10,16 @@ export default function MenuScreen({ navigation }) {
   const dispatch = useDispatch();
   const [name, setName] = useState(null);
   const [cuisineTypes, setCuisineTypes] = useState(null);
-  const [menu, setMenu] = useState(null);
 
   const restaurant = useSelector((state) => state.restaurant.value);
-  console.log(restaurant);
   const { token } = restaurant;
 
   let Menu;
-
   useEffect(() => {
     (async () => {
-      const response = await fetch(
-        `${BACKEND_URL}/restaurants/${token}`
-      );
-      console.log(token);
+      const response = await fetch(`${BACKEND_URL}/restaurants/${token}`);
       const data = await response.json();
       const { result } = data;
-      console.log(data);
       if (result === true) {
         setName(data.restaurant.name);
         setCuisineTypes(data.restaurant.cuisineTypes);
@@ -37,7 +30,7 @@ export default function MenuScreen({ navigation }) {
                 <View style={styles.inputCard}>
                   <View style={styles.menuPrice}>
                     <Text style={styles.title}>{data.name}</Text>
-                    <Text style={styles.title}>`${data.price}`€</Text>
+                    <Text style={styles.title}>{data.price}€</Text>
                   </View>
                   <Text style={styles.subtitle}>{data.description}</Text>
                 </View>
@@ -45,7 +38,6 @@ export default function MenuScreen({ navigation }) {
             </View>
           );
         });
-        setMenu(Menu);
       } else {
         console.log("Error: restaurant not found");
       }
@@ -58,9 +50,7 @@ export default function MenuScreen({ navigation }) {
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.cuisine}>{cuisineTypes}</Text>
       </View>
-      <ScrollView style={styles.inputCard}>
-        {Menu}
-      </ScrollView>
+      <ScrollView style={styles.inputCard}>{Menu}</ScrollView>
     </View>
   );
 }

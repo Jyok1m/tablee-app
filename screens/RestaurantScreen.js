@@ -12,26 +12,24 @@ export default function RestaurantScreen({ navigation }) {
   const [cuisineTypes, setCuisineTypes] = useState(null);
   const [description, setDescription] = useState(null);
   const [perks, setPerks] = useState(null);
-  const [photos, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState("");
   const [phone, setPhone] = useState(null);
   const [availabilities, setAvailabilities] = useState();
   const [address, setAddress] = useState(null);
 
   const restaurant = useSelector((state) => state.restaurant.value);
-  console.log(restaurant);
   const { token } = restaurant;
 
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/restaurants/${token}`);
-      console.log(token);
       const data = await response.json();
       const { result } = data;
-      console.log(data);
       if (result === true) {
         setName(data.restaurant.name);
         setCuisineTypes(data.restaurant.cuisineTypes);
         setPhotos(data.restaurant.photos[0]);
+        showPhoto(data.restaurant.photos[0]);
         setDescription(data.restaurant.description);
         setPerks(data.restaurant.perks);
         setAvailabilities(data.restaurant.availabilities);
@@ -46,13 +44,22 @@ export default function RestaurantScreen({ navigation }) {
     })();
   }, []);
 
+  function showPhoto(photo) {
+    return (
+      <Image
+        style={styles.pictures}
+        source={{ uri: photo, width: 300, height: 150 }}
+      />
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Header />
       <View style={styles.header}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.cuisine}>{cuisineTypes}</Text>
-        <Image style={styles.pictures} source={require("../assets/plat.jpg")} />
+        {showPhoto(photos)}
       </View>
       <ScrollView>
         <View style={styles.inputCard}>
@@ -92,8 +99,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   pictures: {
-    width: 280,
-    maxHeight: 150,
+    borderColor: "#fffff",
     padding: 10,
     margin: 10,
   },
