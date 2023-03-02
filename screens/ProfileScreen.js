@@ -13,6 +13,7 @@ import { logoutUser, removePhoto } from "../reducers/user";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
+import Toast from "react-native-root-toast";
 
 export default function ProfileScreen({ navigation }) {
   /* -------------------------------------------------------------------------- */
@@ -26,14 +27,18 @@ export default function ProfileScreen({ navigation }) {
   const [password, setPassword] = useState(null);
   const [history, setHistory] = useState([]);
 
+  const [isEditable, setIsEditable] = useState(false);
+  const [fieldToDisplay, setFieldToDisplay] = useState(null);
   const [inputValue, setInputValue] = useState("");
-  const [isFocused, setIsFocused] = useState("");
-  const [inputType, setInputType] = useState("");
   const [sendState, setSendState] = useState(false);
+
+  const bioRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-  const { token } = user;
+  const { token, profilePic } = user;
 
   /* ---------------- Get all the data and update the state ---------------- */
 
@@ -42,11 +47,10 @@ export default function ProfileScreen({ navigation }) {
       const response = await fetch(`${BACKEND_URL}/users/${token}`);
       const data = await response.json();
       const { result } = data;
-      const { studentCard, bio, username, email, password, history } =
-        data.user;
+      const { picture, bio, username, email, password, history } = data.user;
 
       if (result) {
-        setProfilePhoto(studentCard);
+        setProfilePhoto(picture);
         setBio(bio);
         setUsername(username);
         setEmail(email);
@@ -54,37 +58,60 @@ export default function ProfileScreen({ navigation }) {
         setHistory(history);
       }
     })();
-  }, [sendState]);
+  }, [sendState, profilePic]);
 
-  /* ------------------------------- Show Modal ------------------------------ */
+  /* ------------------------------- Handle input fields ------------------------------ */
 
-  const displayInputField = (inputType) => {
-    setInputType(inputType);
-    setIsFocused(inputType);
+  const handleEdit = (inputName) => {
+    setIsEditable(true);
+    setFieldToDisplay(inputName);
   };
 
-  const closeInputField = () => {
-    setIsFocused("");
+  const cancelEdit = () => {
+    setIsEditable(false);
+    setFieldToDisplay(null);
     setInputValue("");
-    setInputType("");
   };
 
   /* ------------------------------- Handle Edit ------------------------------ */
 
   async function saveInput() {
     // Fetch de la réponse et modif des états
-    const userData = { [inputType]: inputValue };
+    if (inputValue === "") {
+      return;
+    }
+    const userData = { [fieldToDisplay]: inputValue };
     const response = await fetch(`${BACKEND_URL}/users/${token}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
     });
     const data = await response.json();
-    if (data) alert("Entrée sauvegardée !");
+    if (data.result) {
+      Toast.show("Modification enregistrée !", {
+        duration: Toast.durations.LONG,
+        position: -10,
+        textColor: "#1D2C3B",
+        opacity: 1,
+        shadow: true,
+        backgroundColor: "#CDAB82",
+        animation: true,
+        delay: 500,
+      });
+    } else {
+      Toast.show(data.error, {
+        duration: Toast.durations.LONG,
+        position: 0,
+        textColor: "#1D2C3B",
+        opacity: 1,
+        shadow: true,
+        backgroundColor: "#CDAB82",
+        animation: true,
+        delay: 500,
+      });
+    }
     setSendState(!sendState);
-    setIsFocused("");
-    setInputValue("");
-    setInputType("");
+    cancelEdit();
   }
 
   /* --------------------------------- Logout --------------------------------- */
@@ -106,8 +133,6 @@ export default function ProfileScreen({ navigation }) {
       </ScrollView>
     );
   });
-
-  const bioRef = useRef();
 
   /* -------------------------------------------------------------------------- */
   /*                                   Return                                   */
@@ -134,55 +159,61 @@ export default function ProfileScreen({ navigation }) {
           {profilePhoto && (
             <Image style={styles.profilePic} source={{ uri: profilePhoto }} />
           )}
-          <TouchableOpacity style={styles.editPhoto}>
+          <TouchableOpacity
+            style={styles.editPhoto}
+            onPress={() => navigation.navigate("Snap")}
+          >
             <Text style={styles.edit}>Modifier</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Bio container */}
+
         <View style={styles.bioContainer}>
           <View style={styles.inputCard}>
             <View style={styles.cardTop}>
               <Text style={styles.title}>Bio</Text>
-              {isFocused === "bio" ? (
-                <View style={styles.editFocused}>
-                  <TouchableOpacity onPress={() => closeInputField()}>
+              <View style={styles.editFocused}>
+                {isEditable && fieldToDisplay === "bio" && (
+                  <TouchableOpacity
+                    onPress={() => cancelEdit()}
+                    style={styles.cancelEdit}
+                  >
                     <Text style={styles.edit}>Annuler</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => saveInput()}>
-                    <Text style={styles.edit}>Sauvegarder</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
+                )}
                 <TouchableOpacity
-                  onPressIn={() => {
-                    displayInputField("bio");
-                  }}
-                  onPressOut={() => {
-                    bioRef.current.focus();
-                  }}
+                  onPressIn={() =>
+                    isEditable && fieldToDisplay === "bio"
+                      ? saveInput()
+                      : handleEdit("bio")
+                  }
+                  onPressOut={() => bioRef.current.focus()}
                 >
-                  <Text style={styles.edit}>Modifier</Text>
+                  <Text style={styles.edit}>
+                    {isEditable && fieldToDisplay === "bio"
+                      ? "Sauvegarder"
+                      : "Modifier"}
+                  </Text>
                 </TouchableOpacity>
-              )}
+              </View>
             </View>
-            {isFocused === "bio" ? (
-              <ScrollView style={styles.editViewTop}>
-                <TextInput
-                  style={styles.editContent}
-                  placeholder="Racontez votre histoire..."
-                  placeholderTextColor="grey"
-                  onChangeText={(value) => setInputValue(value)}
-                  value={inputValue}
-                  multiline={true}
-                  ref={bioRef}
-                />
-              </ScrollView>
-            ) : bio ? (
-              <ScrollView style={styles.scrollView}>
-                <Text style={styles.content}>{bio}</Text>
-              </ScrollView>
-            ) : (
-              <Text style={styles.noContent}>Racontez votre histoire...</Text>
-            )}
+            <TextInput
+              style={styles.content}
+              editable={isEditable}
+              onChangeText={(value) => setInputValue(value)}
+              placeholder={
+                isEditable && fieldToDisplay === "bio"
+                  ? "Racontez votre histoire"
+                  : bio
+              }
+              placeholderTextColor={
+                isEditable && fieldToDisplay === "bio" ? "grey" : "#FFF"
+              }
+              value={isEditable && fieldToDisplay === "bio" ? inputValue : ""}
+              multiline={true}
+              ref={bioRef}
+            />
           </View>
         </View>
       </View>
@@ -193,78 +224,72 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Email</Text>
-            {isFocused === "email" ? (
-              <View style={styles.editFocusedMain}>
-                <TouchableOpacity onPress={() => closeInputField()}>
-                  <Text style={styles.edit}>Annuler</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => saveInput()}>
-                  <Text style={styles.edit}>Sauvegarder</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  displayInputField("email");
-                }}
-              >
-                <Text style={styles.edit}>Modifier</Text>
-              </TouchableOpacity>
-            )}
           </View>
-          {isFocused === "email" ? (
-            <ScrollView style={styles.editViewTop}>
-              <TextInput
-                style={styles.editContent}
-                placeholder="Entrez votre nouvel email..."
-                placeholderTextColor="grey"
-                onChangeText={(value) => setInputValue(value)}
-                value={inputValue}
-                multiline={true}
-              />
-            </ScrollView>
-          ) : (
-            email && <Text style={styles.content}>{email}</Text>
-          )}
+          <TextInput
+            style={styles.content}
+            editable={isEditable}
+            onChangeText={(value) => setInputValue(value)}
+            placeholder={
+              isEditable && fieldToDisplay === "email"
+                ? "Nouvel email..."
+                : email
+            }
+            placeholderTextColor={
+              isEditable && fieldToDisplay === "email" ? "grey" : "#FFF"
+            }
+            value={isEditable && fieldToDisplay === "email" ? inputValue : ""}
+            ref={emailRef}
+          />
         </View>
 
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Mot de passe</Text>
-            {isFocused === "password" ? (
-              <View style={styles.editFocusedMain}>
-                <TouchableOpacity onPress={() => closeInputField()}>
+            <View style={styles.editFocused}>
+              {isEditable && fieldToDisplay === "password" && (
+                <TouchableOpacity
+                  onPress={() => cancelEdit()}
+                  style={styles.cancelEditMain}
+                >
                   <Text style={styles.edit}>Annuler</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => saveInput()}>
-                  <Text style={styles.edit}>Sauvegarder</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
+              )}
               <TouchableOpacity
-                onPress={() => {
-                  displayInputField("password");
-                }}
+                onPressIn={() =>
+                  isEditable && fieldToDisplay === "password"
+                    ? saveInput()
+                    : handleEdit("password")
+                }
+                onPressOut={() => passwordRef.current.focus()}
               >
-                <Text style={styles.edit}>Modifier</Text>
+                <Text style={styles.edit}>
+                  {isEditable && fieldToDisplay === "password"
+                    ? "Sauvegarder"
+                    : "Modifier"}
+                </Text>
               </TouchableOpacity>
-            )}
+            </View>
           </View>
-          {isFocused === "password" ? (
-            <ScrollView style={styles.editViewTop}>
-              <TextInput
-                style={styles.editContent}
-                placeholder="Entrez votre nouveau mot de passe..."
-                placeholderTextColor="grey"
-                onChangeText={(value) => setInputValue(value)}
-                value={inputValue}
-                multiline={true}
-              />
-            </ScrollView>
-          ) : (
-            password && <Text style={styles.content}>********</Text>
-          )}
+          <TextInput
+            style={styles.content}
+            editable={isEditable}
+            onChangeText={(value) => setInputValue(value)}
+            placeholder={
+              isEditable && fieldToDisplay === "password"
+                ? "Nouveau mot de passe..."
+                : "********"
+            }
+            placeholderTextColor={
+              isEditable && fieldToDisplay === "password" ? "grey" : "#FFF"
+            }
+            value={
+              isEditable && fieldToDisplay === "password" ? inputValue : ""
+            }
+            multiline={true}
+            ref={passwordRef}
+          />
         </View>
+
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Moyen de paiement</Text>
@@ -274,6 +299,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
           {password && <Text style={styles.content}>********</Text>}
         </View>
+
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Historique</Text>
@@ -293,11 +319,6 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => logout()}>
           <Text style={styles.pressableText}>Déconnexion</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RestaurantTabNavigator")}
-        >
-          <Text style={styles.pressableText}>Test page restaurant</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -355,6 +376,7 @@ const styles = StyleSheet.create({
   editPhoto: {
     width: "100%",
     height: "30%",
+    paddingRight: "20%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -401,17 +423,18 @@ const styles = StyleSheet.create({
     color: "#CDAB82",
     textDecorationLine: "underline",
     fontStyle: "italic",
+    paddingLeft: 20,
   },
   editFocused: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "60%",
+    justifyContent: "flex-end",
+    width: "50%",
   },
-  editFocusedMain: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  cancelEdit: {
     paddingLeft: "20%",
-    width: "60%",
+  },
+  cancelEditMain: {
+    paddingLeft: "20%",
   },
   editContent: {
     borderBottomWidth: 1,

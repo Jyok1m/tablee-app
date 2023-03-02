@@ -12,24 +12,29 @@ export default function MenuScreen({ navigation }) {
   const [cuisineTypes, setCuisineTypes] = useState(null);
 
   const restaurant = useSelector((state) => state.restaurant.value);
+  //console.log(restaurant);
   const { token } = restaurant;
 
   let Menu;
   useEffect(() => {
     (async () => {
-      const response = await fetch(`${BACKEND_URL}/restaurants/${token}`);
+      const response = await fetch(
+        `${BACKEND_URL}/restaurants/${token}`
+      );
       const data = await response.json();
       const { result } = data;
+      //console.log(data.restaurant.menuItems);
       if (result === true) {
         setName(data.restaurant.name);
         setCuisineTypes(data.restaurant.cuisineTypes);
-        Menu = data.restaurant.menuItems.map((data, i) => {
+        Menu = data.restaurant.menuItems.map((data, i) => {       
+          const {name, price, description} = data
           return (
             <View key={i} style={styles.card}>
               <View>
                 <View style={styles.inputCard}>
                   <View style={styles.menuPrice}>
-                    <Text style={styles.title}>{data.name}</Text>
+                    <Text style={styles.title}>{name}</Text>
                     <Text style={styles.title}>{data.price}€</Text>
                   </View>
                   <Text style={styles.subtitle}>{data.description}</Text>
@@ -50,7 +55,9 @@ export default function MenuScreen({ navigation }) {
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.cuisine}>{cuisineTypes}</Text>
       </View>
-      <ScrollView style={styles.inputCard}>{Menu}</ScrollView>
+      <View style={styles.menuContainer}>
+        {menu}
+      </View>
     </View>
   );
 }
@@ -70,17 +77,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: RFPercentage(2),
     fontWeight: "500",
-    color: "#CDAB82",
+    color: "white",
+  },
+  menuContainer: {
+    width: "90%",
+    height: "70%",
+    borderColor: "#CDAB82",
+    borderWidth: 1,
+    borderRadius: 5,
   },
   inputCard: {
     width: "100%",
     minHeight: "2%",
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
-    borderWidth: 1,
-    borderRadius: 5,
+    borderBottomWidth: 1,
     marginBottom: "5%",
     padding: 5,
+    paddingBottom: 15,
+    paddingTop: 15,
+    justifyContent: "center"
   },
   header: {
     alignItems: "center",
