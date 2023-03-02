@@ -31,6 +31,13 @@ export default function ProfileScreen({ navigation }) {
   const [inputType, setInputType] = useState("");
   const [sendState, setSendState] = useState(false);
 
+  const [isEditable, setIsEditable] = useState(false);
+  const [fieldToDisplay, setFieldToDisplay] = useState(null);
+
+  const bioRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const { token } = user;
@@ -57,6 +64,11 @@ export default function ProfileScreen({ navigation }) {
   }, [sendState]);
 
   /* ------------------------------- Show Modal ------------------------------ */
+
+  const handleEdit = (inputType) => {
+    setIsEditable(!isEditable);
+    setFieldToDisplay(inputType);
+  };
 
   const displayInputField = (inputType) => {
     setInputType(inputType);
@@ -107,8 +119,6 @@ export default function ProfileScreen({ navigation }) {
     );
   });
 
-  const bioRef = useRef();
-
   /* -------------------------------------------------------------------------- */
   /*                                   Return                                   */
   /* -------------------------------------------------------------------------- */
@@ -142,47 +152,33 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.inputCard}>
             <View style={styles.cardTop}>
               <Text style={styles.title}>Bio</Text>
-              {isFocused === "bio" ? (
-                <View style={styles.editFocused}>
-                  <TouchableOpacity onPress={() => closeInputField()}>
-                    <Text style={styles.edit}>Annuler</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => saveInput()}>
-                    <Text style={styles.edit}>Sauvegarder</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPressIn={() => {
-                    displayInputField("bio");
-                  }}
-                  onPressOut={() => {
-                    bioRef.current.focus();
-                  }}
-                >
-                  <Text style={styles.edit}>Modifier</Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPressIn={() => handleEdit("bio")}
+                onPressOut={() => bioRef.current.focus()}
+              >
+                <Text style={styles.edit}>
+                  {isEditable && fieldToDisplay === "bio"
+                    ? "Sauvegarder"
+                    : "Modifier"}
+                </Text>
+              </TouchableOpacity>
             </View>
-            {isFocused === "bio" ? (
-              <ScrollView style={styles.editViewTop}>
-                <TextInput
-                  style={styles.editContent}
-                  placeholder="Racontez votre histoire..."
-                  placeholderTextColor="grey"
-                  onChangeText={(value) => setInputValue(value)}
-                  value={inputValue}
-                  multiline={true}
-                  ref={bioRef}
-                />
-              </ScrollView>
-            ) : bio ? (
-              <ScrollView style={styles.scrollView}>
-                <Text style={styles.content}>{bio}</Text>
-              </ScrollView>
-            ) : (
-              <Text style={styles.noContent}>Racontez votre histoire...</Text>
-            )}
+            <TextInput
+              style={styles.content}
+              editable={isEditable}
+              onChangeText={(value) => setInputValue(value)}
+              placeholder={
+                isEditable && fieldToDisplay === "bio"
+                  ? "Racontez votre histoire"
+                  : bio
+              }
+              placeholderTextColor={
+                isEditable && fieldToDisplay === "bio" ? "grey" : "#FFF"
+              }
+              value={isEditable && fieldToDisplay === "bio" ? inputValue : ""}
+              multiline={true}
+              ref={bioRef}
+            />
           </View>
         </View>
       </View>
@@ -193,78 +189,68 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Email</Text>
-            {isFocused === "email" ? (
-              <View style={styles.editFocusedMain}>
-                <TouchableOpacity onPress={() => closeInputField()}>
-                  <Text style={styles.edit}>Annuler</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => saveInput()}>
-                  <Text style={styles.edit}>Sauvegarder</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  displayInputField("email");
-                }}
-              >
-                <Text style={styles.edit}>Modifier</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPressIn={() => handleEdit("email")}
+              onPressOut={() => emailRef.current.focus()}
+            >
+              <Text style={styles.edit}>
+                {isEditable && fieldToDisplay === "email"
+                  ? "Sauvegarder"
+                  : "Modifier"}
+              </Text>
+            </TouchableOpacity>
           </View>
-          {isFocused === "email" ? (
-            <ScrollView style={styles.editViewTop}>
-              <TextInput
-                style={styles.editContent}
-                placeholder="Entrez votre nouvel email..."
-                placeholderTextColor="grey"
-                onChangeText={(value) => setInputValue(value)}
-                value={inputValue}
-                multiline={true}
-              />
-            </ScrollView>
-          ) : (
-            email && <Text style={styles.content}>{email}</Text>
-          )}
+          <TextInput
+            style={styles.content}
+            editable={isEditable}
+            onChangeText={(value) => setInputValue(value)}
+            placeholder={
+              isEditable && fieldToDisplay === "email"
+                ? "Nouvel email..."
+                : email
+            }
+            placeholderTextColor={
+              isEditable && fieldToDisplay === "email" ? "grey" : "#FFF"
+            }
+            value={isEditable && fieldToDisplay === "email" ? inputValue : ""}
+            ref={emailRef}
+          />
         </View>
 
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Mot de passe</Text>
-            {isFocused === "password" ? (
-              <View style={styles.editFocusedMain}>
-                <TouchableOpacity onPress={() => closeInputField()}>
-                  <Text style={styles.edit}>Annuler</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => saveInput()}>
-                  <Text style={styles.edit}>Sauvegarder</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  displayInputField("password");
-                }}
-              >
-                <Text style={styles.edit}>Modifier</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPressIn={() => handleEdit("password")}
+              onPressOut={() => passwordRef.current.focus()}
+            >
+              <Text style={styles.edit}>
+                {isEditable && fieldToDisplay === "password"
+                  ? "Sauvegarder"
+                  : "Modifier"}
+              </Text>
+            </TouchableOpacity>
           </View>
-          {isFocused === "password" ? (
-            <ScrollView style={styles.editViewTop}>
-              <TextInput
-                style={styles.editContent}
-                placeholder="Entrez votre nouveau mot de passe..."
-                placeholderTextColor="grey"
-                onChangeText={(value) => setInputValue(value)}
-                value={inputValue}
-                multiline={true}
-              />
-            </ScrollView>
-          ) : (
-            password && <Text style={styles.content}>********</Text>
-          )}
+          <TextInput
+            style={styles.content}
+            editable={isEditable}
+            onChangeText={(value) => setInputValue(value)}
+            placeholder={
+              isEditable && fieldToDisplay === "password"
+                ? "Nouveau mot de passe..."
+                : "********"
+            }
+            placeholderTextColor={
+              isEditable && fieldToDisplay === "password" ? "grey" : "#FFF"
+            }
+            value={
+              isEditable && fieldToDisplay === "password" ? inputValue : ""
+            }
+            multiline={true}
+            ref={passwordRef}
+          />
         </View>
+
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Moyen de paiement</Text>
@@ -274,6 +260,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
           {password && <Text style={styles.content}>********</Text>}
         </View>
+
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Historique</Text>
