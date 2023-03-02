@@ -125,7 +125,7 @@ export default function HomeScreen({ navigation }) {
             </Pressable>
           </Callout>
         </Marker>
-      );
+      )
     });
   } else {
     restaurantMarkers = filtreRestaurant.map((data, i) => {
