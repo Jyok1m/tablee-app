@@ -7,7 +7,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, removePhoto } from "../reducers/user";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -107,6 +107,8 @@ export default function ProfileScreen({ navigation }) {
     );
   });
 
+  const bioRef = useRef();
+
   /* -------------------------------------------------------------------------- */
   /*                                   Return                                   */
   /* -------------------------------------------------------------------------- */
@@ -151,8 +153,11 @@ export default function ProfileScreen({ navigation }) {
                 </View>
               ) : (
                 <TouchableOpacity
-                  onPress={() => {
+                  onPressIn={() => {
                     displayInputField("bio");
+                  }}
+                  onPressOut={() => {
+                    bioRef.current.focus();
                   }}
                 >
                   <Text style={styles.edit}>Modifier</Text>
@@ -163,9 +168,12 @@ export default function ProfileScreen({ navigation }) {
               <ScrollView style={styles.editViewTop}>
                 <TextInput
                   style={styles.editContent}
+                  placeholder="Racontez votre histoire..."
+                  placeholderTextColor="grey"
                   onChangeText={(value) => setInputValue(value)}
                   value={inputValue}
                   multiline={true}
+                  ref={bioRef}
                 />
               </ScrollView>
             ) : bio ? (
@@ -208,6 +216,8 @@ export default function ProfileScreen({ navigation }) {
             <ScrollView style={styles.editViewTop}>
               <TextInput
                 style={styles.editContent}
+                placeholder="Entrez votre nouvel email..."
+                placeholderTextColor="grey"
                 onChangeText={(value) => setInputValue(value)}
                 value={inputValue}
                 multiline={true}
@@ -244,6 +254,8 @@ export default function ProfileScreen({ navigation }) {
             <ScrollView style={styles.editViewTop}>
               <TextInput
                 style={styles.editContent}
+                placeholder="Entrez votre nouveau mot de passe..."
+                placeholderTextColor="grey"
                 onChangeText={(value) => setInputValue(value)}
                 value={inputValue}
                 multiline={true}
