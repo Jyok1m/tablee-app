@@ -7,12 +7,11 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, removePhoto } from "../reducers/user";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { BACKEND_URL } from "../backend_url";
-import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
 
 export default function ProfileScreen({ navigation }) {
@@ -31,8 +30,6 @@ export default function ProfileScreen({ navigation }) {
   const [isFocused, setIsFocused] = useState("");
   const [inputType, setInputType] = useState("");
   const [sendState, setSendState] = useState(false);
-
-  const navigate = useNavigation();
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
@@ -75,10 +72,12 @@ export default function ProfileScreen({ navigation }) {
   /* ------------------------------- Handle Edit ------------------------------ */
 
   async function saveInput() {
+    // Fetch de la réponse et modif des états
+    const userData = { [inputType]: inputValue };
     const response = await fetch(`${BACKEND_URL}/users/${token}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [inputType]: inputValue }),
+      body: JSON.stringify(userData),
     });
     const data = await response.json();
     if (data) alert("Entrée sauvegardée !");
