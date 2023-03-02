@@ -13,6 +13,7 @@ import { logoutUser, removePhoto } from "../reducers/user";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
+import Toast from "react-native-root-toast";
 
 export default function ProfileScreen({ navigation }) {
   /* -------------------------------------------------------------------------- */
@@ -26,9 +27,6 @@ export default function ProfileScreen({ navigation }) {
   const [password, setPassword] = useState(null);
   const [history, setHistory] = useState([]);
 
-  const [isFocused, setIsFocused] = useState("");
-  const [inputType, setInputType] = useState("");
-
   const [isEditable, setIsEditable] = useState(false);
   const [fieldToDisplay, setFieldToDisplay] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -40,7 +38,7 @@ export default function ProfileScreen({ navigation }) {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-  const { token } = user;
+  const { token, profilePic } = user;
 
   /* ---------------- Get all the data and update the state ---------------- */
 
@@ -49,11 +47,10 @@ export default function ProfileScreen({ navigation }) {
       const response = await fetch(`${BACKEND_URL}/users/${token}`);
       const data = await response.json();
       const { result } = data;
-      const { studentCard, bio, username, email, password, history } =
-        data.user;
+      const { picture, bio, username, email, password, history } = data.user;
 
       if (result) {
-        setProfilePhoto(studentCard);
+        setProfilePhoto(picture);
         setBio(bio);
         setUsername(username);
         setEmail(email);
@@ -61,9 +58,9 @@ export default function ProfileScreen({ navigation }) {
         setHistory(history);
       }
     })();
-  }, [sendState]);
+  }, [sendState, profilePic]);
 
-  /* ------------------------------- Show Modal ------------------------------ */
+  /* ------------------------------- Handle input fields ------------------------------ */
 
   const handleEdit = (inputName) => {
     setIsEditable(true);
@@ -80,6 +77,9 @@ export default function ProfileScreen({ navigation }) {
 
   async function saveInput() {
     // Fetch de la réponse et modif des états
+    if (inputValue === "") {
+      return;
+    }
     const userData = { [fieldToDisplay]: inputValue };
     const response = await fetch(`${BACKEND_URL}/users/${token}`, {
       method: "PUT",
@@ -87,7 +87,29 @@ export default function ProfileScreen({ navigation }) {
       body: JSON.stringify(userData),
     });
     const data = await response.json();
-    if (data) alert("Entrée sauvegardée !");
+    if (data.result) {
+      Toast.show("Modification enregistrée !", {
+        duration: Toast.durations.LONG,
+        position: -10,
+        textColor: "#1D2C3B",
+        opacity: 1,
+        shadow: true,
+        backgroundColor: "#CDAB82",
+        animation: true,
+        delay: 500,
+      });
+    } else {
+      Toast.show(data.error, {
+        duration: Toast.durations.LONG,
+        position: 0,
+        textColor: "#1D2C3B",
+        opacity: 1,
+        shadow: true,
+        backgroundColor: "#CDAB82",
+        animation: true,
+        delay: 500,
+      });
+    }
     setSendState(!sendState);
     cancelEdit();
   }
@@ -137,10 +159,16 @@ export default function ProfileScreen({ navigation }) {
           {profilePhoto && (
             <Image style={styles.profilePic} source={{ uri: profilePhoto }} />
           )}
-          <TouchableOpacity style={styles.editPhoto}>
+          <TouchableOpacity
+            style={styles.editPhoto}
+            onPress={() => navigation.navigate("Snap")}
+          >
             <Text style={styles.edit}>Modifier</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Bio container */}
+
         <View style={styles.bioContainer}>
           <View style={styles.inputCard}>
             <View style={styles.cardTop}>
@@ -196,30 +224,6 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Email</Text>
-            <View style={styles.editFocused}>
-              {isEditable && fieldToDisplay === "email" && (
-                <TouchableOpacity
-                  onPress={() => cancelEdit()}
-                  style={styles.cancelEditMain}
-                >
-                  <Text style={styles.edit}>Annuler</Text>
-                </TouchableOpacity>
-              )}
-              <TouchableOpacity
-                onPressIn={() =>
-                  isEditable && fieldToDisplay === "email"
-                    ? saveInput()
-                    : handleEdit("email")
-                }
-                onPressOut={() => emailRef.current.focus()}
-              >
-                <Text style={styles.edit}>
-                  {isEditable && fieldToDisplay === "email"
-                    ? "Sauvegarder"
-                    : "Modifier"}
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
           <TextInput
             style={styles.content}
@@ -315,11 +319,6 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => logout()}>
           <Text style={styles.pressableText}>Déconnexion</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RestaurantTabNavigator")}
-        >
-          <Text style={styles.pressableText}>Test page restaurant</Text>
         </TouchableOpacity>
       </View>
     </View>
