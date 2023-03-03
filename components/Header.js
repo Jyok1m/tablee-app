@@ -7,12 +7,30 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import { BACKEND_URL } from "../backend_url";
+import { useDispatch, useSelector } from "react-redux";
+import { likeRestaurant } from "../reducers/user";
 
 export default function Header() {
   const [isBack, setIsBack] = useState(false);
   const [isHome, setIsHome] = useState(false);
+  const dispatch = useDispatch();
+  const restaurant = useSelector((state) => state.restaurant.value);
+  const user = useSelector((state) => state.user.value);
   const navigation = useNavigation();
   const route = useRoute();
+
+  const handleLike = async () => {
+    const response = await fetch(`${BACKEND_URL}/users/like/${user.token}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token: restaurant.token,
+      }),
+    });
+    const data = await response.json();
+    data.result && alert("Restaurant Liked");
+  };
 
   // Set the nam of the scren we are on.
   useEffect(() => {
@@ -40,7 +58,10 @@ export default function Header() {
       </TouchableOpacity>
     );
     favoriteIcon = (
-      <TouchableOpacity style={styles.sideContainerLeft}>
+      <TouchableOpacity
+        style={styles.sideContainerLeft}
+        onPress={() => handleLike()}
+      >
         <FontAwesomeIcon icon={faHeartCirclePlus} color="#CDAB82" size={24} />
       </TouchableOpacity>
     );

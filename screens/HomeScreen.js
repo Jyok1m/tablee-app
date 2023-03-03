@@ -14,7 +14,7 @@ import { mapStyle } from "../components/MapStyle";
 import * as Location from "expo-location";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addRestaurant, sendToken } from "../reducers/restaurant";
+import { sendToken } from "../reducers/restaurant";
 import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
