@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { STRIPE_PUBLBISHABLE_KEY } from "@env";
 
 // Navigation:
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -25,6 +26,10 @@ import MessageScreen from "./screens/MessageScreen";
 import FavoriteScreen from "./screens/FavoriteScreen";
 import UpcomingScreen from "./screens/UpcomingScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+
+// Stripe:
+import Constants from "expo-constants";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 // Font Awesome:
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -249,25 +254,27 @@ function RestaurantTabNavigator() {
 export default function App() {
   return (
     <RootSiblingParent>
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <SafeAreaView style={{ flex: 1, backgroundColor: "#1D2C3B" }}>
-            <NavigationContainer>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Landing" component={LandingScreen} />
-                <Stack.Screen name="Signup" component={SignupScreen} />
-                <Stack.Screen name="Scan" component={ScanScreen} />
-                <Stack.Screen name="Snap" component={SnapScreen} />
-                <Stack.Screen name="TabNavigator" component={TabNavigator} />
-                <Stack.Screen
-                  name="RestaurantTabNavigator"
-                  component={RestaurantTabNavigator}
-                />
-              </Stack.Navigator>
-            </NavigationContainer>
-          </SafeAreaView>
-        </PersistGate>
-      </Provider>
+      <StripeProvider publishableKey={STRIPE_PUBLBISHABLE_KEY}>
+        <Provider store={store}>
+          <PersistGate persistor={persistor}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: "#1D2C3B" }}>
+              <NavigationContainer>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="Landing" component={LandingScreen} />
+                  <Stack.Screen name="Signup" component={SignupScreen} />
+                  <Stack.Screen name="Scan" component={ScanScreen} />
+                  <Stack.Screen name="Snap" component={SnapScreen} />
+                  <Stack.Screen name="TabNavigator" component={TabNavigator} />
+                  <Stack.Screen
+                    name="RestaurantTabNavigator"
+                    component={RestaurantTabNavigator}
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </SafeAreaView>
+          </PersistGate>
+        </Provider>
+      </StripeProvider>
     </RootSiblingParent>
   );
 }

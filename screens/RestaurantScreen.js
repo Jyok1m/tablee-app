@@ -12,7 +12,7 @@ export default function RestaurantScreen({ navigation }) {
   const [cuisineTypes, setCuisineTypes] = useState(null);
   const [description, setDescription] = useState(null);
   const [perks, setPerks] = useState(null);
-  const [photos, setPhotos] = useState("");
+  const [photos, setPhotos] = useState(null);
   const [phone, setPhone] = useState(null);
   const [availabilities, setAvailabilities] = useState();
   const [address, setAddress] = useState(null);
@@ -59,7 +59,7 @@ export default function RestaurantScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.cuisine}>{cuisineTypes}</Text>
-        {showPhoto(photos)}
+        {photos && showPhoto(photos)}
       </View>
       <ScrollView>
         <View style={styles.inputCard}>

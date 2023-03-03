@@ -10,6 +10,7 @@ export default function MenuScreen({ navigation }) {
   const dispatch = useDispatch();
   const [name, setName] = useState(null);
   const [cuisineTypes, setCuisineTypes] = useState(null);
+  const [menu, setMenu] = useState(null);
 
   const restaurant = useSelector((state) => state.restaurant.value);
   //console.log(restaurant);
@@ -18,17 +19,15 @@ export default function MenuScreen({ navigation }) {
   let Menu;
   useEffect(() => {
     (async () => {
-      const response = await fetch(
-        `${BACKEND_URL}/restaurants/${token}`
-      );
+      const response = await fetch(`${BACKEND_URL}/restaurants/${token}`);
       const data = await response.json();
       const { result } = data;
       //console.log(data.restaurant.menuItems);
       if (result === true) {
         setName(data.restaurant.name);
         setCuisineTypes(data.restaurant.cuisineTypes);
-        Menu = data.restaurant.menuItems.map((data, i) => {       
-          const {name, price, description} = data
+        Menu = data.restaurant.menuItems.map((data, i) => {
+          const { name, price, description } = data;
           return (
             <View key={i} style={styles.card}>
               <View>
@@ -43,6 +42,7 @@ export default function MenuScreen({ navigation }) {
             </View>
           );
         });
+        setMenu(Menu);
       } else {
         console.log("Error: restaurant not found");
       }
@@ -55,9 +55,7 @@ export default function MenuScreen({ navigation }) {
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.cuisine}>{cuisineTypes}</Text>
       </View>
-      <View style={styles.menuContainer}>
-        {menu}
-      </View>
+      <View style={styles.menuContainer}>{menu}</View>
     </View>
   );
 }
@@ -96,7 +94,7 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingBottom: 15,
     paddingTop: 15,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   header: {
     alignItems: "center",
