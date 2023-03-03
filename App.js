@@ -28,7 +28,6 @@ import UpcomingScreen from "./screens/UpcomingScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 
 // Stripe:
-import Constants from "expo-constants";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
 // Font Awesome:

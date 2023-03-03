@@ -18,7 +18,7 @@ export default function FavoriteScreen() {
       const data = await response.json();
       const restoLiked = data.user.likes;
       console.log(restoLiked);
-      const Resto = restoLiked.map((data, i) => {
+      Resto = restoLiked.map((data, i) => {
         const { name, price, cuisineTypes, description } = data;
         return (
           <View key={i} style={styles.inputCard}>
