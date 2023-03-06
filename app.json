@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "tablee-app",
-    "slug": "tablee-app",
+    "name": "Tablée",
+    "slug": "Tablee",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1D2C3B"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,8 +22,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#1D2C3B"
       }
     },
     "web": {
