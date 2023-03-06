@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: { token: null },
+  value: { token: null, reviews:[] },
 };
 
 export const restaurantSlice = createSlice({
@@ -11,8 +11,11 @@ export const restaurantSlice = createSlice({
     sendToken: (state, action) => {
       state.value.token = action.payload;
     },
+    addReviews: (state, action) => {
+      state.value.push(action.payload);
+    }
   },
 });
 
-export const { addRestaurant, sendToken } = restaurantSlice.actions;
+export const { addReviews, sendToken } = restaurantSlice.actions;
 export default restaurantSlice.reducer;

@@ -25,6 +25,7 @@ import MessageScreen from "./screens/MessageScreen";
 import FavoriteScreen from "./screens/FavoriteScreen";
 import UpcomingScreen from "./screens/UpcomingScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import ChatRoomScreen from "./screens/ChatRoomScreen";
 
 // Font Awesome:
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -146,7 +147,7 @@ function TabNavigator() {
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Messages" component={MessageScreen} />
+        <Tab.Screen name="Messages" component={ChatRoomScreen} />
         <Tab.Screen name="Favorites" component={FavoriteScreen} />
         <Tab.Screen name="Upcoming" component={UpcomingScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
@@ -259,6 +260,7 @@ export default function App() {
                 <Stack.Screen name="Scan" component={ScanScreen} />
                 <Stack.Screen name="Snap" component={SnapScreen} />
                 <Stack.Screen name="TabNavigator" component={TabNavigator} />
+                <Stack.Screen name="MessageScreen" component={MessageScreen} />
                 <Stack.Screen
                   name="RestaurantTabNavigator"
                   component={RestaurantTabNavigator}
