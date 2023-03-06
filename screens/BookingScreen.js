@@ -71,7 +71,7 @@ export default function BookingScreen({}) {
       }
       setAvailabilities(slotArr);
     })();
-  }, [date]);
+  }, [date, pressedButtonIndex]);
 
   // Display and handle the times slots
 
@@ -184,7 +184,7 @@ export default function BookingScreen({}) {
         </View>
 
         <View style={styles.times}>
-          {availableSlots}
+          {showDate && availableSlots}
         </View>
 
       </ScrollView>
