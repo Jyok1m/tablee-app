@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { BACKEND_URL } from "../backend_url";
+import {StyleSheet, Text, View, ScrollView, Image} from "react-native";
+import React, {useEffect, useState} from "react";
+import {useSelector, useDispatch} from "react-redux";
+import {RFPercentage} from "react-native-responsive-fontsize";
+import {BACKEND_URL} from "../backend_url";
 import Header from "../components/Header";
-import { addRestaurant } from "../reducers/restaurant";
+import {addRestaurant} from "../reducers/restaurant";
 
-export default function RestaurantScreen({ navigation }) {
+export default function RestaurantScreen({navigation}) {
   const dispatch = useDispatch();
   const [name, setName] = useState(null);
   const [cuisineTypes, setCuisineTypes] = useState(null);
@@ -14,17 +14,17 @@ export default function RestaurantScreen({ navigation }) {
   const [perks, setPerks] = useState(null);
   const [photos, setPhotos] = useState(null);
   const [phone, setPhone] = useState(null);
-  const [availabilities, setAvailabilities] = useState();
+  const [availabilities, setAvailabilities] = useState(null);
   const [address, setAddress] = useState(null);
 
   const restaurant = useSelector((state) => state.restaurant.value);
-  const { token } = restaurant;
+  const {token} = restaurant;
 
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/restaurants/${token}`);
       const data = await response.json();
-      const { result } = data;
+      const {result} = data;
       if (result === true) {
         setName(data.restaurant.name);
         setCuisineTypes(data.restaurant.cuisineTypes);
@@ -32,9 +32,9 @@ export default function RestaurantScreen({ navigation }) {
         showPhoto(data.restaurant.photos[0]);
         setDescription(data.restaurant.description);
         setPerks(data.restaurant.perks);
-        setAvailabilities(data.restaurant.availabilities);
+        setAvailabilities(data.restaurant.availabilities.join(", "));
         setPhone(data.restaurant.phone);
-        const { streetNumber, streetName, postCode, city } =
+        const {streetNumber, streetName, postCode, city} =
           data.restaurant.address;
         const restaurantAddress = `${streetNumber} ${streetName} ${postCode} ${city}`;
         setAddress(restaurantAddress);
@@ -48,14 +48,14 @@ export default function RestaurantScreen({ navigation }) {
     return (
       <Image
         style={styles.pictures}
-        source={{ uri: photo, width: 300, height: 150 }}
+        source={{uri: photo, width: 300, height: 150}}
       />
     );
   }
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header/>
       <View style={styles.header}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.cuisine}>{cuisineTypes}</Text>
@@ -71,11 +71,11 @@ export default function RestaurantScreen({ navigation }) {
           <Text style={styles.subtitle}>{perks}</Text>
         </View>
         <View style={styles.inputCard}>
-          <Text style={styles.title}>Validité</Text>
+          <Text style={styles.title}>Validité des avantages</Text>
           <Text style={styles.subtitle}>{availabilities}</Text>
         </View>
         <View style={styles.inputCard}>
-          <Text style={styles.title}>Phone</Text>
+          <Text style={styles.title}>Téléphone</Text>
           <Text style={styles.subtitle}>{phone}</Text>
         </View>
         <View style={styles.inputCard}>
@@ -92,37 +92,37 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   header: {
     alignItems: "center",
-    paddingTop: 10,
+    paddingTop: 10
   },
   pictures: {
     borderColor: "#fffff",
     padding: 10,
-    margin: 10,
+    margin: 10
   },
   subtitle: {
     fontSize: RFPercentage(1.6),
     fontWeight: "400",
-    color: "#ffffff",
+    color: "#ffffff"
   },
   title: {
     fontSize: RFPercentage(2),
     fontWeight: "500",
-    color: "#CDAB82",
+    color: "#CDAB82"
   },
   name: {
     fontSize: RFPercentage(5),
     fontWeight: "600",
-    color: "#CDAB82",
+    color: "#CDAB82"
   },
   cuisine: {
     fontSize: RFPercentage(3),
     fontStyle: "italic",
     fontWeight: "500",
-    color: "#ffffff",
+    color: "#ffffff"
   },
   inputCard: {
     width: "100%",
@@ -132,6 +132,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: "5%",
-    padding: 5,
-  },
+    padding: 5
+  }
 });
