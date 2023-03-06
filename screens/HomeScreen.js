@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
   Modal,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import React from "react";
-import MapView, { Marker, PROVIDER_GOOGLE, Callout } from "react-native-maps";
-import { Dimensions } from "react-native";
-import { mapStyle } from "../components/MapStyle";
+import MapView, {Marker, PROVIDER_GOOGLE, Callout} from "react-native-maps";
+import {Dimensions} from "react-native";
+import {mapStyle} from "../components/MapStyle";
 import * as Location from "expo-location";
 
-import { useDispatch, useSelector } from "react-redux";
-import { sendToken } from "../reducers/restaurant";
-import { BACKEND_URL } from "../backend_url";
+import {useDispatch, useSelector} from "react-redux";
+import {sendToken} from "../reducers/restaurant";
+import {BACKEND_URL} from "../backend_url";
 import Header from "../components/Header";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({navigation}) {
   const [currentPosition, setCurrentPosition] = useState(null);
   const [allRestaurants, setAllRestaurants] = useState([]);
   const [filtreRestaurant, setFiltreRestaurant] = useState([]);
@@ -33,9 +33,9 @@ export default function HomeScreen({ navigation }) {
   // Demande de l'autorisation et fetch de la route pour avoir les coordonnées de tous les restaurants
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const {status} = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+        await Location.watchPositionAsync({distanceInterval: 10}, (location) => {
           setCurrentPosition(location.coords);
         });
       }
@@ -77,9 +77,9 @@ export default function HomeScreen({ navigation }) {
 
   // Redirige vers la page du resto lors du click sur le modal
   function handleRestaurantPage(restoToken) {
-   dispatch(sendToken(restoToken))
+    dispatch(sendToken(restoToken));
     navigation.navigate("RestaurantTabNavigator");
-    
+
   }
 
   // Affiche les markeurs en fonction de la recherche
@@ -96,7 +96,7 @@ export default function HomeScreen({ navigation }) {
         token
       } = data;
       return (
-        <Marker key={i} coordinate={{ latitude, longitude }} title={name}>
+        <Marker key={i} coordinate={{latitude, longitude}} title={name}>
           <Callout style={styles.calloutContainer} tooltip={true} onPress={() => handleRestaurantPage(token)}>
             <View style={styles.calloutTop}>
               <View style={styles.imgPlaceholder}>
@@ -125,7 +125,7 @@ export default function HomeScreen({ navigation }) {
             </Pressable>
           </Callout>
         </Marker>
-      )
+      );
     });
   } else {
     restaurantMarkers = filtreRestaurant.map((data, i) => {
@@ -136,10 +136,11 @@ export default function HomeScreen({ navigation }) {
         description,
         cuisineTypes,
         averagePrice,
+        token
       } = data;
       return (
-        <Marker key={i} coordinate={{ latitude, longitude }} title={name}>
-          <Callout style={styles.calloutContainer} tooltip={true}>
+        <Marker key={i} coordinate={{latitude, longitude}} title={name}>
+          <Callout style={styles.calloutContainer} tooltip={true} onPress={() => handleRestaurantPage(token)}>
             <View style={styles.calloutTop}>
               <View style={styles.imgPlaceholder}>
                 <Text>Photo</Text>
@@ -173,7 +174,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header/>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="De quoi avez-vous envie ?"
@@ -192,7 +193,7 @@ export default function HomeScreen({ navigation }) {
           latitude: currentPosition ? currentPosition.latitude : 48.866667,
           longitude: currentPosition ? currentPosition.longitude : 2.333333,
           latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          longitudeDelta: 0.0421
         }}>
         {/*{currentPosition && (
           <Marker
@@ -212,13 +213,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     borderRadius: 50,
-    alignItems: "center",
+    alignItems: "center"
   },
   inputContainer: {
     width: "100%",
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
     top: "5%",
     left: "5%",
     zIndex: 1,
-    alignItems: "center",
+    alignItems: "center"
   },
   recherche: {
     backgroundColor: "white",
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#CDAB82",
     borderRadius: 3,
-    padding: 5,
+    padding: 5
   },
 
   boutonRecherche: {
@@ -247,10 +248,10 @@ const styles = StyleSheet.create({
     color: "#1D2C3B",
     transition: 1,
     width: "50%",
-    alignItems: "center",
+    alignItems: "center"
   },
   boutonRechercheVide: {
-    display: "none",
+    display: "none"
   },
   calloutContainer: {
     backgroundColor: "#1D2C3B",
@@ -262,18 +263,18 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
     alignItems: "center",
     padding: 10,
-    color: "white",
+    color: "white"
   },
   calloutTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 20
   },
   calloutinfos: {
     alignItems: "flex-end",
-    fontSize: 12,
+    fontSize: 12
   },
   imgPlaceholder: {
     width: 50,
@@ -281,28 +282,28 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: "grey",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   calloutDescription: {
-    marginBottom: 15,
+    marginBottom: 15
   },
   calloutTitle: {
     color: "#CDAB82",
-    fontSize: 16,
+    fontSize: 16
   },
   whiteText: {
-    color: "white",
+    color: "white"
   },
   smallText: {
-    fontSize: 12,
+    fontSize: 12
   },
   calloutLink: {
     borderWidth: 1,
     borderColor: "#CDAB82",
     borderRadius: 3,
-    padding: 5,
+    padding: 5
   },
   calloutLinkText: {
-    color: "#CDAB82",
-  },
+    color: "#CDAB82"
+  }
 });
