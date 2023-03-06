@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { BACKEND_URL } from "../backend_url";
 import Header from "../components/Header";
-import { addRestaurant } from "../reducers/restaurant";
 
 export default function MenuScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -13,7 +12,7 @@ export default function MenuScreen({ navigation }) {
   const [menu, setMenu] = useState(null);
 
   const restaurant = useSelector((state) => state.restaurant.value);
-  //console.log(restaurant);
+
   const { token } = restaurant;
 
   let Menu;
