@@ -33,9 +33,9 @@ export default function MenuScreen({ navigation }) {
                 <View style={styles.inputCard}>
                   <View style={styles.menuPrice}>
                     <Text style={styles.title}>{name}</Text>
-                    <Text style={styles.title}>{data.price}€</Text>
+                    <Text style={styles.title}>{price}€</Text>
                   </View>
-                  <Text style={styles.subtitle}>{data.description}</Text>
+                  <Text style={styles.subtitle}>{description}</Text>
                 </View>
               </View>
             </View>

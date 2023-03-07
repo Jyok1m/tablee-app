@@ -17,7 +17,6 @@ export default function FavoriteScreen() {
       const response = await fetch(`${BACKEND_URL}/users/${token}`);
       const data = await response.json();
       const restoLiked = data.user.likes;
-      console.log(restoLiked);
       Resto = restoLiked.map((data, i) => {
         const { name, price, cuisineTypes, description } = data;
         return (
