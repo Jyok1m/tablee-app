@@ -18,6 +18,7 @@ import ReviewScreen from "./screens/ReviewScreen";
 import MenuScreen from "./screens/MenuScreen";
 import BookingScreen from "./screens/BookingScreen";
 import CheckoutScreen from "./screens/CheckoutScreen";
+import NewReviewScreen from "./screens/NewReviewScreen";
 
 // Tab nav screens:
 import HomeScreen from "./screens/HomeScreen";
@@ -267,6 +268,7 @@ export default function App() {
                   name="RestaurantTabNavigator"
                   component={RestaurantTabNavigator}
                 />
+                <Stack.Screen name="NewReview" component={NewReviewScreen}/>
               </Stack.Navigator>
             </NavigationContainer>
           </SafeAreaView>

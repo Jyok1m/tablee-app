@@ -29,12 +29,13 @@ export default function ChatRoomScreen({navigation}) {
   //👇🏻 Runs whenever there is new trigger from the backend
   useEffect(() => {
     (async () => {
-      const response = await fetch("http://192.168.10.161:3000/messages/rooms");
+      const response = await fetch("http://192.168.1.10:3000/messages/rooms");
       const data = await response.json();
       if (data) {
         setRoomsFetched(data.rooms);
       }
       //console.log(roomsFetched);
+
     })();
   }, [visible]);
 
@@ -44,7 +45,6 @@ export default function ChatRoomScreen({navigation}) {
           id: data.id,
           name: data.name,
         });
-        console.log(data.id)
       };
 return (
   <Pressable style={styles.chatPreview} onPress={handleNavigation} key={i}>
