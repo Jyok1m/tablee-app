@@ -543,6 +543,9 @@ export default function BookingScreen({navigation}) {
           >
             <Text style={[styles.textButton, formReady && styles.pressedTextButton]}>Réserver</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Checkout")}>
+            <Text>Vers paiement screen</Text>
+          </TouchableOpacity>
         </View>
       </View>
 

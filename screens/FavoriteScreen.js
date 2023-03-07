@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
-import React, { useState } from "react";
+import {StyleSheet, Text, View, ScrollView} from "react-native";
+import React, {useState} from "react";
 import Header from "../components/Header";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { BACKEND_URL } from "../backend_url";
+import {useDispatch, useSelector} from "react-redux";
+import {useEffect} from "react";
+import {BACKEND_URL} from "../backend_url";
 
 export default function FavoriteScreen() {
   const user = useSelector((state) => state.user.value);
-  const { token } = user;
+  const {token} = user;
   const [resto, setResto] = useState([]);
 
   let Resto;
@@ -17,9 +17,8 @@ export default function FavoriteScreen() {
       const response = await fetch(`${BACKEND_URL}/users/${token}`);
       const data = await response.json();
       const restoLiked = data.user.likes;
-      console.log(restoLiked);
       Resto = restoLiked.map((data, i) => {
-        const { name, price, cuisineTypes, description } = data;
+        const {name, price, cuisineTypes, description} = data;
         return (
           <View key={i} style={styles.inputCard}>
             <View style={styles.entete}>
@@ -49,7 +48,7 @@ export default function FavoriteScreen() {
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header/>
       <ScrollView>{resto}</ScrollView>
     </View>
   );
@@ -60,13 +59,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   entete: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingBottom: 5,
-    justifyItems: "center",
+    justifyItems: "center"
   },
   inputCard: {
     width: "100%",
@@ -78,7 +77,7 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingBottom: 15,
     paddingTop: 15,
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   imgPlaceholder: {
     width: 50,
@@ -86,22 +85,22 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: "grey",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
 
   title: {
     color: "#CDAB82",
-    fontSize: 20,
+    fontSize: 20
   },
   infos: {
     alignItems: "flex-end",
-    fontSize: 12,
+    fontSize: 12
   },
   whiteText: {
-    color: "white",
+    color: "white"
   },
   smallText: {
-    fontSize: 12,
+    fontSize: 12
   },
   calloutContainer: {
     backgroundColor: "#1D2C3B",
@@ -113,6 +112,6 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
     alignItems: "center",
     padding: 10,
-    color: "white",
-  },
+    color: "white"
+  }
 });
