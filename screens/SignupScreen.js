@@ -3,18 +3,19 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  TextInput,
+  TextInput
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState } from "react";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { useDispatch, useSelector } from "react-redux";
-import { signinUser, removePhoto } from "../reducers/user";
-import { BACKEND_URL } from "../backend_url";
+import {SafeAreaView} from "react-native-safe-area-context";
+import React, {useState} from "react";
+import {RFPercentage} from "react-native-responsive-fontsize";
+import {useDispatch, useSelector} from "react-redux";
+import {signinUser, removePhoto} from "../reducers/user";
+import {BACKEND_URL} from "../backend_url";
 
-export default function SignupScreen({ navigation }) {
+export default function SignupScreen({navigation}) {
   const [username, setUsername] = useState("");
   const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,19 +31,20 @@ export default function SignupScreen({ navigation }) {
   async function signup() {
     // Fetch la route signup:
     const studentCard = user.photos;
-    const userData = { username, firstname, email, password, studentCard };
+    const userData = {username, firstname, lastname, email, password, studentCard};
     const response = await fetch(`${BACKEND_URL}/users/signup`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(userData)
     });
     const data = await response.json();
 
     // Gérer la réponse + les alertes du fetch
     if (data.result === true) {
-      dispatch(signinUser({ username, token: data.token }));
+      dispatch(signinUser({username, token: data.token}));
       setUsername("");
       setFirstname("");
+      setLastname("");
       setEmail("");
       setPassword("");
       dispatch(removePhoto());
@@ -77,6 +79,13 @@ export default function SignupScreen({ navigation }) {
         value={firstname}
       />
       <TextInput
+        placeholder="Nom"
+        textContentType="familyName"
+        style={styles.inputBox}
+        onChangeText={(value) => setLastname(value)}
+        value={lastname}
+      />
+      <TextInput
         placeholder="Email universitaire"
         textContentType="emailAddress"
         style={styles.inputBox}
@@ -107,11 +116,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   logo: {
     width: "100%",
-    maxHeight: "10%",
+    maxHeight: "10%"
   },
   inputBox: {
     paddingHorizontal: 20,
@@ -122,7 +131,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 5,
     marginTop: "5%",
-    fontSize: RFPercentage(2.3),
+    fontSize: RFPercentage(2.3)
   },
   button: {
     alignItems: "center",
@@ -134,10 +143,10 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 3,
     borderRadius: 5,
-    marginTop: "5%",
+    marginTop: "5%"
   },
   text: {
     fontSize: RFPercentage(2.3),
-    fontWeight: "500",
-  },
+    fontWeight: "500"
+  }
 });

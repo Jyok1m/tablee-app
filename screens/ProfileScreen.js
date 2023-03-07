@@ -5,17 +5,17 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  TextInput,
+  TextInput
 } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutUser, removePhoto } from "../reducers/user";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { BACKEND_URL } from "../backend_url";
+import React, {useEffect, useState, useRef} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {logoutUser, removePhoto} from "../reducers/user";
+import {RFPercentage} from "react-native-responsive-fontsize";
+import {BACKEND_URL} from "../backend_url";
 import Header from "../components/Header";
 import Toast from "react-native-root-toast";
 
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({navigation}) {
   /* -------------------------------------------------------------------------- */
   /*                                    Logic                                   */
   /* -------------------------------------------------------------------------- */
@@ -38,7 +38,7 @@ export default function ProfileScreen({ navigation }) {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-  const { token, profilePic } = user;
+  const {token, profilePic} = user;
 
   /* ---------------- Get all the data and update the state ---------------- */
 
@@ -46,8 +46,8 @@ export default function ProfileScreen({ navigation }) {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/users/${token}`);
       const data = await response.json();
-      const { result } = data;
-      const { picture, bio, username, email, password, history } = data.user;
+      const {result} = data;
+      const {picture, bio, username, email, password, history} = data.user;
 
       if (result) {
         setProfilePhoto(picture);
@@ -80,11 +80,11 @@ export default function ProfileScreen({ navigation }) {
     if (inputValue === "") {
       return;
     }
-    const userData = { [fieldToDisplay]: inputValue };
+    const userData = {[fieldToDisplay]: inputValue};
     const response = await fetch(`${BACKEND_URL}/users/${token}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(userData)
     });
     const data = await response.json();
     if (data.result) {
@@ -96,7 +96,7 @@ export default function ProfileScreen({ navigation }) {
         shadow: true,
         backgroundColor: "#CDAB82",
         animation: true,
-        delay: 500,
+        delay: 500
       });
     } else {
       Toast.show(data.error, {
@@ -107,7 +107,7 @@ export default function ProfileScreen({ navigation }) {
         shadow: true,
         backgroundColor: "#CDAB82",
         animation: true,
-        delay: 500,
+        delay: 500
       });
     }
     setSendState(!sendState);
@@ -123,16 +123,18 @@ export default function ProfileScreen({ navigation }) {
   }
 
   /* --------------------------------- Handle restaurant history --------------------------------- */
+  /*
+    const restaurantHistory = history.map((data, i) => {
+      return (
+        <ScrollView style={styles.scrollView}>
+          <Text key={i} style={styles.content}>
+            {`\u2022 ${data.restaurant.name}`}
+          </Text>
+        </ScrollView>
+      );
+    });
 
-  const restaurantHistory = history.map((data, i) => {
-    return (
-      <ScrollView style={styles.scrollView}>
-        <Text key={i} style={styles.content}>
-          {`\u2022 ${data.restaurant.name}`}
-        </Text>
-      </ScrollView>
-    );
-  });
+   */
 
   /* -------------------------------------------------------------------------- */
   /*                                   Return                                   */
@@ -142,7 +144,7 @@ export default function ProfileScreen({ navigation }) {
     <View style={styles.container}>
       {/* Header */}
 
-      <Header />
+      <Header/>
 
       {/* Title container*/}
 
@@ -157,7 +159,7 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.userContainer}>
         <View style={styles.photoContainer}>
           {profilePhoto && (
-            <Image style={styles.profilePic} source={{ uri: profilePhoto }} />
+            <Image style={styles.profilePic} source={{uri: profilePhoto}}/>
           )}
           <TouchableOpacity
             style={styles.editPhoto}
@@ -308,13 +310,13 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.cardTop}>
             <Text style={styles.title}>Historique</Text>
           </View>
-          {history.length ? (
+          {/*history.length ? (
             restaurantHistory
           ) : (
             <ScrollView style={styles.scrollView}>
               <Text style={styles.noContent}>Pas encore de restaurant...</Text>
             </ScrollView>
-          )}
+          )*/}
         </View>
       </View>
 
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
 
   /* ----------------------------- Title Container ----------------------------- */
@@ -348,12 +350,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: "5%",
+    marginBottom: "5%"
   },
   screenTitle: {
     fontSize: RFPercentage(3.5),
     color: "#CDAB82",
-    fontWeight: "500",
+    fontWeight: "500"
   },
 
   /* ------------------------------ User container ----------------------------- */
@@ -363,26 +365,26 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "20%",
     alignItems: "center",
-    marginBottom: "5%",
+    marginBottom: "5%"
   },
   photoContainer: {
     width: "30%",
     height: "100%",
-    marginRight: "5%",
+    marginRight: "5%"
   },
   profilePic: {
     height: "70%",
     width: "100%",
     borderRadius: 50,
     borderColor: "#CDAB82",
-    borderWidth: 1,
+    borderWidth: 1
   },
   editPhoto: {
     width: "100%",
     height: "30%",
     paddingRight: "20%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   bioContainer: {
     justifyContent: "space-between",
@@ -390,7 +392,7 @@ const styles = StyleSheet.create({
     height: "100%",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 5
   },
 
   /* ----------------------------- Main container ----------------------------- */
@@ -400,26 +402,26 @@ const styles = StyleSheet.create({
     height: "55%",
 
     marginBottom: "3%",
-    padding: 5,
+    padding: 5
   },
   inputCard: {
     width: "100%",
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
     marginBottom: "2%",
-    padding: 5,
+    padding: 5
   },
   cardTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     borderColor: "#CDAB82",
     borderBottomWidth: 1,
-    marginBottom: "2%",
+    marginBottom: "2%"
   },
   title: {
     fontSize: RFPercentage(2),
     fontWeight: "500",
-    color: "#CDAB82",
+    color: "#CDAB82"
   },
   edit: {
     fontSize: RFPercentage(1.6),
@@ -427,42 +429,42 @@ const styles = StyleSheet.create({
     color: "#CDAB82",
     textDecorationLine: "underline",
     fontStyle: "italic",
-    paddingLeft: 20,
+    paddingLeft: 20
   },
   editFocused: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    width: "50%",
+    width: "50%"
   },
   cancelEdit: {
-    paddingLeft: "20%",
+    paddingLeft: "20%"
   },
   cancelEditMain: {
-    paddingLeft: "20%",
+    paddingLeft: "20%"
   },
   editContent: {
     borderBottomWidth: 1,
     borderBottomColor: "#CDAB82",
     fontSize: RFPercentage(1.6),
     fontWeight: "400",
-    color: "#FFF",
+    color: "#FFF"
   },
   editViewTop: {
-    maxHeight: "80%",
+    maxHeight: "80%"
   },
   content: {
     fontSize: RFPercentage(1.6),
     fontWeight: "400",
-    color: "#FFF",
+    color: "#FFF"
   },
   noContent: {
     fontSize: RFPercentage(1.6),
     fontWeight: "400",
     color: "grey",
-    fontStyle: "italic",
+    fontStyle: "italic"
   },
   scrollView: {
-    height: "40%",
+    height: "40%"
   },
 
   /* ----------------------------- Button container ----------------------------- */
@@ -471,12 +473,12 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "space-evenly"
   },
   pressableText: {
     textDecorationLine: "underline",
     fontSize: RFPercentage(2),
     fontWeight: "500",
-    color: "#CDAB82",
-  },
+    color: "#CDAB82"
+  }
 });
