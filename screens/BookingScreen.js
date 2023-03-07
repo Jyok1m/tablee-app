@@ -5,7 +5,8 @@ import {
   View,
   TouchableOpacity,
   Modal,
-  TextInput
+  TextInput,
+  ActivityIndicator
 } from "react-native";
 import {useSelector} from "react-redux";
 import Toast from "react-native-root-toast";
@@ -18,7 +19,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 
 const moment = require("moment");
 
-export default function BookingScreen() {
+export default function BookingScreen({navigation}) {
   const user = useSelector((state) => state.user.value);
   const restaurant = useSelector((state) => state.restaurant.value);
   const restaurantToken = restaurant.token;
@@ -46,10 +47,11 @@ export default function BookingScreen() {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [cardInfosReady, setCardInfosReady] = useState(false);
 
-  const [request, setRequest] = useState(null);
+  const [request, setRequest] = useState("");
   const [requestModalVisible, setRequestModalVisible] = useState(false);
 
   const [formReady, setFormReady] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Set date:
   function handleDateButton() {
@@ -192,7 +194,7 @@ export default function BookingScreen() {
 
   function handleCancelRequest() {
     setRequestModalVisible(false);
-    setRequest(null);
+    setRequest("");
   }
 
   // Determine whether the form is ready or not
@@ -207,15 +209,14 @@ export default function BookingScreen() {
   // Handle Validate
 
   async function validateForm() {
+    setLoading(true);
     try {
-
       // Create user in Stripe:
       await fetch(`${BACKEND_URL}/customers/new/${user.token}`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({phone: phoneNumber})
       });
-
       // Add credit card to Stripe:
       const cardDetails = {
         name: cardHolderName,
@@ -224,25 +225,58 @@ export default function BookingScreen() {
         exp_year: cardExpirationYear,
         cvc: cardCVV
       };
-      await fetch(`${BACKEND_URL}/cards/new/${user.token}`, {
+      await fetch(`${BACKEND_URL}/cards/save/${user.token}`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(cardDetails)
       });
-
       // Create Booking:
-
-
+      const bookingDetails = {
+        guests: numberOfPersons,
+        date: selectedTime,
+        specialRequests: request,
+        restaurantToken: restaurant.token
+      };
+      const response = await fetch(`${BACKEND_URL}/bookings/new/${user.token}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(bookingDetails)
+      });
+      const data = await response.json();
+      if (data.result === false) {
+        Toast.show(response.error, {
+          duration: Toast.durations.LONG,
+          position: -10,
+          textColor: "#1D2C3B",
+          opacity: 1,
+          shadow: true,
+          backgroundColor: "#CDAB82",
+          animation: true,
+          delay: 500
+        });
+      } else {
+        setLoading(false);
+        alert(`${data.message} 🔥Ta référence de réservation est: ${data.bookingId}`);
+        navigation.navigate("TabNavigator");
+      }
     } catch (error) {
       console.log(error);
     }
   }
 
-  console.log(selectedTime);
-
   return (
     <View style={styles.container}>
       <Header/>
+
+      <Modal visible={loading} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View>
+              <ActivityIndicator size="large" color="#CDAB82"/>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <View style={styles.title}>
         <Text style={styles.name}>Réservation</Text>
@@ -503,7 +537,7 @@ export default function BookingScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={() => showPersonsModal()}
+          <TouchableOpacity onPress={() => validateForm()}
                             disabled={!formReady && true}
                             style={[styles.notSelectedButton, formReady && styles.selectionButton]}
           >
@@ -597,7 +631,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   modalView: {
-    backgroundColor: "#FFF",
+    backgroundColor: "#1D2C3B",
     borderRadius: 10,
     padding: 30,
     alignItems: "center",
