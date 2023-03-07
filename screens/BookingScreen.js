@@ -256,8 +256,7 @@ export default function BookingScreen({navigation}) {
         });
       } else {
         setLoading(false);
-        alert(`${data.message} 
-        🔥Ta référence de réservation est: ${data.bookingId}`);
+        alert(`${data.message} 🔥Ta référence de réservation est: ${data.bookingId}`);
         navigation.navigate("TabNavigator");
       }
     } catch (error) {
