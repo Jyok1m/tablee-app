@@ -3,102 +3,122 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ScrollView,
+  ScrollView, Modal, TextInput
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Header from "../components/Header";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { TextInput } from "react-native-paper";
-import { useSelector, useDispatch } from "react-redux";
-import { BACKEND_URL } from "../backend_url";
+import {RFPercentage} from "react-native-responsive-fontsize";
+import {useSelector, useDispatch} from "react-redux";
+import {BACKEND_URL} from "../backend_url";
+import {setBookingId} from "../reducers/booking";
+import {refreshComponents} from "../reducers/booking";
 
-export default function UpcomingScreen({ navigation }) {
+export default function UpcomingScreen({navigation}) {
   const dispatch = useDispatch();
+  const booking = useSelector((state) => state.booking.value);
+  const refresher = booking.refresher;
   const [responseUpcoming, setResponseUpcoming] = useState([]);
   const [responseHistory, setResponseHistory] = useState([]);
+  const [deleteMessage, setDeleteMessage] = useState(null);
+  const [notificationModalVisible, setNotificationModalVisible] = useState(false);
+  const [deletedModalVisible, setDeletedModalVisible] = useState(false);
+  const [booking_id, setBooking_id] = useState(null);
   const user = useSelector((state) => state.user.value);
-  const { token } = user;
-  const moment = require("moment/moment");
+  const {token} = user;
+  const moment = require("moment");
 
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/bookings/upcoming/${token}`);
       const data = await response.json();
-      if (data.result === true) {
-        console.log(data.result);
-        setResponseUpcoming(data.upcoming);
-      }
-
-      const historyResponse = await fetch(
-        `${BACKEND_URL}/bookings/history/${token}`
-      );
+      if (data.result === true) setResponseUpcoming(data.upcoming);
+      const historyResponse = await fetch(`${BACKEND_URL}/bookings/history/${token}`);
       const historyData = await historyResponse.json();
-      if (historyData.result === true) {
-        console.log(historyData.result);
-        setResponseHistory(historyData.history);
-      }
-
-      console.log(responseHistory);
+      if (historyData.result === true) setResponseHistory(historyData.history);
     })();
-  }, []);
+  }, [refresher]);
+
+  // Handle comment:
+  async function handleComment(bookingId) {
+    dispatch(setBookingId(bookingId));
+    navigation.navigate("NewReview");
+  }
+
+  // Handle payment:
+  async function handlePayment(bookingId) {
+    dispatch(setBookingId(bookingId));
+    navigation.navigate("Checkout");
+  }
+
+  // Handle cancel press:
+  function handleCancelPress(bookingId) {
+    setNotificationModalVisible(true);
+    setBooking_id(bookingId);
+  }
+
+  // Handle cancel:
+  async function handleCancel() {
+    setNotificationModalVisible(false);
+    const response = await fetch(`${BACKEND_URL}/bookings/delete/${token}`, {
+      method: "DELETE",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({bookingId: booking_id})
+    });
+    const data = await response.json();
+    setDeleteMessage(data.message);
+    setDeletedModalVisible(true);
+  }
+
+  // handle Map go back:
+  async function handleMapGoBack() {
+    setDeletedModalVisible(false);
+    navigation.navigate("Home");
+    dispatch(refreshComponents());
+  }
 
   const futuresResa = responseUpcoming.map((data, i) => {
     return (
       <View style={styles.inputCard} key={i}>
-        <Text style={styles.name}>{data.initialData.title}</Text>
+        <Text style={styles.name}>{data.initialData.title}{"\n"}</Text>
         <View styles={styles.recap}>
           <Text style={styles.whiteText}>
-            le {moment(data.initialData.start).format("DD/MM/YYYY")} à{" "}
-            {data.initialData.hourlyType} pour {data.guests} personnes
+            Date : {moment(data.initialData.start).format("DD/MM/YYYY")} {"\n"}
+            Heure : {moment(data.initialData.start).format("HH:00")} {"\n"}
+            Nombre de personnes : {data.guests} {"\n"}
+            Réservation : {data._id}
           </Text>
-          <Text style={styles.whiteText}></Text>
-          <Text style={styles.whiteText}></Text>
         </View>
-        <Text style={styles.whiteText}>{data.specialRequests}</Text>
-        <View style={styles.threeButtons}>
-          <TouchableOpacity style={styles.littlebutton}>
-            <Text>Supprimer</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.littlebutton}>
-            <Text>Commenter</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.littlebutton}>
-            <Text>Payer</Text>
+        <Text style={styles.whiteText}>Demande(s): {data.specialRequests}</Text>
+        <View style={styles.buttons}>
+          <TouchableOpacity onPress={() => handleCancelPress(data._id)} style={styles.littleButton}>
+            <Text>Annuler</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   });
+
   let historiques = [];
   if (responseHistory.length > 0) {
     historiques = responseHistory.map((data, i) => {
       return (
         <View style={styles.inputCard} key={i}>
-          <Text style={styles.name}>{data.initialData.title}</Text>
+          <Text style={styles.name}>{data.initialData.title}{"\n"}</Text>
           <View styles={styles.recap}>
             <Text style={styles.whiteText}>
-              le {moment(data.initialData.start).format("DD/MM/YYYY")} à{" "}
-              {data.initialData.hourlyType} pour {data.guests} personnes
+              Date : {moment(data.initialData.start).format("DD/MM/YYYY")} {"\n"}
+              Heure : {moment(data.initialData.start).format("HH:00")} {"\n"}
+              Nombre de personnes : {data.guests} {"\n"}
+              Réservation : {data._id}
             </Text>
-            <Text style={styles.whiteText}></Text>
-            <Text style={styles.whiteText}></Text>
           </View>
-          <Text style={styles.whiteText}>{data.specialRequests}</Text>
-          <View style={styles.threeButtons}>
-            <TouchableOpacity style={styles.littlebutton}>
-              <Text>Supprimer</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("NewReview")}
-              style={styles.littlebutton}
-            >
-              <Text>Commenter</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.littlebutton}
-              onPress={() => navigation.navigate("Checkout")}
-            >
+          <Text style={styles.whiteText}>Demande(s): {data.specialRequests}</Text>
+          <View style={styles.buttons}>
+            <TouchableOpacity onPress={() => handlePayment(data._id)} style={styles.littleButton}>
               <Text>Payer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleComment(data._id)} style={styles.littleButton}>
+              <Text>Commenter</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -108,12 +128,64 @@ export default function UpcomingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Header />
-      <Text style={styles.name}>Réservations à venir</Text>
-      <ScrollView>{futuresResa}</ScrollView>
+      <Header/>
 
-      <Text style={styles.name}>Historique</Text>
-      <ScrollView>{historiques.length > 0 && historiques}</ScrollView>
+      <Modal visible={notificationModalVisible} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.notification}>
+              Es-tu sûr de vouloir annuler ta réservation ?
+            </Text>
+            <TouchableOpacity
+              onPress={() => handleCancel()}
+              style={styles.modalButton}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Oui</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setNotificationModalVisible(false)}
+              style={styles.modalButton}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Non</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={deletedModalVisible} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.notification}>
+              {deleteMessage}
+            </Text>
+            <TouchableOpacity
+              onPress={() => handleMapGoBack()}
+              style={styles.modalButton}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Retour à la carte</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <View style={{height: "40%", width: "100%"}}>
+        <Text style={styles.title}>Réservations à venir</Text>
+        <ScrollView contentContainerStyle={{width: "100%", maxHeight: "10000%"}}>
+          {futuresResa}
+        </ScrollView>
+      </View>
+
+      <View style={{width: "100%", borderTopColor: "#CDAB82", borderTopWidth: 2, marginVertical: 20}}/>
+
+      <View style={{height: "40%", width: "100%"}}>
+        <Text style={styles.title}>Historique</Text>
+        <ScrollView contentContainerStyle={{width: "100%", maxHeight: "10000%"}}>
+          {historiques.length > 0 && historiques}
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -123,67 +195,97 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   recap: {
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   whiteText: {
     color: "white",
-    fontSize: RFPercentage(2.3),
+    fontSize: RFPercentage(2)
   },
-  threeButtons: {
+  buttons: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "space-evenly"
   },
-  button: {
+  littleButton: {
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,
-    width: "100%",
-    minHeight: "7%",
+    width: "40%",
+    height: "50%",
     backgroundColor: "#CDAB82",
-    borderColor: "#CDAB82",
-    borderWidth: 3,
     borderRadius: 5,
-    marginTop: "10%",
-  },
-  littlebutton: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 2,
-    paddingVertical: 3,
-    width: "32%",
-    minHeight: "7%",
-    backgroundColor: "#CDAB82",
-    borderColor: "#CDAB82",
-    borderWidth: 3,
-    borderRadius: 5,
-    marginTop: "5%",
-    marginBottom: "2%",
+    marginTop: "2%"
   },
 
   entete: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingBottom: 5,
-    alignItems: "baseline",
+    alignItems: "baseline"
   },
-  name: {
+  title: {
     fontSize: RFPercentage(3),
     fontWeight: "600",
     color: "#CDAB82",
+    textAlign: "center"
+  },
+  name: {
+    fontSize: RFPercentage(2.5),
+    fontWeight: "600",
+    color: "#CDAB82",
+    textAlign: "center"
   },
   inputCard: {
     width: "100%",
-    minHeight: "2%",
+    height: 225,
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: "5%",
     marginTop: "5%",
-    padding: 5,
+    padding: 5
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  modalView: {
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 30,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: "75%"
+  },
+  modalButton: {
+    width: 150,
+    alignItems: "center",
+    marginVertical: 10,
+    paddingTop: 8,
+    backgroundColor: "#CDAB82",
+    borderRadius: 10
+  },
+  pressedTextButton: {
+    color: "#1D2C3B",
+    height: 24,
+    fontWeight: "600",
+    fontSize: 15
+  },
+  notification: {
+    color: "#1D2C3B",
+    fontSize: RFPercentage(2),
+    fontWeight: "400"
+  }
 });

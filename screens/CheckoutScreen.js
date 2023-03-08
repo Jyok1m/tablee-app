@@ -5,6 +5,8 @@ import {RFPercentage} from "react-native-responsive-fontsize";
 import {useDispatch, useSelector} from "react-redux";
 import {BACKEND_URL} from "../backend_url";
 
+const moment = require("moment");
+
 export default function CheckoutScreen({navigation}) {
   const dispatch = useDispatch();
   const booking = useSelector((state) => state.booking.value);
@@ -22,7 +24,8 @@ export default function CheckoutScreen({navigation}) {
   const [validationMessage, setValidationMessage] = useState("");
   const inputRef = useRef(null);
 
-  const booking_id = "64072e026c308d6a59932677";
+  const booking_id = booking.bookingId;
+
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/bookings/${booking_id}`);
@@ -170,10 +173,10 @@ export default function CheckoutScreen({navigation}) {
           <Text style={styles.bookingTitle}>Rappel de la réservation{"\n"}</Text>
           <Text style={styles.bookingContent}>
             Restaurant : {restaurantName} {"\n"}{"\n"}
-            Date : {bookingDate} {"\n"}{"\n"}
-            Heure : {bookingTime} {"\n"}{"\n"}
+            Date : {moment(bookingDate).format("DD/MM/YYYY")} {"\n"}{"\n"}
+            Heure : {moment(bookingDate).format("HH:00")} {"\n"}{"\n"}
             Nombre de personnes : {numberOfPeople} {"\n"}{"\n"}
-            Numéro de réservation : {bookingNumber} {"\n"}{"\n"}
+            Réservation : {bookingNumber} {"\n"}{"\n"}
           </Text>
         </View>
 

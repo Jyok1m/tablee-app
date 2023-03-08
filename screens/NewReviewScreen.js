@@ -4,32 +4,36 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TextInput,
+  TextInput
 } from "react-native";
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Header from "../components/Header";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { useSelector, useDispatch } from "react-redux";
-import { addReviews } from "../reducers/restaurant";
-import { BACKEND_URL } from "../backend_url";
+import {RFPercentage} from "react-native-responsive-fontsize";
+import {useSelector, useDispatch} from "react-redux";
+import {addReviews} from "../reducers/restaurant";
+import {BACKEND_URL} from "../backend_url";
 
 export default function NewReviewScreen() {
-  const [inputValue, setInputValue] = useState(null);
+  const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
   const restaurant = useSelector((state) => state.restaurant.value);
-  const token = { restaurant };
+  const booking = useSelector((state) => state.booking.value);
+  const {bookingId} = booking;
+  const token = {restaurant};
   const user = useSelector((state) => state.user.value);
+
+  console.log(bookingId);
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Header />
+      <Header/>
       <Text style={styles.name}>{restaurant.name}Maxims</Text>
       <TextInput
         style={styles.content}
-        placeholder="Ecris ton avis sur le restaurant"
+        placeholder="Écris ton avis sur le restaurant..."
         onChangeText={(value) => setInputValue(value)}
         multiline={true}
         textAlign="left"
@@ -48,13 +52,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   name: {
     fontSize: RFPercentage(3),
     fontWeight: "600",
     color: "#CDAB82",
-    padding: 20,
+    padding: 20
   },
   button: {
     alignItems: "center",
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 3,
     borderRadius: 5,
-    marginTop: "10%",
+    marginTop: "10%"
   },
   content: {
     alignContent: "flex-start",
@@ -74,6 +78,6 @@ const styles = StyleSheet.create({
     height: "50%",
     width: "100%",
     borderRadius: 5,
-    padding: 10,
-  },
+    padding: 10
+  }
 });
