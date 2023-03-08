@@ -17,8 +17,11 @@ import { BACKEND_URL } from "../backend_url";
 export default function ReviewScreen() {
   const dispatch = useDispatch();
   const restaurant = useSelector((state) => state.restaurant.value);
-  const [everyReviews, setEveryReviews] = useState([]);
+  const user = useSelector((state) => state.user.value);
   const { token } = restaurant;
+  const booking = useSelector((state) => state.booking.value);
+  const [everyReviews, setEveryReviews] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -28,19 +31,51 @@ export default function ReviewScreen() {
       const data = await response.json();
       if (data.result === true) {
         setEveryReviews(data.allReviews);
+        console.log(data.allReviews);
       }
     })();
-  }, []);
+  }, [refresh]);
+
+  async function handleUpVote(reviewId) {
+    const response = await fetch(
+      `${BACKEND_URL}/restaurants/upVote/${user.token}/${reviewId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurantToken: restaurant.token }),
+      }
+    );
+    const data = await response.json();
+    if (data.result) {
+      setRefresh(!refresh);
+    }
+  }
+  async function handleDownVote(reviewId) {
+    const response = await fetch(
+      `${BACKEND_URL}/restaurants/downVote/${user.token}/${reviewId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurantToken: restaurant.token }),
+      }
+    );
+    const data = await response.json();
+    if (data.result) {
+      setRefresh(!refresh);
+    }
+  }
 
   const myReviews = everyReviews.map((data, i) => {
     return (
       <View style={styles.reviewsContainer} key={i}>
         <View style={styles.counter}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleUpVote(data._id)}>
             <FontAwesome name="caret-up" style={styles.caretUp}></FontAwesome>
           </TouchableOpacity>
-          <Text style={styles.count}>{data.upVotedBy.length}</Text>
-          <TouchableOpacity>
+          <Text style={styles.count}>
+            {data.upVotedBy.length - data.downVotedBy.length}
+          </Text>
+          <TouchableOpacity onPress={() => handleDownVote(data._id)}>
             <FontAwesome
               name="caret-down"
               style={styles.caretDown}
@@ -62,7 +97,7 @@ export default function ReviewScreen() {
     <View style={styles.container}>
       <Header />
       <ScrollView>
-        <View>{myReviews}</View>
+        <View>{everyReviews.length > 0 && myReviews}</View>
       </ScrollView>
     </View>
   );

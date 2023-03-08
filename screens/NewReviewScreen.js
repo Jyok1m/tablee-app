@@ -10,7 +10,6 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useSelector, useDispatch } from "react-redux";
-import { addReviews } from "../reducers/restaurant";
 import { BACKEND_URL } from "../backend_url";
 import { useEffect } from "react";
 
