@@ -3,8 +3,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  TextInput,
-  View
+  TextInput
 } from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import React, {useState, useEffect} from "react";
@@ -24,7 +23,7 @@ export default function LandingScreen({navigation}) {
     if (user.token) navigation.navigate("TabNavigator");
   }, []);
 
-  // Fonction signin pour login le user
+  // Fonction signin pour login l'utilisateur
   async function signin() {
     const userData = {username, password};
     const response = await fetch(`${BACKEND_URL}/users/signin`, {
