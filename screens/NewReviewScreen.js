@@ -4,14 +4,15 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TextInput
+  TextInput,
 } from "react-native";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Header from "../components/Header";
-import {RFPercentage} from "react-native-responsive-fontsize";
-import {useSelector, useDispatch} from "react-redux";
-import {addReviews} from "../reducers/restaurant";
-import {BACKEND_URL} from "../backend_url";
+import { RFPercentage } from "react-native-responsive-fontsize";
+import { useSelector, useDispatch } from "react-redux";
+import { addReviews } from "../reducers/restaurant";
+import { BACKEND_URL } from "../backend_url";
+import { useEffect } from "react";
 
 export default function NewReviewScreen() {
   const [inputValue, setInputValue] = useState(null);
@@ -19,45 +20,33 @@ export default function NewReviewScreen() {
   const dispatch = useDispatch();
   const restaurant = useSelector((state) => state.restaurant.value);
   const booking = useSelector((state) => state.booking.value);
-  const {bookingId} = booking;
-  const token = {restaurant};
+  const { bookingId } = booking;
+  const token = { restaurant };
   const user = useSelector((state) => state.user.value);
 
-  useEffect(() => {
-    (async function handleSubmit() {
-      const reviewSchema = {
-        writer: booking.booker.username,
-        date: booking.date,
-        description: newReviews, // on met quoi ici ?
-        upVotedBy: [], 
-        downVotedBy: [],
-      };
-      
-      const response = await fetch(
-        `${BACKEND_URL}/restaurants/reviews/${booking._id}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(reviewSchema),
-        }
-      );
-      const data = await response.json();
-      if (data.result === true) {
-        const createdReviews = { ...data.reviews, author: writer };
-          dispatch(addReviews(createdReviews));
-          setNewReviews('');
-       
+  async function handleSubmit() {
+    const response = await fetch(
+      `${BACKEND_URL}/restaurants/reviews/${booking.bookingId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ review: inputValue }),
       }
-    })();
-  }, []);
+    );
+    const data = await response.json();
+    if (data.result === true) {
 
+      setNewReviews(null);
+      alert('commentaire sauvegardé')
+    }
+  }
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Header/>
+      <Header />
       <Text style={styles.name}>{restaurant.name}Maxims</Text>
       <TextInput
         style={styles.content}
@@ -68,7 +57,7 @@ export default function NewReviewScreen() {
         textAlignVertical="top"
         value={inputValue}
       />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={()=>handleSubmit()}>
         <Text style={styles.text}>Valider</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
@@ -80,13 +69,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B"
+    backgroundColor: "#1D2C3B",
   },
   name: {
     fontSize: RFPercentage(3),
     fontWeight: "600",
     color: "#CDAB82",
-    padding: 20
+    padding: 20,
   },
   button: {
     alignItems: "center",
@@ -98,7 +87,7 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 3,
     borderRadius: 5,
-    marginTop: "10%"
+    marginTop: "10%",
   },
   content: {
     alignContent: "flex-start",
@@ -106,6 +95,6 @@ const styles = StyleSheet.create({
     height: "50%",
     width: "100%",
     borderRadius: 5,
-    padding: 10
-  }
+    padding: 10,
+  },
 });
