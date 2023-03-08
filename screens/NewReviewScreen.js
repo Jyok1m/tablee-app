@@ -47,7 +47,7 @@ export default function NewReviewScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <Header />
-      <Text style={styles.name}>{restaurant.name}Maxims</Text>
+      <Text style={styles.name}>{restaurant.name}</Text>
       <TextInput
         style={styles.content}
         placeholder="Écris ton avis sur le restaurant..."
