@@ -6,16 +6,17 @@ import {
   SafeAreaView,
   FlatList,
   StyleSheet,
-  ScrollView
+  ScrollView,
+  Image
 } from "react-native";
-import { useState } from "react";
-import { Feather } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
-import ChatComponent from "../components/ChatComponent";
+import {useState} from "react";
+import {Feather} from "@expo/vector-icons";
+import {useSelector} from "react-redux";
 import NewChatModal from "../components/NewChatModal";
-import { useLayoutEffect, useEffect } from "react";
+import {useEffect} from "react";
+import {BACKEND_URL} from "../backend_url";
 import socket from "../socket";
-import { Ionicons } from "@expo/vector-icons";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function ChatRoomScreen({navigation}) {
   // Recupere les infos de l'utilisateur
@@ -24,53 +25,47 @@ export default function ChatRoomScreen({navigation}) {
   const [visible, setVisible] = useState(false);
   const [roomsFetched, setRoomsFetched] = useState([]);
 
-
-  let conversations = <View></View>
+  let conversations = <View></View>;
   //👇🏻 Runs whenever there is new trigger from the backend
   useEffect(() => {
     (async () => {
-      const response = await fetch("http://192.168.1.10:3000/messages/rooms");
+      const response = await fetch(`${BACKEND_URL}/messages/rooms`);
       const data = await response.json();
       if (data) {
         setRoomsFetched(data.rooms);
       }
       //console.log(roomsFetched);
-
     })();
   }, [visible]);
 
   conversations = roomsFetched?.map((data, i) => {
-      const handleNavigation = () => {
-        navigation.navigate("MessageScreen", {
-          id: data.id,
-          name: data.name,
-        });
-      };
-return (
-  <Pressable style={styles.chatPreview} onPress={handleNavigation} key={i}>
-    <Ionicons
-      name="person-circle-outline"
-      size={45}
-      color="black"
-      style={styles.chatPreviewAvatar}
-    />
+    const handleNavigation = () => {
+      navigation.navigate("MessageScreen", {
+        id: data.id,
+        name: data.name
+      });
+    };
+    return (
+      <Pressable style={styles.chatPreview} onPress={handleNavigation} key={i}>
 
-    <View style={styles.chatPreviewRightContainer}>
-      <View>
-        <Text style={styles.cusername}>{data.name}</Text>
+        <View style={styles.chatPreviewRightContainer}>
+          <View>
+            <Text style={styles.cusername}>{data.name}</Text>
 
-        <Text style={styles.cmessage}>
-          {data.messages?.length == 0 ? data.messages.text : "Tap to start chatting"}
-        </Text>
-      </View>
-      <View>
-        <Text style={styles.chatTime}>
-          {data.messages.time ? data.messages.time : "now"}
-        </Text>
-      </View>
-    </View>
-  </Pressable>
-);
+            <Text style={styles.cmessage}>
+              {data.messages?.length == 0
+                ? data.messages.text
+                : "Tap to start chatting"}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.chatTime}>
+              {data.messages.time ? data.messages.time : "now"}
+            </Text>
+          </View>
+        </View>
+      </Pressable>
+    );
   });
 
   return (
@@ -81,7 +76,7 @@ return (
 
           {/* 👇🏻 Logs "ButtonPressed" to the console when the icon is clicked */}
           <Pressable onPress={() => setVisible(true)}>
-            <Feather name="edit" size={24} color="#CDAB82" />
+            <Feather name="edit" size={24} color="#CDAB82"/>
           </Pressable>
         </View>
       </View>
@@ -95,7 +90,7 @@ return (
           </View>
         )}
       </ScrollView>
-      {visible ? <NewChatModal setVisible={setVisible} /> : ""}
+      {visible ? <NewChatModal setVisible={setVisible}/> : ""}
     </SafeAreaView>
   );
 }
@@ -105,12 +100,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#1D2C3B",
     flex: 1,
     padding: 10,
-    position: "relative",
+    position: "relative"
   },
   chatheading: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#CDAB82",
+    color: "#CDAB82"
   },
   chattopContainer: {
     backgroundColor: "#1D2C3B",
@@ -119,21 +114,21 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     marginBottom: 15,
-    elevation: 2,
+    elevation: 2
   },
   chatheader: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   chatlistContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 10
   },
   chatemptyContainer: {
     width: "100%",
     height: "80%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   chatPreview: {
     width: "100%",
@@ -143,27 +138,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: "#CDAB82",
     height: 80,
-    marginBottom: 10,
+    marginBottom: 10
   },
   //Fenetres de chat
   chatPreviewAvatar: {
-    marginRight: 15,
+    marginRight: 15
   },
   cusername: {
     fontSize: 18,
     marginBottom: 5,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   cmessage: {
     fontSize: 14,
-    opacity: 0.7,
+    opacity: 0.7
   },
   chatPreviewRightContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    flex: 1,
+    flex: 1
   },
   chatTime: {
-    opacity: 0.5,
-  },
+    opacity: 0.5
+  }
 });
