@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator,
+  ScrollView
 } from "react-native";
 import {useSelector, useDispatch} from "react-redux";
 import {refreshComponents} from "../reducers/booking";
@@ -269,8 +270,6 @@ export default function BookingScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Header/>
-
       <Modal visible={loading} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -280,274 +279,266 @@ export default function BookingScreen({navigation}) {
           </View>
         </View>
       </Modal>
+      <Modal visible={modalVisible} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TextInput
+              placeholder="Ex: 1, 2, 3..."
+              placeholderTextColor="grey"
+              type=""
+              onChangeText={(value) => setNumberOfPersons(value)}
+              value={numberOfPersons}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+            <TouchableOpacity
+              onPress={() => handlePersonsClick()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Confirmer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleCancel()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={timeModalVisible} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.timeContainer}>
+              {showDate && availableSlots}
+            </View>
+            <TouchableOpacity
+              onPress={() => handleValidateTime()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Ajouter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleCancelTime()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Annuler</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={cardModalVisible} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TextInput
+              style={styles.input}
+              placeholder="Nom sur la carte bancaire"
+              placeholderTextColor="grey"
+              value={cardHolderName}
+              onChangeText={(value) => setCardHolderName(value)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Numéro de carte"
+              placeholderTextColor="grey"
+              value={cardNumber}
+              onChangeText={(value) => setCardNumber(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Mois d'expiration (MM)"
+              placeholderTextColor="grey"
+              value={cardExpirationMonth}
+              onChangeText={(value) => setCardExpirationMonth(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Année d'expiration (AAAA)"
+              placeholderTextColor="grey"
+              value={cardExpirationYear}
+              onChangeText={(value) => setCardExpirationYear(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="CVV"
+              placeholderTextColor="grey"
+              value={cardCVV}
+              onChangeText={(value) => setCardCVV(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number"
+              placeholderTextColor="grey"
+              value={phoneNumber}
+              onChangeText={(value) => setPhoneNumber(value)}
+              keyboardType="phone-pad"
+            />
+            <TouchableOpacity
+              onPress={() => handleValidateCard()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Ajouter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleCancelCard()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Annuler</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={requestModalVisible} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TextInput
+              placeholder="Que veux-tu demander ?"
+              placeholderTextColor="grey"
+              onChangeText={(value) => setRequest(value)}
+              value={request}
+              style={styles.input}
+            />
+            <TouchableOpacity
+              onPress={() => handleValidateRequest()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Confirmer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleCancelRequest()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Header/>
 
       <View style={styles.title}>
         <Text style={styles.name}>Réservation</Text>
       </View>
 
-      <View style={styles.mainContainer}>
+      <ScrollView>
+        <Text style={styles.dividerTitle}>Informations de base</Text>
 
-        <View style={styles.dataContainer}>
-          <View style={styles.divider}>
-            <Text style={styles.dividerTitle}>Informations de base</Text>
-          </View>
-
-          <Modal visible={modalVisible} animationType="fade" transparent>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TextInput
-                  placeholder="Ex: 1, 2, 3..."
-                  placeholderTextColor="grey"
-                  type=""
-                  onChangeText={(value) => setNumberOfPersons(value)}
-                  value={numberOfPersons}
-                  style={styles.input}
-                  keyboardType="numeric"
-                />
-                <TouchableOpacity
-                  onPress={() => handlePersonsClick()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Confirmer</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleCancel()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Annuler</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-          <View>
-            <TouchableOpacity onPress={() => showPersonsModal()}
-                              style={[styles.notSelectedButton, (showPersons && numberOfPersons) && styles.selectionButton]}
-            >
-              <Text style={[styles.textButton, (showPersons && numberOfPersons) && styles.pressedTextButton]}>
-                {showPersons && numberOfPersons ? `${numberOfPersons} personne(s)` : "Nombre de personnes"}
-              </Text>
-              {showPersons && numberOfPersons ?
-                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-                :
-                <FontAwesomeIcon icon={faHandPointer} size={14} color="#CDAB82"/>
-              }
-            </TouchableOpacity>
-          </View>
-
-          <View>
-            <TouchableOpacity onPress={() => handleDateButton()}
-                              style={[styles.notSelectedButton, showDate && styles.selectionButton]}
-            >
-              <Text style={[styles.textButton, showDate && styles.pressedTextButton]}>
-                {showDate ? moment(date).locale("fr").format("DD/MM/YYYY") : "Date"}
-              </Text>
-              {showDate ?
-                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-                :
-                <FontAwesomeIcon icon={faHandPointer} size={14} color="#CDAB82"/>
-              }
-            </TouchableOpacity>
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode="date"
-                onChange={onChange}
-                minimumDate={new Date()}
-              />
-            )}
-          </View>
-
-          <Modal visible={timeModalVisible} animationType="fade" transparent>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <View style={styles.timeContainer}>
-                  {showDate && availableSlots}
-                </View>
-                <TouchableOpacity
-                  onPress={() => handleValidateTime()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Ajouter</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleCancelTime()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Annuler</Text>
-                </TouchableOpacity>
-
-              </View>
-            </View>
-          </Modal>
-          <View>
-            <TouchableOpacity onPress={() => showTimeModal()}
-                              style={[styles.notSelectedButton, selectedTime && styles.selectionButton]}
-            >
-              <Text style={[styles.textButton, selectedTime && styles.pressedTextButton]}>
-                {selectedTime
-                  ?
-                  `${new Date(selectedTime.toString()).getHours()}:${new Date(selectedTime.toString()).getMinutes()}0`
-                  :
-                  "Horaire(s) disponible(s)"}
-              </Text>
-              {selectedTime ?
-                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-                :
-                <FontAwesomeIcon icon={faHandPointer} size={14} color="#CDAB82"/>
-              }
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.dataContainer}>
-          <View style={styles.divider}>
-            <Text style={styles.dividerTitle}>Informations de paiement</Text>
-            <Text style={styles.dividerSubtitle}>(Cela nous permet de valider la réservation auprès du
-              restaurant)</Text>
-          </View>
-          <Modal visible={cardModalVisible} animationType="fade" transparent>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Nom sur la carte bancaire"
-                  placeholderTextColor="grey"
-                  value={cardHolderName}
-                  onChangeText={(value) => setCardHolderName(value)}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Numéro de carte"
-                  placeholderTextColor="grey"
-                  value={cardNumber}
-                  onChangeText={(value) => setCardNumber(value)}
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Mois d'expiration (MM)"
-                  placeholderTextColor="grey"
-                  value={cardExpirationMonth}
-                  onChangeText={(value) => setCardExpirationMonth(value)}
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Année d'expiration (AAAA)"
-                  placeholderTextColor="grey"
-                  value={cardExpirationYear}
-                  onChangeText={(value) => setCardExpirationYear(value)}
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="CVV"
-                  placeholderTextColor="grey"
-                  value={cardCVV}
-                  onChangeText={(value) => setCardCVV(value)}
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Phone Number"
-                  placeholderTextColor="grey"
-                  value={phoneNumber}
-                  onChangeText={(value) => setPhoneNumber(value)}
-                  keyboardType="phone-pad"
-                />
-                <TouchableOpacity
-                  onPress={() => handleValidateCard()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Ajouter</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleCancelCard()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Annuler</Text>
-                </TouchableOpacity>
-
-              </View>
-            </View>
-          </Modal>
-          <View>
-            <TouchableOpacity onPress={() => showCardModal()}
-                              style={[styles.notSelectedButton, cardInfosReady && styles.selectionButton]}
-            >
-              <Text style={[styles.textButton, cardInfosReady && styles.pressedTextButton]}>
-                {cardInfosReady ? "Carte bancaire renseignée" : "Carte bancaire"}
-              </Text>
-              {cardInfosReady ?
-                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-                :
-                <FontAwesomeIcon icon={faHandPointer} size={14} color="#CDAB82"/>
-              }
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.dataContainer}>
-          <View style={styles.divider}>
-            <Text style={styles.dividerTitle}>Confirmation</Text>
-          </View>
-          <Modal visible={requestModalVisible} animationType="fade" transparent>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TextInput
-                  placeholder="Que veux-tu demander ?"
-                  placeholderTextColor="grey"
-                  onChangeText={(value) => setRequest(value)}
-                  value={request}
-                  style={styles.input}
-                />
-                <TouchableOpacity
-                  onPress={() => handleValidateRequest()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Confirmer</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleCancelRequest()}
-                  style={styles.button}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.pressedTextButton}>Annuler</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-          <View>
-            <TouchableOpacity onPress={() => showRequestModal()}
-                              style={[styles.notSelectedButton, request && styles.selectionButton]}
-            >
-              <Text style={[styles.textButton, request && styles.pressedTextButton]}>
-                {request ? "Modifier la demande" : "Demande(s) spéciale(s)"}
-              </Text>
-              {request ?
-                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-                :
-                <FontAwesomeIcon icon={faHandPointer} size={14} color="#CDAB82"/>
-              }
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity onPress={() => validateForm()}
-                            disabled={!formReady && true}
-                            style={[styles.notSelectedButton, formReady && styles.selectionButton]}
+        <View>
+          <TouchableOpacity onPress={() => showPersonsModal()}
+                            style={[styles.notSelectedButton, (showPersons && numberOfPersons) && styles.selectionButton]}
           >
-            <Text style={[styles.textButton, formReady && styles.pressedTextButton]}>Réserver</Text>
+            <Text style={[styles.textButton, (showPersons && numberOfPersons) && styles.pressedTextButton]}>
+              {showPersons && numberOfPersons ? `${numberOfPersons} personne(s)` : "Nombre de personnes"}
+            </Text>
+            {showPersons && numberOfPersons ?
+              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
+              :
+              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
+            }
           </TouchableOpacity>
         </View>
-      </View>
+
+        <View>
+          <TouchableOpacity onPress={() => handleDateButton()}
+                            style={[styles.notSelectedButton, showDate && styles.selectionButton]}
+          >
+            <Text style={[styles.textButton, showDate && styles.pressedTextButton]}>
+              {showDate ? moment(date).locale("fr").format("DD/MM/YYYY") : "Date"}
+            </Text>
+            {showDate ?
+              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
+              :
+              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
+            }
+          </TouchableOpacity>
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode="date"
+              onChange={onChange}
+              minimumDate={new Date()}
+            />
+          )}
+        </View>
+
+        <View>
+          <TouchableOpacity onPress={() => showTimeModal()}
+                            style={[styles.notSelectedButton, selectedTime && styles.selectionButton]}
+          >
+            <Text style={[styles.textButton, selectedTime && styles.pressedTextButton]}>
+              {selectedTime
+                ?
+                `${new Date(selectedTime.toString()).getHours()}:${new Date(selectedTime.toString()).getMinutes()}0`
+                :
+                "Horaire(s) disponible(s)"}
+            </Text>
+            {selectedTime ?
+              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
+              :
+              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
+            }
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.dividerTitle}>Informations de paiement {"\n"}
+          <Text style={styles.dividerSubtitle}>
+            (Cela nous permet de valider la réservation auprès du restaurant)
+          </Text>
+        </Text>
+
+        <View>
+          <TouchableOpacity onPress={() => showCardModal()}
+                            style={[styles.notSelectedButton, cardInfosReady && styles.selectionButton]}
+          >
+            <Text style={[styles.textButton, cardInfosReady && styles.pressedTextButton]}>
+              {cardInfosReady ? "Carte bancaire renseignée" : "Carte bancaire"}
+            </Text>
+            {cardInfosReady ?
+              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
+              :
+              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
+            }
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.dividerTitle}>Confirmation</Text>
+
+        <View>
+          <TouchableOpacity onPress={() => showRequestModal()}
+                            style={[styles.notSelectedButton, request && styles.selectionButton]}
+          >
+            <Text style={[styles.textButton, request && styles.pressedTextButton]}>
+              {request ? "Modifier la demande" : "Demande(s) spéciale(s)"}
+            </Text>
+            {request ?
+              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
+              :
+              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
+            }
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      <TouchableOpacity onPress={() => validateForm()}
+                        disabled={!formReady && true}
+                        style={[styles.reserveButton, formReady && styles.selectionButton]}
+      >
+        <Text style={[styles.reserveText, formReady && styles.pressedTextButton]}>Réserver</Text>
+      </TouchableOpacity>
 
     </View>
   );
@@ -561,9 +552,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1D2C3B"
   },
   title: {
-    alignItems: "center",
-    paddingTop: 10,
-    paddingBottom: 10
+    alignItems: "center"
   },
   mainContainer: {
     justifyContent: "space-between"
@@ -577,15 +566,18 @@ const styles = StyleSheet.create({
     height: 50
   },
   dividerTitle: {
-    fontSize: RFPercentage(2),
+    fontSize: RFPercentage(3),
     fontWeight: "600",
-    color: "#FFF"
+    color: "#CDAB82",
+    marginVertical: 15,
+    textAlign: "center"
   },
   dividerSubtitle: {
-    fontSize: RFPercentage(1.3),
+    fontSize: RFPercentage(1.5),
     fontWeight: "600",
-    color: "#FFF",
-    textStyle: "italic"
+    color: "#CDAB82",
+    fontStyle: "italic",
+    textAlign: "center"
   },
   timeContainer: {
     flexDirection: "row", // This sets the direction of the scroll to horizontal
@@ -602,7 +594,7 @@ const styles = StyleSheet.create({
     fontSize: RFPercentage(3),
     fontStyle: "italic",
     fontWeight: "500",
-    color: "#ffffff"
+    color: "#FFF"
   },
   notSelectedButton: {
     alignItems: "center",
@@ -610,9 +602,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     minWidth: "100%",
     height: 50,
+    borderColor: "grey",
+    borderWidth: 1,
+    borderRadius: 10,
+    marginVertical: "2%"
+  },
+  reserveButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    minWidth: "100%",
+    height: 50,
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginVertical: "2%"
   },
   selectionButton: {
@@ -624,7 +627,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#CDAB82",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginVertical: "2%"
   },
   centeredView: {
@@ -663,10 +666,16 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   textButton: {
+    color: "grey",
+    height: 24,
+    fontWeight: "600",
+    fontSize: RFPercentage(2)
+  },
+  reserveText: {
     color: "#CDAB82",
     height: 24,
     fontWeight: "600",
-    fontSize: 15
+    fontSize: RFPercentage(2)
   },
   timeButton: {
     alignItems: "center",
@@ -676,7 +685,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginVertical: "2%",
     marginHorizontal: "1%"
   },
@@ -695,7 +704,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#CDAB82",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginVertical: "2%",
     marginHorizontal: "1%"
   },

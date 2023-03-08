@@ -131,8 +131,6 @@ export default function CalendarScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Header/>
-
       <Modal visible={notificationModalVisible} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -156,7 +154,6 @@ export default function CalendarScreen({navigation}) {
           </View>
         </View>
       </Modal>
-
       <Modal visible={deletedModalVisible} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -174,7 +171,9 @@ export default function CalendarScreen({navigation}) {
         </View>
       </Modal>
 
-      <View style={{height: "40%", width: "100%"}}>
+      <Header/>
+
+      <View style={{height: "42%", width: "100%"}}>
         <Text style={styles.title}>Réservations à venir</Text>
         <ScrollView contentContainerStyle={{width: "100%", maxHeight: "10000%"}}>
           {futuresResa}
@@ -183,7 +182,7 @@ export default function CalendarScreen({navigation}) {
 
       <View style={{width: "100%", borderTopColor: "#CDAB82", borderTopWidth: 2, marginVertical: 20}}/>
 
-      <View style={{height: "40%", width: "100%"}}>
+      <View style={{height: "42%", width: "100%"}}>
         <Text style={styles.title}>Historique</Text>
         <ScrollView contentContainerStyle={{width: "100%", maxHeight: "10000%"}}>
           {historiques.length > 0 && historiques}
@@ -219,7 +218,7 @@ const styles = StyleSheet.create({
     width: "40%",
     height: "50%",
     backgroundColor: "#CDAB82",
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "2%"
   },
 
@@ -230,13 +229,14 @@ const styles = StyleSheet.create({
     alignItems: "baseline"
   },
   title: {
-    fontSize: RFPercentage(3),
+    fontSize: RFPercentage(4),
     fontWeight: "600",
     color: "#CDAB82",
-    textAlign: "center"
+    textAlign: "center",
+    marginBottom: 10
   },
   name: {
-    fontSize: RFPercentage(2.5),
+    fontSize: RFPercentage(3),
     fontWeight: "600",
     color: "#CDAB82",
     textAlign: "center"
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: "5%",
     marginTop: "5%",
     padding: 5
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     color: "#1D2C3B",
     height: 24,
     fontWeight: "600",
-    fontSize: 15
+    fontSize: RFPercentage(2)
   },
   notification: {
     color: "#1D2C3B",

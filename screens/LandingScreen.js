@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     maxHeight: "40%",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: 20
   },
   inputBox: {
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "5%",
     fontSize: RFPercentage(2)
   },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#CDAB82",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "5%"
   },
   pressableText: {

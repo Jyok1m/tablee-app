@@ -266,14 +266,14 @@ const styles = StyleSheet.create({
     minHeight: "3%",
     borderWidth: 2,
     borderColor: "#CDAB82",
-    borderRadius: 3,
+    borderRadius: 5,
     padding: 5
   },
   sendButton: {
     backgroundColor: "#CDAB82",
     marginTop: 10,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     color: "#1D2C3B",
     transition: 1,
     width: "20%",
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   messagingbuttonContainer: {
     width: "30%",
     backgroundColor: "green",
-    borderRadius: 3,
+    borderRadius: 5,
     alignItems: "center",
     justifyContent: "center"
   },

@@ -171,6 +171,7 @@ export default function HomeScreen({navigation}) {
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="De quoi as-tu envie ?"
+          placeholderTextColor="grey"
           style={styles.recherche}
           onChangeText={(value) => setRechercheInput(value)}
         />
@@ -204,7 +205,6 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
-    borderRadius: 50,
     alignItems: "center"
   },
   inputContainer: {
@@ -222,15 +222,16 @@ const styles = StyleSheet.create({
     minHeight: "3%",
     borderWidth: 2,
     borderColor: "#CDAB82",
-    borderRadius: 3,
-    padding: 5
+    borderRadius: 10,
+    padding: 5,
+    paddingLeft: 10
   },
 
   boutonRecherche: {
     backgroundColor: "#CDAB82",
     marginTop: 10,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     color: "#1D2C3B",
     transition: 1,
     width: "50%",
@@ -245,7 +246,8 @@ const styles = StyleSheet.create({
     width: 300,
     height: 250,
     alignItems: "center",
-    padding: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     color: "white",
     justifyContent: "flex-end"
   },
@@ -258,15 +260,7 @@ const styles = StyleSheet.create({
   },
   calloutInfos: {
     alignItems: "flex-end",
-    fontSize: 12
-  },
-  imgPlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 100,
-    backgroundColor: "grey",
-    alignItems: "center",
-    justifyContent: "center"
+    fontSize: RFPercentage(2)
   },
   calloutDescription: {
     marginBottom: 20,
@@ -282,13 +276,13 @@ const styles = StyleSheet.create({
     textAlign: "justify"
   },
   smallText: {
-    fontSize: RFPercentage(1.5),
+    fontSize: RFPercentage(1.75),
     fontStyle: "italic"
   },
   calloutLink: {
     borderWidth: 1,
     borderColor: "#CDAB82",
-    borderRadius: 3,
+    borderRadius: 10,
     padding: 5
   },
   calloutLinkText: {

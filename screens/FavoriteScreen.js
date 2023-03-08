@@ -1,9 +1,10 @@
 import {StyleSheet, Text, View, ScrollView} from "react-native";
 import React, {useState} from "react";
 import Header from "../components/Header";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {useEffect} from "react";
 import {BACKEND_URL} from "../backend_url";
+import {RFPercentage} from "react-native-responsive-fontsize";
 
 export default function FavoriteScreen() {
   const user = useSelector((state) => state.user.value);
@@ -18,25 +19,19 @@ export default function FavoriteScreen() {
       const data = await response.json();
       const restoLiked = data.user.likes;
       Resto = restoLiked.map((data, i) => {
-        const {name, price, cuisineTypes, description} = data;
+        const {name, averagePrice, cuisineTypes, description} = data;
         return (
           <View key={i} style={styles.inputCard}>
             <View style={styles.entete}>
-              <View style={styles.imgPlaceholder}>
-                <Text>Photo</Text>
-              </View>
-              <View style={styles.infos}>
-                <Text style={styles.title}>{name}</Text>
-                <Text style={[styles.whiteText, styles.smallText]}>
-                  {cuisineTypes}
-                </Text>
-                <Text style={[styles.whiteText, styles.smallText]}>
-                  Prix moyen: {price}€
+              <Text style={styles.title}>{name}</Text>
+              <View style={styles.calloutInfos}>
+                <Text style={styles.whiteText}>
+                  {cuisineTypes} {"\n"}
+                  <Text style={styles.whiteText}>Prix moyen: {averagePrice}€</Text>
                 </Text>
               </View>
             </View>
-
-            <Text style={[styles.whiteText, styles.smallText]}>
+            <Text style={styles.whiteText}>
               {description}
             </Text>
           </View>
@@ -49,7 +44,12 @@ export default function FavoriteScreen() {
   return (
     <View style={styles.container}>
       <Header/>
-      <ScrollView>{resto}</ScrollView>
+      <View style={styles.header}>
+        <Text style={styles.name}>Favoris</Text>
+      </View>
+      <ScrollView style={{width: "100%"}}>
+        <View>{resto}</View>
+      </ScrollView>
     </View>
   );
 }
@@ -72,35 +72,26 @@ const styles = StyleSheet.create({
     minHeight: "2%",
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
-    borderBottomWidth: 1,
-    marginBottom: "5%",
-    padding: 5,
-    paddingBottom: 15,
-    paddingTop: 15,
-    justifyContent: "space-between"
-  },
-  imgPlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 100,
-    backgroundColor: "grey",
-    alignItems: "center",
-    justifyContent: "center"
+    borderWidth: 1,
+    marginBottom: 20,
+    padding: 10,
+    justifyContent: "space-between",
+    borderRadius: 10
   },
 
   title: {
     color: "#CDAB82",
-    fontSize: 20
+    fontSize: RFPercentage(3),
+    fontWeight: "500"
   },
   infos: {
     alignItems: "flex-end",
-    fontSize: 12
+    fontSize: RFPercentage(2)
   },
   whiteText: {
-    color: "white"
-  },
-  smallText: {
-    fontSize: 12
+    fontSize: RFPercentage(2),
+    color: "white",
+    marginBottom: 10
   },
   calloutContainer: {
     backgroundColor: "#1D2C3B",
@@ -109,9 +100,17 @@ const styles = StyleSheet.create({
     height: 250,
     borderWidth: 2,
     borderColor: "#CDAB82",
-    //justifyContent: 'center',
     alignItems: "center",
     padding: 10,
     color: "white"
+  },
+  header: {
+    alignItems: "center"
+  },
+  name: {
+    fontSize: RFPercentage(4),
+    fontWeight: "600",
+    color: "#CDAB82",
+    marginBottom: 20
   }
 });
