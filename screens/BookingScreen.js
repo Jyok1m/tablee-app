@@ -566,8 +566,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   mainContainer: {
-    justifyContent: "space-between",
-    height: "80%"
+    justifyContent: "space-between"
   },
   dataContainer: {
     width: "100%"
