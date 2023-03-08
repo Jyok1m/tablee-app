@@ -13,15 +13,15 @@ import {
 } from "react-native";
 import React, { useRef } from "react";
 import Header from "../components/Header";
-import { useEffect, useState, useLayoutEffect } from "react";
-import { BACKEND_URL } from "../backend_url";
-import { io } from "socket.io-client";
-import { useSelector } from "react-redux";
-import { Ionicons } from "@expo/vector-icons";
+import {useEffect, useState, useLayoutEffect} from "react";
+import {BACKEND_URL} from "../backend_url";
+import {io} from "socket.io-client";
+import {useSelector} from "react-redux";
+import {Ionicons} from "@expo/vector-icons";
 
 var socket = io(`http://192.168.1.10:3000`);
 
-export default function MessageScreen({ route, navigation }) {
+export default function MessageScreen({route, navigation}) {
   const [message, setMessage] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const [user, setUser] = useState("");
@@ -35,7 +35,7 @@ export default function MessageScreen({ route, navigation }) {
   const userInfos = useSelector((state) => state.user.value);
 
   // Recupere le nom et l'id de la chatroom
-  const { name, id } = route.params;
+  const {name, id} = route.params;
 
   // Recupere le nom d'utilisateur (puis la photo de profil apres)
   const getUsername = () => {
@@ -49,7 +49,7 @@ export default function MessageScreen({ route, navigation }) {
 
   // Met le titre du header avec le nom de la chatroom
   useLayoutEffect(() => {
-    navigation.setOptions({ title: name, roomId: id });
+    navigation.setOptions({title: name, roomId: id});
     setRoomNumber(id);
     getUsername();
   }, []);
@@ -86,16 +86,16 @@ export default function MessageScreen({ route, navigation }) {
         key={i}
         style={[
           styles.messagingscreen,
-          { paddingVertical: 15, paddingHorizontal: 10 },
+          {paddingVertical: 15, paddingHorizontal: 10}
         ]}>
         <View>
           <View
             style={
               status
                 ? styles.mmessageWrapper
-                : [styles.mmessageWrapper, { alignItems: "flex-end" }]
+                : [styles.mmessageWrapper, {alignItems: "flex-end"}]
             }>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
               <Ionicons
                 name="person-circle-outline"
                 size={30}
@@ -108,9 +108,9 @@ export default function MessageScreen({ route, navigation }) {
                   status
                     ? styles.mmessage
                     : [
-                        styles.mmessage,
-                        { backgroundColor: "rgb(194, 243, 194)" },
-                      ]
+                      styles.mmessage,
+                      {backgroundColor: "rgb(194, 243, 194)"}
+                    ]
                 }>
                 <Text>{data.message}</Text>
               </View>
@@ -232,7 +232,7 @@ export default function MessageScreen({ route, navigation }) {
         />
         <Pressable style={styles.sendButton} onPress={sendMessage}>
           <View>
-            <Text style={{ color: "#f2f0f1", fontSize: 20 }}>SEND</Text>
+            <Text style={{color: "#f2f0f1", fontSize: 20}}>SEND</Text>
           </View>
         </Pressable>
       </View>
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#CDAB82",
     borderRadius: 3,
-    padding: 5,
+    padding: 5
   },
   sendButton: {
     backgroundColor: "#CDAB82",
@@ -304,68 +304,27 @@ const styles = StyleSheet.create({
     backgroundColor: "green",
     borderRadius: 3,
     alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 50,
+    justifyContent: "center"
   },
 
   mmessageWrapper: {
     width: "100%",
     alignItems: "flex-start",
-    marginBottom: 15,
+    marginBottom: 15
   },
   mmessage: {
     maxWidth: "50%",
     backgroundColor: "#f5ccc2",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 2,
+    marginBottom: 2
   },
   mvatar: {
-    marginRight: 5,
+    marginRight: 5
   },
   // Bulles messages
-  chatemptyText: { fontWeight: "bold", fontSize: 24, paddingBottom: 30 },
+  chatemptyText: {fontWeight: "bold", fontSize: 24, paddingBottom: 30},
   messagingscreen: {
-    flex: 1,
-  },
-  messaginginputContainer: {
-    width: "100%",
-    minHeight: 100,
-    backgroundColor: "white",
-    paddingVertical: 30,
-    paddingHorizontal: 15,
-    justifyContent: "center",
-    flexDirection: "row",
-  },
-  messaginginput: {
-    borderWidth: 1,
-    padding: 15,
-    flex: 1,
-    marginRight: 10,
-    borderRadius: 20,
-  },
-  messagingbuttonContainer: {
-    width: "30%",
-    backgroundColor: "green",
-    borderRadius: 3,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 50,
-  },
-
-  mmessageWrapper: {
-    width: "100%",
-    alignItems: "flex-start",
-    marginBottom: 15,
-  },
-  mmessage: {
-    maxWidth: "50%",
-    backgroundColor: "#f5ccc2",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 2,
-  },
-  mvatar: {
-    marginRight: 5,
-  },
+    flex: 1
+  }
 });

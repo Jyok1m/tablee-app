@@ -10063,6 +10063,11 @@ react-native-root-siblings@^4.0.0:
   resolved "https://registry.npmjs.org/react-native-root-siblings/-/react-native-root-siblings-4.1.1.tgz"
   integrity sha512-sdmLElNs5PDWqmZmj4/aNH4anyxreaPm61c4ZkRiR8SO/GzLg6KjAbb0e17RmMdnBdD0AIQbS38h/l55YKN4ZA==
 
+react-native-root-siblings@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-root-siblings/-/react-native-root-siblings-4.1.1.tgz#b7742db7634a87f507eb99a5fd699c4f10c46ab0"
+  integrity sha512-sdmLElNs5PDWqmZmj4/aNH4anyxreaPm61c4ZkRiR8SO/GzLg6KjAbb0e17RmMdnBdD0AIQbS38h/l55YKN4ZA==
+
 react-native-root-toast@^3.4.1:
   version "3.4.1"
   resolved "https://registry.npmjs.org/react-native-root-toast/-/react-native-root-toast-3.4.1.tgz"

@@ -1,14 +1,13 @@
 import React from "react";
-import { Text } from "react-native";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { RootSiblingParent } from "react-native-root-siblings";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {Text} from "react-native";
+import {RFPercentage} from "react-native-responsive-fontsize";
+import {NavigationContainer} from "@react-navigation/native";
+import {RootSiblingParent} from "react-native-root-siblings";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 // Navigation:
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 // Stack screens:
 import LandingScreen from "./screens/LandingScreen";
@@ -18,17 +17,19 @@ import RestaurantScreen from "./screens/RestaurantScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import MenuScreen from "./screens/MenuScreen";
 import BookingScreen from "./screens/BookingScreen";
+import CheckoutScreen from "./screens/CheckoutScreen";
+import NewReviewScreen from "./screens/NewReviewScreen";
 
 // Tab nav screens:
 import HomeScreen from "./screens/HomeScreen";
 import MessageScreen from "./screens/MessageScreen";
 import FavoriteScreen from "./screens/FavoriteScreen";
-import UpcomingScreen from "./screens/UpcomingScreen";
+import CalendarScreen from "./screens/CalendarScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import ChatRoomScreen from "./screens/ChatRoomScreen";
 
 // Font Awesome:
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {
   faHouse,
   faEnvelope,
@@ -38,30 +39,31 @@ import {
   faInfoCircle,
   faCheck,
   faBookOpen,
-  faCalendarDays,
+  faCalendarDays
 } from "@fortawesome/free-solid-svg-icons";
 
 // Import store persistance modules:
-import { Provider } from "react-redux";
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import {Provider} from "react-redux";
+import {combineReducers, configureStore} from "@reduxjs/toolkit";
 import user from "./reducers/user";
 import restaurant from "./reducers/restaurant";
-import { persistStore, persistReducer } from "redux-persist";
-import { PersistGate } from "redux-persist/integration/react";
+import booking from "./reducers/booking";
+import {persistStore, persistReducer} from "redux-persist";
+import {PersistGate} from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SnapScreen from "./screens/SnapScreen";
 
 // Configure the store:
-const reducers = combineReducers({ user, restaurant });
+const reducers = combineReducers({user, restaurant, booking});
 const persistConfig = {
-  key: "face-up",
+  key: "tablee",
   storage: AsyncStorage,
-  blacklist: ["token"],
+  blacklist: ["token", "bookingId"]
 };
 const store = configureStore({
   reducer: persistReducer(persistConfig, reducers),
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+    getDefaultMiddleware({serializableCheck: false})
 });
 const persistor = persistStore(store);
 
@@ -70,9 +72,9 @@ const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#1D2C3B" }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: "#1D2C3B"}}>
       <Tab.Navigator
-        screenOptions={({ route }) => ({
+        screenOptions={({route}) => ({
           tabBarIcon: () => {
             let iconName;
 
@@ -82,17 +84,17 @@ function TabNavigator() {
               iconName = faEnvelope;
             } else if (route.name === "Favorites") {
               iconName = faHeart;
-            } else if (route.name === "Upcoming") {
+            } else if (route.name === "Calendar") {
               iconName = faCalendarCheck;
             } else if (route.name === "Profile") {
               iconName = faCircleUser;
             }
 
             return (
-              <FontAwesomeIcon icon={iconName} size={20} color={"#CDAB82"} />
+              <FontAwesomeIcon icon={iconName} size={20} color={"#CDAB82"}/>
             );
           },
-          tabBarLabel: ({ focused }) => {
+          tabBarLabel: ({focused}) => {
             let bottomWidth, bottomColor, labelName;
             let weight = "400";
 
@@ -102,8 +104,8 @@ function TabNavigator() {
               labelName = "Messages";
             } else if (route.name === "Favorites") {
               labelName = "Favoris";
-            } else if (route.name === "Upcoming") {
-              labelName = "À venir";
+            } else if (route.name === "Calendar") {
+              labelName = "Résas";
             } else if (route.name === "Profile") {
               labelName = "Profil";
             }
@@ -127,7 +129,7 @@ function TabNavigator() {
                   borderBottomWidth: bottomWidth,
                   borderBottomColor: bottomColor,
                   paddingBottom: 5,
-                  width: "90%",
+                  width: "90%"
                 }}
               >
                 {labelName}
@@ -142,15 +144,15 @@ function TabNavigator() {
             borderTopWidth: null,
             height: RFPercentage(8),
             paddingBottom: RFPercentage(0.5),
-            paddingTop: RFPercentage(0.6),
-          },
+            paddingTop: RFPercentage(0.6)
+          }
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Messages" component={ChatRoomScreen} />
-        <Tab.Screen name="Favorites" component={FavoriteScreen} />
-        <Tab.Screen name="Upcoming" component={UpcomingScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Home" component={HomeScreen}/>
+        <Tab.Screen name="Messages" component={ChatRoomScreen}/>
+        <Tab.Screen name="Favorites" component={FavoriteScreen}/>
+        <Tab.Screen name="Calendar" component={CalendarScreen}/>
+        <Tab.Screen name="Profile" component={ProfileScreen}/>
       </Tab.Navigator>
     </SafeAreaView>
   );
@@ -158,9 +160,9 @@ function TabNavigator() {
 
 function RestaurantTabNavigator() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#1D2C3B" }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: "#1D2C3B"}}>
       <Tab.Navigator
-        screenOptions={({ route }) => ({
+        screenOptions={({route}) => ({
           tabBarIcon: () => {
             let iconName;
             let iconColor = "#CDAB82";
@@ -177,10 +179,10 @@ function RestaurantTabNavigator() {
             }
 
             return (
-              <FontAwesomeIcon icon={iconName} size={20} color={iconColor} />
+              <FontAwesomeIcon icon={iconName} size={20} color={iconColor}/>
             );
           },
-          tabBarLabel: ({ focused }) => {
+          tabBarLabel: ({focused}) => {
             let bottomWidth, bottomColor, labelName;
             let labelColor = "#CDAB82";
             let weight = "400";
@@ -219,7 +221,7 @@ function RestaurantTabNavigator() {
                   borderBottomWidth: bottomWidth,
                   borderBottomColor: bottomColor,
                   paddingBottom: 5,
-                  width: "90%",
+                  width: "90%"
                 }}
               >
                 {labelName}
@@ -234,14 +236,14 @@ function RestaurantTabNavigator() {
             borderTopWidth: null,
             height: RFPercentage(8),
             paddingBottom: RFPercentage(0.5),
-            paddingTop: RFPercentage(0.6),
-          },
+            paddingTop: RFPercentage(0.6)
+          }
         })}
       >
-        <Tab.Screen name="Restaurant" component={RestaurantScreen} />
-        <Tab.Screen name="Reviews" component={ReviewScreen} />
-        <Tab.Screen name="Menu" component={MenuScreen} />
-        <Tab.Screen name="Bookings" component={BookingScreen} />
+        <Tab.Screen name="Restaurant" component={RestaurantScreen}/>
+        <Tab.Screen name="Reviews" component={ReviewScreen}/>
+        <Tab.Screen name="Menu" component={MenuScreen}/>
+        <Tab.Screen name="Bookings" component={BookingScreen}/>
       </Tab.Navigator>
     </SafeAreaView>
   );
@@ -252,19 +254,21 @@ export default function App() {
     <RootSiblingParent>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          <SafeAreaView style={{ flex: 1, backgroundColor: "#1D2C3B" }}>
+          <SafeAreaView style={{flex: 1, backgroundColor: "#1D2C3B"}}>
             <NavigationContainer>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Landing" component={LandingScreen} />
-                <Stack.Screen name="Signup" component={SignupScreen} />
-                <Stack.Screen name="Scan" component={ScanScreen} />
-                <Stack.Screen name="Snap" component={SnapScreen} />
-                <Stack.Screen name="TabNavigator" component={TabNavigator} />
-                <Stack.Screen name="MessageScreen" component={MessageScreen} />
+              <Stack.Navigator screenOptions={{headerShown: false}}>
+                <Stack.Screen name="Landing" component={LandingScreen}/>
+                <Stack.Screen name="Signup" component={SignupScreen}/>
+                <Stack.Screen name="Scan" component={ScanScreen}/>
+                <Stack.Screen name="Snap" component={SnapScreen}/>
+                <Stack.Screen name="TabNavigator" component={TabNavigator}/>
+                <Stack.Screen name="MessageScreen" component={MessageScreen}/>
+                <Stack.Screen name="Checkout" component={CheckoutScreen}/>
                 <Stack.Screen
                   name="RestaurantTabNavigator"
                   component={RestaurantTabNavigator}
                 />
+                <Stack.Screen name="NewReview" component={NewReviewScreen}/>
               </Stack.Navigator>
             </NavigationContainer>
           </SafeAreaView>
