@@ -88,10 +88,16 @@ export default function UpcomingScreen({ navigation }) {
             <TouchableOpacity style={styles.littlebutton}>
               <Text>Supprimer</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.littlebutton}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("NewReview")}
+              style={styles.littlebutton}
+            >
               <Text>Commenter</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.littlebutton}>
+            <TouchableOpacity
+              style={styles.littlebutton}
+              onPress={() => navigation.navigate("Checkout")}
+            >
               <Text>Payer</Text>
             </TouchableOpacity>
           </View>
@@ -108,13 +114,6 @@ export default function UpcomingScreen({ navigation }) {
 
       <Text style={styles.name}>Historique</Text>
       <ScrollView>{historiques.length > 0 && historiques}</ScrollView>
-
-      <TouchableOpacity
-        onPress={() => navigation.navigate("NewReview")}
-        style={styles.button}
-      >
-        <Text>New Review</Text>
-      </TouchableOpacity>
     </View>
   );
 }
