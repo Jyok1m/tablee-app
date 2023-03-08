@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RFPercentage } from "react-native-responsive-fontsize";
-import { BACKEND_URL } from "../backend_url";
+import {StyleSheet, Text, View, ScrollView, Image} from "react-native";
+import React, {useEffect, useState} from "react";
+import {useSelector, useDispatch} from "react-redux";
+import {RFPercentage} from "react-native-responsive-fontsize";
+import {BACKEND_URL} from "../backend_url";
 import Header from "../components/Header";
 
-export default function MenuScreen({ navigation }) {
+export default function MenuScreen({navigation}) {
   const dispatch = useDispatch();
   const [name, setName] = useState(null);
   const [cuisineTypes, setCuisineTypes] = useState(null);
@@ -13,20 +13,20 @@ export default function MenuScreen({ navigation }) {
 
   const restaurant = useSelector((state) => state.restaurant.value);
 
-  const { token } = restaurant;
+  const {token} = restaurant;
 
   let Menu;
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/restaurants/${token}`);
       const data = await response.json();
-      const { result } = data;
+      const {result} = data;
       //console.log(data.restaurant.menuItems);
       if (result === true) {
         setName(data.restaurant.name);
         setCuisineTypes(data.restaurant.cuisineTypes);
         Menu = data.restaurant.menuItems.map((data, i) => {
-          const { name, price, description } = data;
+          const {name, price, description} = data;
           return (
             <View key={i} style={styles.card}>
               <View>
@@ -49,10 +49,9 @@ export default function MenuScreen({ navigation }) {
   }, []);
   return (
     <View style={styles.container}>
-      <Header />
+      <Header/>
       <View style={styles.header}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.cuisine}>{cuisineTypes}</Text>
+        <Text style={styles.name}>Menu</Text>
       </View>
       <View style={styles.menuContainer}>{menu}</View>
     </View>
@@ -64,24 +63,24 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   subtitle: {
     fontSize: RFPercentage(1.6),
     fontWeight: "400",
-    color: "#ffffff",
+    color: "#ffffff"
   },
   title: {
     fontSize: RFPercentage(2),
     fontWeight: "500",
-    color: "white",
+    color: "white"
   },
   menuContainer: {
     width: "90%",
     height: "70%",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 5
   },
   inputCard: {
     width: "100%",
@@ -93,27 +92,28 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingBottom: 15,
     paddingTop: 15,
-    justifyContent: "center",
+    justifyContent: "center"
   },
   header: {
     alignItems: "center",
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 20
   },
   menuPrice: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   name: {
     fontSize: RFPercentage(5),
     fontWeight: "600",
     color: "#CDAB82",
+    marginBottom: 20
   },
   cuisine: {
     fontSize: RFPercentage(3),
     fontStyle: "italic",
     fontWeight: "500",
-    color: "#ffffff",
-  },
+    color: "#ffffff"
+  }
 });

@@ -8,7 +8,8 @@ import {
   TextInput,
   ActivityIndicator
 } from "react-native";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
+import {refreshComponents} from "../reducers/booking";
 import Toast from "react-native-root-toast";
 import Header from "../components/Header";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -20,6 +21,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 const moment = require("moment");
 
 export default function BookingScreen({navigation}) {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const restaurant = useSelector((state) => state.restaurant.value);
   const restaurantToken = restaurant.token;
@@ -258,6 +260,7 @@ export default function BookingScreen({navigation}) {
         setLoading(false);
         alert(`${data.message} 🔥Ta référence de réservation est: ${data.bookingId}`);
         navigation.navigate("TabNavigator");
+        dispatch(refreshComponents());
       }
     } catch (error) {
       console.log(error);
@@ -542,9 +545,6 @@ export default function BookingScreen({navigation}) {
                             style={[styles.notSelectedButton, formReady && styles.selectionButton]}
           >
             <Text style={[styles.textButton, formReady && styles.pressedTextButton]}>Réserver</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Checkout")}>
-            <Text>Vers paiement screen</Text>
           </TouchableOpacity>
         </View>
       </View>

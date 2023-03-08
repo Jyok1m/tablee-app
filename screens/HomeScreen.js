@@ -18,6 +18,7 @@ import {sendToken} from "../reducers/restaurant";
 import {BACKEND_URL} from "../backend_url";
 import Header from "../components/Header";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import Toast from "react-native-root-toast";
 
 export default function HomeScreen({navigation}) {
   const [currentPosition, setCurrentPosition] = useState(null);

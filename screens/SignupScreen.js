@@ -11,6 +11,7 @@ import {RFPercentage} from "react-native-responsive-fontsize";
 import {useDispatch, useSelector} from "react-redux";
 import {signinUser, removePhoto} from "../reducers/user";
 import {BACKEND_URL} from "../backend_url";
+import Toast from "react-native-root-toast";
 
 export default function SignupScreen({navigation}) {
   const [username, setUsername] = useState("");
@@ -43,13 +44,22 @@ export default function SignupScreen({navigation}) {
     if (data.result === true) {
       dispatch(signinUser({username, token: data.token}));
       setUsername("");
-      setFirstname("");
       setLastname("");
       setEmail("");
       setPassword("");
       dispatch(removePhoto());
-      alert("Connexion réussie !");
       navigation.navigate("TabNavigator");
+      Toast.show(`Bienvenue dans Tablée, ${username} !`, {
+        duration: Toast.durations.LONG,
+        position: -10,
+        textColor: "#1D2C3B",
+        opacity: 1,
+        shadow: true,
+        backgroundColor: "#CDAB82",
+        animation: true,
+        delay: 500
+      });
+      setFirstname("");
     } else {
       alert(data.error);
     }
