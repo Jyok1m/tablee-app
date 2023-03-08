@@ -13,7 +13,7 @@ import {BACKEND_URL} from "../backend_url";
 import {setBookingId} from "../reducers/booking";
 import {refreshComponents} from "../reducers/booking";
 
-export default function UpcomingScreen({navigation}) {
+export default function CalendarScreen({navigation}) {
   const dispatch = useDispatch();
   const booking = useSelector((state) => state.booking.value);
   const refresher = booking.refresher;
@@ -34,7 +34,9 @@ export default function UpcomingScreen({navigation}) {
       if (data.result === true) setResponseUpcoming(data.upcoming);
       const historyResponse = await fetch(`${BACKEND_URL}/bookings/history/${token}`);
       const historyData = await historyResponse.json();
-      if (historyData.result === true) setResponseHistory(historyData.history);
+      if (historyData.result === true) {
+        setResponseHistory(historyData.history);
+      }
     })();
   }, [refresher]);
 
@@ -114,9 +116,10 @@ export default function UpcomingScreen({navigation}) {
           </View>
           <Text style={styles.whiteText}>Demande(s): {data.specialRequests}</Text>
           <View style={styles.buttons}>
-            <TouchableOpacity onPress={() => handlePayment(data._id)} style={styles.littleButton}>
-              <Text>Payer</Text>
-            </TouchableOpacity>
+            {!data.paid &&
+              <TouchableOpacity onPress={() => handlePayment(data._id)} style={styles.littleButton}>
+                <Text>Payer</Text>
+              </TouchableOpacity>}
             <TouchableOpacity onPress={() => handleComment(data._id)} style={styles.littleButton}>
               <Text>Commenter</Text>
             </TouchableOpacity>

@@ -24,7 +24,7 @@ import NewReviewScreen from "./screens/NewReviewScreen";
 import HomeScreen from "./screens/HomeScreen";
 import MessageScreen from "./screens/MessageScreen";
 import FavoriteScreen from "./screens/FavoriteScreen";
-import UpcomingScreen from "./screens/UpcomingScreen";
+import CalendarScreen from "./screens/CalendarScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import ChatRoomScreen from "./screens/ChatRoomScreen";
 
@@ -84,7 +84,7 @@ function TabNavigator() {
               iconName = faEnvelope;
             } else if (route.name === "Favorites") {
               iconName = faHeart;
-            } else if (route.name === "Upcoming") {
+            } else if (route.name === "Calendar") {
               iconName = faCalendarCheck;
             } else if (route.name === "Profile") {
               iconName = faCircleUser;
@@ -104,8 +104,8 @@ function TabNavigator() {
               labelName = "Messages";
             } else if (route.name === "Favorites") {
               labelName = "Favoris";
-            } else if (route.name === "Upcoming") {
-              labelName = "À venir";
+            } else if (route.name === "Calendar") {
+              labelName = "Résas";
             } else if (route.name === "Profile") {
               labelName = "Profil";
             }
@@ -151,7 +151,7 @@ function TabNavigator() {
         <Tab.Screen name="Home" component={HomeScreen}/>
         <Tab.Screen name="Messages" component={ChatRoomScreen}/>
         <Tab.Screen name="Favorites" component={FavoriteScreen}/>
-        <Tab.Screen name="Upcoming" component={UpcomingScreen}/>
+        <Tab.Screen name="Calendar" component={CalendarScreen}/>
         <Tab.Screen name="Profile" component={ProfileScreen}/>
       </Tab.Navigator>
     </SafeAreaView>
