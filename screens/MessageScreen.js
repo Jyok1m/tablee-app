@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   Pressable,
   SafeAreaView,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView,
+  Image,
 } from "react-native";
-import React from "react";
+import React, { useRef } from "react";
 import Header from "../components/Header";
 import {useEffect, useState, useLayoutEffect} from "react";
 import {BACKEND_URL} from "../backend_url";
@@ -21,10 +23,13 @@ var socket = io(`http://192.168.1.10:3000`);
 
 export default function MessageScreen({route, navigation}) {
   const [message, setMessage] = useState("");
-  const [messageToSend, setMessageToSend] = useState("");
+  const [messageInput, setMessageInput] = useState("");
   const [user, setUser] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
+  const [socketMessages, setSocketMessages] = useState([]);
   const [roomNumber, setRoomNumber] = useState("");
+
+  const scrollViewRef = useRef();
 
   // Recupere les infos de l'utilisateur
   const userInfos = useSelector((state) => state.user.value);
@@ -49,12 +54,16 @@ export default function MessageScreen({route, navigation}) {
     getUsername();
   }, []);
 
-
   // Gere l'envoie de messages
   useEffect(() => {
-    socket.on("sendMessageFromBack", (newMessage) => {
-      console.log(newMessage);
-    });
+    console.log(userInfos);
+    //Récupere les messages de socket venant du backend
+    socket
+      .off("sendMessageFromBack")
+      .on("sendMessageFromBack", (newMessage) => {
+        console.log(newMessage);
+        setSocketMessages([...socketMessages, newMessage]);
+      });
 
     // Recupere les messages du chat en bdd
     (async () => {
@@ -68,7 +77,7 @@ export default function MessageScreen({route, navigation}) {
     })();
   }, [message]);
 
-  // Render les messages du chat
+  // Render les messages du chat depuis la bdd
   let chatMessagesToRender = <View></View>;
   chatMessagesToRender = chatMessages?.map((data, i) => {
     const status = data.user !== userInfos.username;
@@ -93,6 +102,7 @@ export default function MessageScreen({route, navigation}) {
                 color="black"
                 style={styles.mavatar}
               />
+              {/* <Image source={{ uri: userInfos.photos }} style={styles.mavatar} />*/}
               <View
                 style={
                   status
@@ -105,7 +115,56 @@ export default function MessageScreen({route, navigation}) {
                 <Text>{data.message}</Text>
               </View>
             </View>
-            <Text style={{marginLeft: 40}}>{data.time}</Text>
+            <Text style={{ marginLeft: 40 }}>
+              {data.date.date.hour}h{data.date.date.min}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  });
+
+  // Render les messages du chat reçu de socket
+  let chatMessagesFromSocket = <View></View>;
+  chatMessagesFromSocket = socketMessages?.map((data, i) => {
+    const status = data.user !== userInfos.username;
+    return (
+      <View
+        key={i}
+        style={[
+          styles.messagingscreen,
+          { paddingVertical: 15, paddingHorizontal: 10 },
+        ]}>
+        <View>
+          <View
+            style={
+              status
+                ? styles.mmessageWrapper
+                : [styles.mmessageWrapper, { alignItems: "flex-end" }]
+            }>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons
+                name="person-circle-outline"
+                size={30}
+                color="black"
+                style={styles.mavatar}
+              />
+              {/* <Image source={{ uri: userInfos.photos }} style={styles.mavatar} />*/}
+              <View
+                style={
+                  status
+                    ? styles.mmessage
+                    : [
+                        styles.mmessage,
+                        { backgroundColor: "rgb(194, 243, 194)" },
+                      ]
+                }>
+                <Text>{data.message}</Text>
+              </View>
+            </View>
+            <Text style={{ marginLeft: 40 }}>
+              {data.date.hour}h{data.date.min}
+            </Text>
           </View>
         </View>
       </View>
@@ -113,9 +172,6 @@ export default function MessageScreen({route, navigation}) {
   });
 
   async function sendMessage() {
-
-    socket.emit("sendMessage", "Hello John !");
-
     //Recupére l'heure d'envoi
     const hour =
       new Date().getHours() < 10
@@ -127,37 +183,51 @@ export default function MessageScreen({route, navigation}) {
         ? `0${new Date().getMinutes()}`
         : `${new Date().getMinutes()}`;
 
-    // Envoi message vers le back
-    //socket.emit("newMessage", message);
-
-
-    // Envoi le message dans la bdd
-    (async () => {
-      await fetch(`http://192.168.1.10:3000/messages/send`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          message: message,
-          roomId: roomNumber,
-          user: user,
-          date: {hour, min}
-        })
+    if (message.length > 0) {
+      // Envoi message vers le back via socket
+      socket.emit("sendMessage", {
+        message: message,
+        roomId: roomNumber,
+        user: user,
+        date: { hour, min },
       });
 
-
-    })();
-
+      // Envoi le message dans la bdd
+      (async () => {
+        await fetch(`http://192.168.1.10:3000/messages/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: message,
+            roomId: roomNumber,
+            user: user,
+            date: { hour, min },
+          }),
+        });
+      })();
+    }
   }
 
-
   return (
-    <SafeAreaView style={styles.messagingscreen}>
-      <Text>{name}</Text>
-      <ScrollView>{chatMessagesToRender}</ScrollView>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}>
+      <View style={styles.top}>
+        <Text style={styles.titleName}>{name}</Text>
+      </View>
 
-      <View style={styles.messaginginputContainer}>
+      <ScrollView
+        ref={scrollViewRef}
+        onContentSizeChange={() =>
+          scrollViewRef.current.scrollToEnd({ animated: true })
+        }>
+        {chatMessagesToRender}
+        {chatMessagesFromSocket}
+      </ScrollView>
+
+      <View style={styles.inputContainer}>
         <TextInput
-          style={styles.messaginginput}
+          style={styles.messageInput}
           onChangeText={(value) => setMessage(value)}
         />
         <Pressable style={styles.sendButton} onPress={sendMessage}>
@@ -166,16 +236,28 @@ export default function MessageScreen({route, navigation}) {
           </View>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#1D2C3B",
+  },
+  top: {
+    justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B"
+    backgroundColor: "#1D2C3B",
+    paddingTop: 60,
+    paddingBottom: 20,
+    borderBottomColor: "#CDAB82",
+    borderBottomWidth: 1,
+  },
+  titleName: {
+    color: "#CDAB82",
+    fontSize: 24,
   },
   messageInput: {
     backgroundColor: "white",
@@ -194,24 +276,28 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     color: "#1D2C3B",
     transition: 1,
-    width: "50%",
-    alignItems: "center"
+    width: "20%",
+    alignItems: "center",
   },
-  messaginginputContainer: {
+  inputContainer: {
     width: "100%",
     minHeight: 100,
-    backgroundColor: "white",
+    backgroundColor: "#1D2C3B",
     paddingVertical: 30,
     paddingHorizontal: 15,
     justifyContent: "center",
-    flexDirection: "row"
+    alignItems: "center",
+    flexDirection: "row",
+    borderTopColor: "#CDAB82",
+    borderTopWidth: 1,
   },
-  messaginginput: {
+  messageInput: {
     borderWidth: 1,
     padding: 15,
     flex: 1,
     marginRight: 10,
-    borderRadius: 20
+    borderRadius: 20,
+    backgroundColor: "white",
   },
   messagingbuttonContainer: {
     width: "30%",

@@ -12,6 +12,7 @@ export default function NewChatModal({ setVisible }) {
   //Créer un nouveau groupe de discussion sur socket
   const handleCreateRoom = () => {
     socket.emit("createRoom", groupName);
+    console.log(groupName)
     closeModal();
   };
   return (
