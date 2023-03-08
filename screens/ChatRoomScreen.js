@@ -6,26 +6,25 @@ import {
   SafeAreaView,
   FlatList,
   StyleSheet,
-  ScrollView
+  ScrollView,
+  Image,
 } from "react-native";
 import { useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import ChatComponent from "../components/ChatComponent";
 import NewChatModal from "../components/NewChatModal";
-import { useLayoutEffect, useEffect } from "react";
+import { useEffect } from "react";
 import socket from "../socket";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function ChatRoomScreen({navigation}) {
+export default function ChatRoomScreen({ navigation }) {
   // Recupere les infos de l'utilisateur
   const userInfos = useSelector((state) => state.user.value);
 
   const [visible, setVisible] = useState(false);
   const [roomsFetched, setRoomsFetched] = useState([]);
 
-
-  let conversations = <View></View>
+  let conversations = <View></View>;
   //👇🏻 Runs whenever there is new trigger from the backend
   useEffect(() => {
     (async () => {
@@ -35,42 +34,37 @@ export default function ChatRoomScreen({navigation}) {
         setRoomsFetched(data.rooms);
       }
       //console.log(roomsFetched);
-
     })();
   }, [visible]);
 
   conversations = roomsFetched?.map((data, i) => {
-      const handleNavigation = () => {
-        navigation.navigate("MessageScreen", {
-          id: data.id,
-          name: data.name,
-        });
-      };
-return (
-  <Pressable style={styles.chatPreview} onPress={handleNavigation} key={i}>
-    <Ionicons
-      name="person-circle-outline"
-      size={45}
-      color="black"
-      style={styles.chatPreviewAvatar}
-    />
+    const handleNavigation = () => {
+      navigation.navigate("MessageScreen", {
+        id: data.id,
+        name: data.name,
+      });
+    };
+    return (
+      <Pressable style={styles.chatPreview} onPress={handleNavigation} key={i}>
+     
+        <View style={styles.chatPreviewRightContainer}>
+          <View>
+            <Text style={styles.cusername}>{data.name}</Text>
 
-    <View style={styles.chatPreviewRightContainer}>
-      <View>
-        <Text style={styles.cusername}>{data.name}</Text>
-
-        <Text style={styles.cmessage}>
-          {data.messages?.length == 0 ? data.messages.text : "Tap to start chatting"}
-        </Text>
-      </View>
-      <View>
-        <Text style={styles.chatTime}>
-          {data.messages.time ? data.messages.time : "now"}
-        </Text>
-      </View>
-    </View>
-  </Pressable>
-);
+            <Text style={styles.cmessage}>
+              {data.messages?.length == 0
+                ? data.messages.text
+                : "Tap to start chatting"}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.chatTime}>
+              {data.messages.time ? data.messages.time : "now"}
+            </Text>
+          </View>
+        </View>
+      </Pressable>
+    );
   });
 
   return (
