@@ -59,10 +59,16 @@ export default function UpcomingScreen({ navigation }) {
           <TouchableOpacity style={styles.littlebutton}>
             <Text>Supprimer</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.littlebutton}>
+          <TouchableOpacity
+            style={styles.littlebutton}
+            onPress={() => navigation.navigate("NewReview")}
+          >
             <Text>Commenter</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.littlebutton}>
+          <TouchableOpacity
+            style={styles.littlebutton}
+            onPress={() => navigation.navigate("Checkout")}
+          >
             <Text>Payer</Text>
           </TouchableOpacity>
         </View>

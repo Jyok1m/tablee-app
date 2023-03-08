@@ -12,49 +12,34 @@ import Header from "../components/Header";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { addReviews } from "../reducers/restaurant";
+import { BACKEND_URL } from "../backend_url";
 
 export default function ReviewScreen() {
   const dispatch = useDispatch();
   const restaurant = useSelector((state) => state.restaurant.value);
-  const [allReviews, setAllReviews] = useState([]);
-  // const { token } = restaurant;
-
-  const reviewsData = [
-    {
-      name: "Manu",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo neque error repudiandae fuga? Ipsa laudantium molestias eos sapiente officiis modi at sunt excepturi expedita sint?",
-      date: "06/03/23",
-      vote: 7,
-    },
-    {
-      name: "Alex",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia",
-      date: "06/03/23",
-      vote: 2,
-    },
-    {
-      name: "Pirlo",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia. Quo neque error repudiandae fuga?",
-      date: "06/03/23",
-      vote: 5,
-    },
-  ];
+  const [everyReviews, setEveryReviews] = useState([]);
+  const { token } = restaurant;
 
   useEffect(() => {
-    setAllReviews(reviewsData.sort((a, b) => b.vote - a.vote));
+    (async () => {
+      const response = await fetch(
+        `${BACKEND_URL}/restaurants/reviews/${token}`
+      );
+      const data = await response.json();
+      if (data.result === true) {
+        setEveryReviews(data.allReviews);
+      }
+    })();
   }, []);
 
-  const myReviews = allReviews.map((data, i) => {
+  const myReviews = everyReviews.map((data, i) => {
     return (
       <View style={styles.reviewsContainer} key={i}>
         <View style={styles.counter}>
           <TouchableOpacity>
             <FontAwesome name="caret-up" style={styles.caretUp}></FontAwesome>
           </TouchableOpacity>
-          <Text style={styles.count}>{data.vote}</Text>
+          <Text style={styles.count}>{data.upVotedBy.length}</Text>
           <TouchableOpacity>
             <FontAwesome
               name="caret-down"
@@ -64,7 +49,7 @@ export default function ReviewScreen() {
         </View>
         <View key={i} style={styles.reviews}>
           <View style={styles.nameDate}>
-            <Text style={styles.name}>{data.name}</Text>
+            <Text style={styles.name}>{data.writer}</Text>
             <Text style={styles.date}>{data.date}</Text>
           </View>
           <Text style={styles.description}>{data.description}</Text>
@@ -76,7 +61,9 @@ export default function ReviewScreen() {
   return (
     <View style={styles.container}>
       <Header />
-      <View>{myReviews}</View>
+      <ScrollView>
+        <View>{myReviews}</View>
+      </ScrollView>
     </View>
   );
 }

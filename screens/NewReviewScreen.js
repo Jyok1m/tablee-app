@@ -12,13 +12,46 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { useSelector, useDispatch } from "react-redux";
 import { addReviews } from "../reducers/restaurant";
 import { BACKEND_URL } from "../backend_url";
+import { writer } from "repl";
 
 export default function NewReviewScreen() {
   const [inputValue, setInputValue] = useState(null);
+  const [newReviews, setNewReviews] = useState(null);
   const dispatch = useDispatch();
   const restaurant = useSelector((state) => state.restaurant.value);
+  const booking = useSelector((state) => state.booking.value);
+
   const token = { restaurant };
   const user = useSelector((state) => state.user.value);
+
+  useEffect(() => {
+    (async function handleSubmit() {
+      const reviewSchema = {
+        writer: booking.booker.username,
+        date: booking.date,
+        description: newReviews, // on met quoi ici ?
+        upVotedBy: [], 
+        downVotedBy: [],
+      };
+      
+      const response = await fetch(
+        `${BACKEND_URL}/restaurants/reviews/${booking._id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reviewSchema),
+        }
+      );
+      const data = await response.json();
+      if (data.result === true) {
+        const createdReviews = { ...data.reviews, author: writer };
+          dispatch(addReviews(createdReviews));
+          setNewReviews('');
+       
+      }
+    })();
+  }, []);
+
 
   return (
     <KeyboardAvoidingView
