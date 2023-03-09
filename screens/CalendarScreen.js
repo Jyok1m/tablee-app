@@ -13,6 +13,7 @@ import {useSelector, useDispatch} from "react-redux";
 import {BACKEND_URL} from "../backend_url";
 import {setBookingId} from "../reducers/booking";
 import {refreshComponents} from "../reducers/booking";
+import moment from "moment/moment";
 
 export default function CalendarScreen({navigation}) {
   const dispatch = useDispatch();
@@ -32,11 +33,11 @@ export default function CalendarScreen({navigation}) {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/bookings/upcoming/${token}`);
       const data = await response.json();
-      if (data.result === true) setResponseUpcoming(data.upcoming);
+      if (data.result === true) setResponseUpcoming(data.upcoming.sort((a, b) => moment(a.initialData.start) - moment(b.initialData.start)));
       const historyResponse = await fetch(`${BACKEND_URL}/bookings/history/${token}`);
       const historyData = await historyResponse.json();
       if (historyData.result === true) {
-        setResponseHistory(historyData.history);
+        setResponseHistory(historyData.history.sort((a, b) => moment(b.initialData.start) - moment(a.initialData.start)));
       }
     })();
   }, [refresher]);
