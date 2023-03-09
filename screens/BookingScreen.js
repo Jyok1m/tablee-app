@@ -531,14 +531,15 @@ export default function BookingScreen({navigation}) {
             }
           </TouchableOpacity>
         </View>
-      </ScrollView>
 
-      <TouchableOpacity onPress={() => validateForm()}
-                        disabled={!formReady && true}
-                        style={[styles.reserveButton, formReady && styles.selectionButton]}
-      >
-        <Text style={[styles.reserveText, formReady && styles.pressedTextButton]}>Réserver</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => validateForm()}
+                          disabled={!formReady && true}
+                          style={[styles.reserveButton, formReady && styles.selectionButton]}
+        >
+          <Text style={[styles.reserveText, formReady && styles.pressedTextButton]}>Réserver</Text>
+        </TouchableOpacity>
+        
+      </ScrollView>
 
     </View>
   );
