@@ -16,6 +16,7 @@ import NewChatModal from "../components/NewChatModal";
 import { useEffect } from "react";
 import socket from "../socket";
 import { Ionicons } from "@expo/vector-icons";
+import { BACKEND_URL } from "../backend_url";
 
 export default function ChatRoomScreen({ navigation }) {
   // Recupere les infos de l'utilisateur
