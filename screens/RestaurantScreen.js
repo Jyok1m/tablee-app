@@ -76,7 +76,7 @@ export default function RestaurantScreen({navigation}) {
         </View>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Téléphone</Text>
-          <Text style={styles.subtitle}>{phone}</Text>
+          <Text style={styles.subtitle}>+33(0){phone}</Text>
         </View>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Adresse</Text>

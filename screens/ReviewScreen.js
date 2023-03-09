@@ -11,7 +11,6 @@ import {useSelector, useDispatch} from "react-redux";
 import Header from "../components/Header";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {RFPercentage} from "react-native-responsive-fontsize";
-import {addReviews} from "../reducers/restaurant";
 import {BACKEND_URL} from "../backend_url";
 
 export default function ReviewScreen() {
@@ -29,6 +28,7 @@ export default function ReviewScreen() {
         `${BACKEND_URL}/restaurants/reviews/${token}`
       );
       const data = await response.json();
+      console.log(data);
       if (data.result === true) {
         setEveryReviews(data.allReviews.sort((a, b) => (b.upVotedBy.length - b.downVotedBy.length) - (a.upVotedBy.length - a.downVotedBy.length)));
       }
@@ -65,40 +65,43 @@ export default function ReviewScreen() {
     }
   }
 
-  const myReviews = everyReviews.map((data, i) => {
-    return (
-      <View style={styles.reviewsContainer} key={i}>
-        <View style={styles.counter}>
-          <TouchableOpacity onPress={() => handleUpVote(data._id)}>
-            <FontAwesome name="caret-up" style={styles.caretUp}></FontAwesome>
-          </TouchableOpacity>
-          <Text style={styles.count}>
-            {data.upVotedBy.length - data.downVotedBy.length}
-          </Text>
-          <TouchableOpacity onPress={() => handleDownVote(data._id)}>
-            <FontAwesome
-              name="caret-down"
-              style={styles.caretDown}
-            ></FontAwesome>
-          </TouchableOpacity>
-        </View>
-        <View key={i} style={styles.reviews}>
-          <View style={styles.nameDate}>
-            <Text style={styles.name}>{data.writer}</Text>
-            <Text style={styles.date}>{data.date}</Text>
+  let myReviews = [];
+  if (everyReviews.length > 0) {
+    myReviews = everyReviews.map((data, i) => {
+      return (
+        <View style={styles.reviewsContainer} key={i}>
+          <View style={styles.counter}>
+            <TouchableOpacity onPress={() => handleUpVote(data._id)}>
+              <FontAwesome name="caret-up" style={styles.caretUp}></FontAwesome>
+            </TouchableOpacity>
+            <Text style={styles.count}>
+              {(everyReviews.length > 0) & data.upVotedBy.length - data.downVotedBy.length}
+            </Text>
+            <TouchableOpacity onPress={() => handleDownVote(data._id)}>
+              <FontAwesome
+                name="caret-down"
+                style={styles.caretDown}
+              ></FontAwesome>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.description}>{data.description}</Text>
+          <View key={i} style={styles.reviews}>
+            <View style={styles.nameDate}>
+              <Text style={styles.name}>{data.writer}</Text>
+              <Text style={styles.date}>{data.date}</Text>
+            </View>
+            <Text style={styles.description}>{data.description}</Text>
+          </View>
         </View>
-      </View>
-    );
-  });
+      );
+    });
+  }
 
   return (
     <View style={styles.container}>
       <Header/>
       <Text style={styles.title}>Avis</Text>
       <ScrollView>
-        {everyReviews.length > 0 && myReviews}
+        {(everyReviews.length > 0) ? myReviews : <Text style={styles.name}>Pas encore d'avis !</Text>}
       </ScrollView>
     </View>
   );
