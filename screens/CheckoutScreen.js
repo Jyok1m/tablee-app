@@ -82,7 +82,7 @@ export default function CheckoutScreen({navigation}) {
           <View style={styles.modalView}>
             <View style={styles.textContent}>
               <Text style={styles.paragraph}>Cher {bookerName}, {"\n"}{"\n"}
-                Nous espérons que tu as passé un bon moment chez {restaurantName}.{"\n"}{"\n"}
+                Nous espérons que tu passeras ou que tu as passé un bon moment chez {restaurantName}.{"\n"}{"\n"}
                 Deux choix cruciaux s'offrent maintenant à toi, à savoir soit: {"\n"}{"\n"}
                 👉 régler le restaurant directement {"\n"}{"\n"}
                 👉 payer le restaurant en utilisant le moyen de paiement renseigné lors le ta réservation {"\n"}{"\n"}
