@@ -70,6 +70,7 @@ export default function CalendarScreen({navigation}) {
     });
     const data = await response.json();
     setDeleteMessage(data.message);
+    dispatch(refreshComponents());
     setDeletedModalVisible(true);
   }
 
