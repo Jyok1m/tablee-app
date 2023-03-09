@@ -66,7 +66,7 @@ export default function CheckoutScreen({navigation}) {
   async function handleCloseTableePaymentModal() {
     setTableePaymentVisible(false);
     dispatch(refreshComponents());
-    navigation.navigate("TabNavigator");
+    navigation.navigate("Home");
   }
 
   return (

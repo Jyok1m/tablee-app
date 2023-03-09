@@ -9,6 +9,8 @@ import {RFPercentage} from "react-native-responsive-fontsize";
 export default function FavoriteScreen() {
   const user = useSelector((state) => state.user.value);
   const {token} = user;
+  const booking = useSelector((state) => state.booking.value);
+  const {refresh} = booking;
   const [resto, setResto] = useState([]);
 
   let Resto;
@@ -39,7 +41,7 @@ export default function FavoriteScreen() {
       });
       setResto(Resto);
     })();
-  }, []);
+  }, [refresh]);
 
   return (
     <View style={styles.container}>

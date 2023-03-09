@@ -99,12 +99,18 @@ export default function CalendarScreen({navigation}) {
             </TouchableOpacity>
             :
             <TouchableOpacity disabled={true} style={styles.reserveButton}>
-              <Text>Prépayé</Text>
+              <Text style={{color: "grey"}}>Prépayé</Text>
             </TouchableOpacity>
           }
-          <TouchableOpacity onPress={() => handleCancelPress(data._id)} style={styles.littleButton}>
-            <Text>Annuler</Text>
-          </TouchableOpacity>
+          {!data.paid ?
+            <TouchableOpacity onPress={() => handleCancelPress(data._id)} style={styles.littleButton}>
+              <Text>Annuler</Text>
+            </TouchableOpacity>
+            :
+            <TouchableOpacity disabled={true} style={styles.reserveButton}>
+              <Text style={{color: "grey"}}>Annulation impossible</Text>
+            </TouchableOpacity>
+          }
         </View>
       </View>
     );
