@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 .env
 .babelrc
+backend_url.js
 
 # macOS
 .DS_Store
