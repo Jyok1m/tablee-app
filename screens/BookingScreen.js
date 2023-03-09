@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,21 +7,21 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
 } from "react-native";
-import {useSelector, useDispatch} from "react-redux";
-import {refreshComponents} from "../reducers/booking";
+import { useSelector, useDispatch } from "react-redux";
+import { refreshComponents } from "../reducers/booking";
 import Toast from "react-native-root-toast";
 import Header from "../components/Header";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import {RFPercentage} from "react-native-responsive-fontsize";
-import {BACKEND_URL} from "../backend_url";
-import {faCheck, faHandPointer} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
+import { RFPercentage } from "react-native-responsive-fontsize";
+import { BACKEND_URL } from "../backend_url";
+import { faCheck, faHandPointer } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const moment = require("moment");
 
-export default function BookingScreen({navigation}) {
+export default function BookingScreen({ navigation }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const restaurant = useSelector((state) => state.restaurant.value);
@@ -75,7 +75,7 @@ export default function BookingScreen({navigation}) {
         `${BACKEND_URL}/restaurants/${restaurantToken}`
       );
       const restaurantData = await restaurantResponse.json();
-      const {restaurant} = restaurantData;
+      const { restaurant } = restaurantData;
       // Aller à travers toutes les dispos du resto pour les trier selon la date choisie
       setAvailabilities([]);
       const slotArr = [];
@@ -92,10 +92,21 @@ export default function BookingScreen({navigation}) {
   const availableSlots = availabilities.map((data, i) => {
     return (
       <View key={i}>
-        <TouchableOpacity style={[styles.timeButton, pressedButtonIndex === i && styles.pressedTimeButton]}
-                          onPress={() => handleTimePress(data.start, i)}>
+        <TouchableOpacity
+          style={[
+            styles.timeButton,
+            pressedButtonIndex === i && styles.pressedTimeButton,
+          ]}
+          onPress={() => handleTimePress(data.start, i)}
+        >
           <Text
-            style={[styles.textButton, pressedButtonIndex === i && styles.pressedTextButton]}>{data.hourlyType}</Text>
+            style={[
+              styles.textButton,
+              pressedButtonIndex === i && styles.pressedTextButton,
+            ]}
+          >
+            {data.hourlyType}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -126,7 +137,7 @@ export default function BookingScreen({navigation}) {
         shadow: true,
         backgroundColor: "#CDAB82",
         animation: true,
-        delay: 500
+        delay: 500,
       });
     } else {
       setModalVisible(false);
@@ -159,7 +170,14 @@ export default function BookingScreen({navigation}) {
   }
 
   function handleValidateCard() {
-    if (cardHolderName && cardNumber && cardExpirationYear && cardExpirationMonth && cardCVV && phoneNumber) {
+    if (
+      cardHolderName &&
+      cardNumber &&
+      cardExpirationYear &&
+      cardExpirationMonth &&
+      cardCVV &&
+      phoneNumber
+    ) {
       setCardInfosReady(true);
       setCardModalVisible(false);
     } else {
@@ -171,7 +189,7 @@ export default function BookingScreen({navigation}) {
         shadow: true,
         backgroundColor: "#CDAB82",
         animation: true,
-        delay: 500
+        delay: 500,
       });
     }
   }
@@ -217,8 +235,8 @@ export default function BookingScreen({navigation}) {
       // Create user in Stripe:
       await fetch(`${BACKEND_URL}/customers/new/${user.token}`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({phone: phoneNumber})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneNumber }),
       });
       // Add credit card to Stripe:
       const cardDetails = {
@@ -226,25 +244,28 @@ export default function BookingScreen({navigation}) {
         number: cardNumber,
         exp_month: cardExpirationMonth,
         exp_year: cardExpirationYear,
-        cvc: cardCVV
+        cvc: cardCVV,
       };
       await fetch(`${BACKEND_URL}/cards/save/${user.token}`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(cardDetails)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cardDetails),
       });
       // Create Booking:
       const bookingDetails = {
         guests: numberOfPersons,
         date: selectedTime,
         specialRequests: request,
-        restaurantToken: restaurant.token
+        restaurantToken: restaurant.token,
       };
-      const response = await fetch(`${BACKEND_URL}/bookings/new/${user.token}`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(bookingDetails)
-      });
+      const response = await fetch(
+        `${BACKEND_URL}/bookings/new/${user.token}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bookingDetails),
+        }
+      );
       const data = await response.json();
       if (data.result === false) {
         Toast.show(response.error, {
@@ -255,11 +276,13 @@ export default function BookingScreen({navigation}) {
           shadow: true,
           backgroundColor: "#CDAB82",
           animation: true,
-          delay: 500
+          delay: 500,
         });
       } else {
         setLoading(false);
-        alert(`${data.message} 🔥Ta référence de réservation est: ${data.bookingId}`);
+        alert(
+          `${data.message} 🔥Ta référence de réservation est: ${data.bookingId}`
+        );
         navigation.navigate("TabNavigator");
         dispatch(refreshComponents());
       }
@@ -274,7 +297,7 @@ export default function BookingScreen({navigation}) {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View>
-              <ActivityIndicator size="large" color="#CDAB82"/>
+              <ActivityIndicator size="large" color="#CDAB82" />
             </View>
           </View>
         </View>
@@ -328,7 +351,6 @@ export default function BookingScreen({navigation}) {
             >
               <Text style={styles.pressedTextButton}>Annuler</Text>
             </TouchableOpacity>
-
           </View>
         </View>
       </Modal>
@@ -396,7 +418,6 @@ export default function BookingScreen({navigation}) {
             >
               <Text style={styles.pressedTextButton}>Annuler</Text>
             </TouchableOpacity>
-
           </View>
         </View>
       </Modal>
@@ -427,120 +448,177 @@ export default function BookingScreen({navigation}) {
           </View>
         </View>
       </Modal>
-      <Header/>
+      <Header />
 
       <View style={styles.title}>
         <Text style={styles.name}>Réservation</Text>
       </View>
 
-      <ScrollView>
-        <Text style={styles.dividerTitle}>Informations de base</Text>
+      <View style={{ width: "100%", height: "80%" }}>
+        <ScrollView>
+          <Text style={styles.dividerTitle}>Informations de base</Text>
 
-        <View>
-          <TouchableOpacity onPress={() => showPersonsModal()}
-                            style={[styles.notSelectedButton, (showPersons && numberOfPersons) && styles.selectionButton]}
-          >
-            <Text style={[styles.textButton, (showPersons && numberOfPersons) && styles.pressedTextButton]}>
-              {showPersons && numberOfPersons ? `${numberOfPersons} personne(s)` : "Nombre de personnes"}
+          <View>
+            <TouchableOpacity
+              onPress={() => showPersonsModal()}
+              style={[
+                styles.notSelectedButton,
+                showPersons && numberOfPersons && styles.selectionButton,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textButton,
+                  showPersons && numberOfPersons && styles.pressedTextButton,
+                ]}
+              >
+                {showPersons && numberOfPersons
+                  ? `${numberOfPersons} personne(s)`
+                  : "Nombre de personnes"}
+              </Text>
+              {showPersons && numberOfPersons ? (
+                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B" />
+              ) : (
+                <FontAwesomeIcon icon={faHandPointer} size={14} color="grey" />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            <TouchableOpacity
+              onPress={() => handleDateButton()}
+              style={[
+                styles.notSelectedButton,
+                showDate && styles.selectionButton,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textButton,
+                  showDate && styles.pressedTextButton,
+                ]}
+              >
+                {showDate
+                  ? moment(date).locale("fr").format("DD/MM/YYYY")
+                  : "Date"}
+              </Text>
+              {showDate ? (
+                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B" />
+              ) : (
+                <FontAwesomeIcon icon={faHandPointer} size={14} color="grey" />
+              )}
+            </TouchableOpacity>
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="date"
+                onChange={onChange}
+                minimumDate={new Date()}
+              />
+            )}
+          </View>
+
+          <View>
+            <TouchableOpacity
+              onPress={() => showTimeModal()}
+              style={[
+                styles.notSelectedButton,
+                selectedTime && styles.selectionButton,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textButton,
+                  selectedTime && styles.pressedTextButton,
+                ]}
+              >
+                {selectedTime
+                  ? `${new Date(selectedTime.toString()).getHours()}:${new Date(
+                      selectedTime.toString()
+                    ).getMinutes()}0`
+                  : "Horaire(s) disponible(s)"}
+              </Text>
+              {selectedTime ? (
+                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B" />
+              ) : (
+                <FontAwesomeIcon icon={faHandPointer} size={14} color="grey" />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.dividerTitle}>
+            Informations de paiement {"\n"}
+            <Text style={styles.dividerSubtitle}>
+              (Cela nous permet de valider la réservation auprès du restaurant)
             </Text>
-            {showPersons && numberOfPersons ?
-              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-              :
-              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
-            }
-          </TouchableOpacity>
-        </View>
-
-        <View>
-          <TouchableOpacity onPress={() => handleDateButton()}
-                            style={[styles.notSelectedButton, showDate && styles.selectionButton]}
-          >
-            <Text style={[styles.textButton, showDate && styles.pressedTextButton]}>
-              {showDate ? moment(date).locale("fr").format("DD/MM/YYYY") : "Date"}
-            </Text>
-            {showDate ?
-              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-              :
-              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
-            }
-          </TouchableOpacity>
-          {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode="date"
-              onChange={onChange}
-              minimumDate={new Date()}
-            />
-          )}
-        </View>
-
-        <View>
-          <TouchableOpacity onPress={() => showTimeModal()}
-                            style={[styles.notSelectedButton, selectedTime && styles.selectionButton]}
-          >
-            <Text style={[styles.textButton, selectedTime && styles.pressedTextButton]}>
-              {selectedTime
-                ?
-                `${new Date(selectedTime.toString()).getHours()}:${new Date(selectedTime.toString()).getMinutes()}0`
-                :
-                "Horaire(s) disponible(s)"}
-            </Text>
-            {selectedTime ?
-              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-              :
-              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
-            }
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.dividerTitle}>Informations de paiement {"\n"}
-          <Text style={styles.dividerSubtitle}>
-            (Cela nous permet de valider la réservation auprès du restaurant)
           </Text>
-        </Text>
 
-        <View>
-          <TouchableOpacity onPress={() => showCardModal()}
-                            style={[styles.notSelectedButton, cardInfosReady && styles.selectionButton]}
+          <View>
+            <TouchableOpacity
+              onPress={() => showCardModal()}
+              style={[
+                styles.notSelectedButton,
+                cardInfosReady && styles.selectionButton,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textButton,
+                  cardInfosReady && styles.pressedTextButton,
+                ]}
+              >
+                {cardInfosReady
+                  ? "Carte bancaire renseignée"
+                  : "Carte bancaire"}
+              </Text>
+              {cardInfosReady ? (
+                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B" />
+              ) : (
+                <FontAwesomeIcon icon={faHandPointer} size={14} color="grey" />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.dividerTitle}>Confirmation</Text>
+
+          <View>
+            <TouchableOpacity
+              onPress={() => showRequestModal()}
+              style={[
+                styles.notSelectedButton,
+                request && styles.selectionButton,
+              ]}
+            >
+              <Text
+                style={[styles.textButton, request && styles.pressedTextButton]}
+              >
+                {request ? "Modifier la demande" : "Demande(s) spéciale(s)"}
+              </Text>
+              {request ? (
+                <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B" />
+              ) : (
+                <FontAwesomeIcon icon={faHandPointer} size={14} color="grey" />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => validateForm()}
+            disabled={!formReady && true}
+            style={[styles.reserveButton, formReady && styles.selectionButton]}
           >
-            <Text style={[styles.textButton, cardInfosReady && styles.pressedTextButton]}>
-              {cardInfosReady ? "Carte bancaire renseignée" : "Carte bancaire"}
+            <Text
+              style={[
+                styles.reserveText,
+                formReady && styles.pressedTextButton,
+              ]}
+            >
+              Réserver
             </Text>
-            {cardInfosReady ?
-              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-              :
-              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
-            }
           </TouchableOpacity>
-        </View>
-
-        <Text style={styles.dividerTitle}>Confirmation</Text>
-
-        <View>
-          <TouchableOpacity onPress={() => showRequestModal()}
-                            style={[styles.notSelectedButton, request && styles.selectionButton]}
-          >
-            <Text style={[styles.textButton, request && styles.pressedTextButton]}>
-              {request ? "Modifier la demande" : "Demande(s) spéciale(s)"}
-            </Text>
-            {request ?
-              <FontAwesomeIcon icon={faCheck} size={14} color="#1D2C3B"/>
-              :
-              <FontAwesomeIcon icon={faHandPointer} size={14} color="grey"/>
-            }
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity onPress={() => validateForm()}
-                          disabled={!formReady && true}
-                          style={[styles.reserveButton, formReady && styles.selectionButton]}
-        >
-          <Text style={[styles.reserveText, formReady && styles.pressedTextButton]}>Réserver</Text>
-        </TouchableOpacity>
-        
-      </ScrollView>
-
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -550,52 +628,52 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1D2C3B"
+    backgroundColor: "#1D2C3B",
   },
   title: {
-    alignItems: "center"
+    alignItems: "center",
   },
   mainContainer: {
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   dataContainer: {
-    width: "100%"
+    width: "100%",
   },
   divider: {
     alignItems: "center",
     justifyContent: "center",
-    height: 50
+    height: 50,
   },
   dividerTitle: {
     fontSize: RFPercentage(3),
     fontWeight: "600",
     color: "#CDAB82",
     marginVertical: 15,
-    textAlign: "center"
+    textAlign: "center",
   },
   dividerSubtitle: {
     fontSize: RFPercentage(1.5),
     fontWeight: "600",
     color: "#CDAB82",
     fontStyle: "italic",
-    textAlign: "center"
+    textAlign: "center",
   },
   timeContainer: {
     flexDirection: "row", // This sets the direction of the scroll to horizontal
     flexWrap: "wrap",
     padding: 10,
-    width: "100%"
+    width: "100%",
   },
   name: {
     fontSize: RFPercentage(5),
     fontWeight: "600",
-    color: "#CDAB82"
+    color: "#CDAB82",
   },
   cuisine: {
     fontSize: RFPercentage(3),
     fontStyle: "italic",
     fontWeight: "500",
-    color: "#FFF"
+    color: "#FFF",
   },
   notSelectedButton: {
     alignItems: "center",
@@ -606,7 +684,7 @@ const styles = StyleSheet.create({
     borderColor: "grey",
     borderWidth: 1,
     borderRadius: 10,
-    marginVertical: "2%"
+    marginVertical: "2%",
   },
   reserveButton: {
     alignItems: "center",
@@ -617,7 +695,7 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 1,
     borderRadius: 10,
-    marginVertical: "2%"
+    marginVertical: "2%",
   },
   selectionButton: {
     alignItems: "center",
@@ -629,12 +707,12 @@ const styles = StyleSheet.create({
     borderColor: "#CDAB82",
     borderWidth: 1,
     borderRadius: 10,
-    marginVertical: "2%"
+    marginVertical: "2%",
   },
   centeredView: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   modalView: {
     backgroundColor: "#1D2C3B",
@@ -644,11 +722,11 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   input: {
     minWidth: 200,
@@ -656,7 +734,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     fontSize: 16,
     color: "white",
-    marginBottom: 10
+    marginBottom: 10,
   },
   button: {
     width: 150,
@@ -664,19 +742,19 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingTop: 8,
     backgroundColor: "#CDAB82",
-    borderRadius: 10
+    borderRadius: 10,
   },
   textButton: {
     color: "grey",
     height: 24,
     fontWeight: "600",
-    fontSize: RFPercentage(2)
+    fontSize: RFPercentage(2),
   },
   reserveText: {
     color: "#CDAB82",
     height: 24,
     fontWeight: "600",
-    fontSize: RFPercentage(2)
+    fontSize: RFPercentage(2),
   },
   timeButton: {
     alignItems: "center",
@@ -688,13 +766,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     marginVertical: "2%",
-    marginHorizontal: "1%"
+    marginHorizontal: "1%",
   },
   pressedTextButton: {
     color: "#1D2C3B",
     height: 24,
     fontWeight: "600",
-    fontSize: 15
+    fontSize: 15,
   },
   pressedTimeButton: {
     alignItems: "center",
@@ -707,11 +785,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     marginVertical: "2%",
-    marginHorizontal: "1%"
+    marginHorizontal: "1%",
   },
   times: {
     flexDirection: "row",
-    width: "100%"
+    width: "100%",
   },
   inputBox: {
     paddingHorizontal: 20,
@@ -722,11 +800,11 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 5,
     marginTop: "5%",
-    fontSize: RFPercentage(2)
+    fontSize: RFPercentage(2),
   },
   cardContainer: {
     width: "100%",
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 });
