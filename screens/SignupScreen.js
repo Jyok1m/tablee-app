@@ -64,8 +64,6 @@ export default function SignupScreen({navigation}) {
       alert(data.error);
     }
 
-    // dispatch(removePhoto());
-    // dispatch(logoutUser());
   }
 
   return (
@@ -112,7 +110,7 @@ export default function SignupScreen({navigation}) {
       />
 
       <TouchableOpacity onPress={() => scanCard()} style={styles.button}>
-        <Text style={styles.text}>Scanner la carte</Text>
+        <Text style={styles.text}>Justificatif de scolarité</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => signup()} style={styles.button}>
         <Text style={styles.text}>S'enregistrer</Text>

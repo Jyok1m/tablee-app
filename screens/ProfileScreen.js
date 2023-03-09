@@ -234,7 +234,7 @@ export default function ProfileScreen({navigation}) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Phone Number"
+              placeholder="Numéro de téléphone"
               placeholderTextColor="grey"
               value={phoneNumber}
               onChangeText={(value) => setPhoneNumber(value)}

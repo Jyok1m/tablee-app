@@ -3,7 +3,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ScrollView, Modal, TextInput
+  ScrollView,
+  Modal
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import Header from "../components/Header";
@@ -16,7 +17,7 @@ import {refreshComponents} from "../reducers/booking";
 export default function CalendarScreen({navigation}) {
   const dispatch = useDispatch();
   const booking = useSelector((state) => state.booking.value);
-  const refresher = booking.refresher;
+  const {refresher} = booking;
   const [responseUpcoming, setResponseUpcoming] = useState([]);
   const [responseHistory, setResponseHistory] = useState([]);
   const [deleteMessage, setDeleteMessage] = useState(null);
@@ -74,8 +75,8 @@ export default function CalendarScreen({navigation}) {
   // handle Map go back:
   async function handleMapGoBack() {
     setDeletedModalVisible(false);
-    navigation.navigate("Home");
     dispatch(refreshComponents());
+    navigation.navigate("Home");
   }
 
   const futuresResa = responseUpcoming.map((data, i) => {
@@ -92,6 +93,15 @@ export default function CalendarScreen({navigation}) {
         </View>
         <Text style={styles.whiteText}>Demande(s): {data.specialRequests}</Text>
         <View style={styles.buttons}>
+          {!data.paid ?
+            <TouchableOpacity onPress={() => handlePayment(data._id)} style={styles.littleButton}>
+              <Text>Prépayer</Text>
+            </TouchableOpacity>
+            :
+            <TouchableOpacity disabled={true} style={styles.reserveButton}>
+              <Text>Prépayé</Text>
+            </TouchableOpacity>
+          }
           <TouchableOpacity onPress={() => handleCancelPress(data._id)} style={styles.littleButton}>
             <Text>Annuler</Text>
           </TouchableOpacity>
@@ -290,5 +300,16 @@ const styles = StyleSheet.create({
     color: "#1D2C3B",
     fontSize: RFPercentage(2),
     fontWeight: "400"
+  },
+  reserveButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40%",
+    height: "50%",
+    color: "#CDAB82",
+    borderColor: "grey",
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: "2%"
   }
 });
