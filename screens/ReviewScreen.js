@@ -12,6 +12,7 @@ import Header from "../components/Header";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {RFPercentage} from "react-native-responsive-fontsize";
 import {BACKEND_URL} from "../backend_url";
+import {refreshComponents} from "../reducers/booking";
 
 export default function ReviewScreen() {
   const dispatch = useDispatch();
@@ -19,8 +20,8 @@ export default function ReviewScreen() {
   const user = useSelector((state) => state.user.value);
   const {token} = restaurant;
   const booking = useSelector((state) => state.booking.value);
+  const {refresher} = booking;
   const [everyReviews, setEveryReviews] = useState([]);
-  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -33,10 +34,10 @@ export default function ReviewScreen() {
         setEveryReviews(data.allReviews.sort((a, b) => (b.upVotedBy.length - b.downVotedBy.length) - (a.upVotedBy.length - a.downVotedBy.length)));
       }
     })();
-  }, [refresh]);
+  }, [refresher]);
 
   async function handleUpVote(reviewId) {
-    const response = await fetch(
+    await fetch(
       `${BACKEND_URL}/restaurants/upVote/${user.token}/${reviewId}`,
       {
         method: "POST",
@@ -44,14 +45,11 @@ export default function ReviewScreen() {
         body: JSON.stringify({restaurantToken: restaurant.token})
       }
     );
-    const data = await response.json();
-    if (data.result) {
-      setRefresh(!refresh);
-    }
+    dispatch(refreshComponents());
   }
 
   async function handleDownVote(reviewId) {
-    const response = await fetch(
+    await fetch(
       `${BACKEND_URL}/restaurants/downVote/${user.token}/${reviewId}`,
       {
         method: "POST",
@@ -59,42 +57,37 @@ export default function ReviewScreen() {
         body: JSON.stringify({restaurantToken: restaurant.token})
       }
     );
-    const data = await response.json();
-    if (data.result) {
-      setRefresh(!refresh);
-    }
+    dispatch(refreshComponents());
   }
 
-  let myReviews = [];
-  if (everyReviews.length > 0) {
-    myReviews = everyReviews.map((data, i) => {
-      return (
-        <View style={styles.reviewsContainer} key={i}>
-          <View style={styles.counter}>
-            <TouchableOpacity onPress={() => handleUpVote(data._id)}>
-              <FontAwesome name="caret-up" style={styles.caretUp}></FontAwesome>
-            </TouchableOpacity>
-            <Text style={styles.count}>
-              {(everyReviews.length > 0) & data.upVotedBy.length - data.downVotedBy.length}
-            </Text>
-            <TouchableOpacity onPress={() => handleDownVote(data._id)}>
-              <FontAwesome
-                name="caret-down"
-                style={styles.caretDown}
-              ></FontAwesome>
-            </TouchableOpacity>
-          </View>
-          <View key={i} style={styles.reviews}>
-            <View style={styles.nameDate}>
-              <Text style={styles.name}>{data.writer}</Text>
-              <Text style={styles.date}>{data.date}</Text>
-            </View>
-            <Text style={styles.description}>{data.description}</Text>
-          </View>
+  const myReviews = everyReviews.map((data, i) => {
+    return (
+      <View style={styles.reviewsContainer} key={i}>
+        <View style={styles.counter}>
+          <TouchableOpacity onPress={() => handleUpVote(data._id)}>
+            <FontAwesome name="caret-up" style={styles.caretUp}></FontAwesome>
+          </TouchableOpacity>
+          <Text style={styles.count}>
+            {(everyReviews.length > 0) && data.upVotedBy.length - data.downVotedBy.length}
+          </Text>
+          <TouchableOpacity onPress={() => handleDownVote(data._id)}>
+            <FontAwesome
+              name="caret-down"
+              style={styles.caretDown}
+            ></FontAwesome>
+          </TouchableOpacity>
         </View>
-      );
-    });
-  }
+        <View key={i} style={styles.reviews}>
+          <View style={styles.nameDate}>
+            <Text style={styles.name}>{data.writer}</Text>
+            <Text style={styles.date}>{data.date}</Text>
+          </View>
+          <Text style={styles.description}>{data.description}</Text>
+        </View>
+      </View>
+    );
+  });
+
 
   return (
     <View style={styles.container}>

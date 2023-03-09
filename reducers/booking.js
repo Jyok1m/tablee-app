@@ -20,5 +20,5 @@ export const bookingSlice = createSlice({
   }
 });
 
-export const {setBookingId, clearBookingId, refreshComponents} = bookingSlice.actions;
+export const {setBookingId, refreshComponents} = bookingSlice.actions;
 export default bookingSlice.reducer;
