@@ -8,12 +8,7 @@ export default function ChatComponent({ name }) {
   const navigation = useNavigation();
   const [messages, setMessages] = useState({});
 
-  //👇🏻 Retrieves the last message in the array from the item prop
- /* useLayoutEffect(() => {
-    setMessages(item.messages[item.messages.length - 1]);
-  }, []);*/
-
-  ///👇🏻 Navigates to the Messaging screen
+  // Va vers la page de la conversation
   const handleNavigation = () => {
     navigation.navigate("MessageScreen", {
       id: item.id,

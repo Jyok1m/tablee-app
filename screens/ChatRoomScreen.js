@@ -16,7 +16,8 @@ import NewChatModal from "../components/NewChatModal";
 import {useEffect} from "react";
 import {BACKEND_URL} from "../backend_url";
 import socket from "../socket";
-import {Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+
 
 export default function ChatRoomScreen({navigation}) {
   // Recupere les infos de l'utilisateur
@@ -26,7 +27,7 @@ export default function ChatRoomScreen({navigation}) {
   const [roomsFetched, setRoomsFetched] = useState([]);
 
   let conversations = <View></View>;
-  //👇🏻 Runs whenever there is new trigger from the backend
+  //Refresh la page à l'ouverture ou fermeture du modal
   useEffect(() => {
     (async () => {
       const response = await fetch(`${BACKEND_URL}/messages/rooms`);
@@ -74,7 +75,6 @@ export default function ChatRoomScreen({navigation}) {
         <View style={styles.chatheader}>
           <Text style={styles.chatheading}>Chats</Text>
 
-          {/* 👇🏻 Logs "ButtonPressed" to the console when the icon is clicked */}
           <Pressable onPress={() => setVisible(true)}>
             <Feather name="edit" size={24} color="#CDAB82"/>
           </Pressable>

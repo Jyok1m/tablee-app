@@ -9,19 +9,19 @@ import {
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
-  Image
+  Image,
 } from "react-native";
-import React, {useRef} from "react";
+import React, { useRef } from "react";
 import Header from "../components/Header";
-import {useEffect, useState, useLayoutEffect} from "react";
-import {BACKEND_URL} from "../backend_url";
-import {io} from "socket.io-client";
-import {useSelector} from "react-redux";
-import {Ionicons} from "@expo/vector-icons";
+import { useEffect, useState, useLayoutEffect } from "react";
+import { BACKEND_URL } from "../backend_url";
+import { io } from "socket.io-client";
+import { useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 
 var socket = io(BACKEND_URL);
 
-export default function MessageScreen({route, navigation}) {
+export default function MessageScreen({ route, navigation }) {
   const [message, setMessage] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const [user, setUser] = useState("");
@@ -35,7 +35,7 @@ export default function MessageScreen({route, navigation}) {
   const userInfos = useSelector((state) => state.user.value);
 
   // Recupere le nom et l'id de la chatroom
-  const {name, id} = route.params;
+  const { name, id } = route.params;
 
   // Recupere le nom d'utilisateur (puis la photo de profil apres)
   const getUsername = () => {
@@ -47,102 +47,53 @@ export default function MessageScreen({route, navigation}) {
     }
   };
 
-  // Met le titre du header avec le nom de la chatroom
-  useLayoutEffect(() => {
-    navigation.setOptions({title: name, roomId: id});
-    setRoomNumber(id);
-    getUsername();
-  }, []);
-
   // Gere l'envoie de messages
   useEffect(() => {
-    console.log(userInfos);
-    //Récupere les messages de socket venant du backend
-    socket
-    .off("sendMessageFromBack")
-    .on("sendMessageFromBack", (newMessage) => {
-      console.log(newMessage);
-      setSocketMessages([...socketMessages, newMessage]);
-    });
+    navigation.setOptions({ title: name, roomId: id });
+    setRoomNumber(id);
 
     // Recupere les messages du chat en bdd
+    getUsername();
     (async () => {
-      const response = await fetch(
-        `${BACKEND_URL}/messages/chatRoom/${id}`
-      );
+      const response = await fetch(`${BACKEND_URL}/messages/chatRoom/${id}`);
       const data = await response.json();
       if (data) {
         setChatMessages(data.chat);
       }
     })();
-  }, [message]);
+  }, []);
 
-  // Render les messages du chat depuis la bdd
-  let chatMessagesToRender = <View></View>;
-  chatMessagesToRender = chatMessages?.map((data, i) => {
-    const status = data.user !== userInfos.username;
-    return (
-      <View
-        key={i}
-        style={[
-          styles.messagingscreen,
-          {paddingVertical: 15, paddingHorizontal: 10}
-        ]}>
-        <View>
-          <View
-            style={
-              status
-                ? styles.mmessageWrapper
-                : [styles.mmessageWrapper, {alignItems: "flex-end"}]
-            }>
-            <View style={{flexDirection: "row", alignItems: "center"}}>
-              <Ionicons
-                name="person-circle-outline"
-                size={30}
-                color="black"
-                style={styles.mavatar}
-              />
-              {/* <Image source={{ uri: userInfos.photos }} style={styles.mavatar} />*/}
-              <View
-                style={
-                  status
-                    ? styles.mmessage
-                    : [
-                      styles.mmessage,
-                      {backgroundColor: "rgb(194, 243, 194)"}
-                    ]
-                }>
-                <Text>{data.message}</Text>
-              </View>
-            </View>
-            <Text style={{marginLeft: 40}}>
-              {data.date.date.hour}h{data.date.date.min}
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  });
+  useEffect(() => {
+    //Récupere les messages de socket venant du backend
+    socket.on("sendMessageFromBack", (newMessage) => {
+      setChatMessages([...chatMessages, newMessage]);
+    });
+    return () => {
+      socket.off();
+    };
+  }, [chatMessages]);
+
+  console.log("chatMessages", chatMessages[chatMessages.length - 1]);
 
   // Render les messages du chat reçu de socket
-  let chatMessagesFromSocket = <View></View>;
-  chatMessagesFromSocket = socketMessages?.map((data, i) => {
-    const status = data.user !== userInfos.username;
+
+  let chatMessagesFromSocket = chatMessages.map((data, i) => {
+    const status = data?.user !== userInfos.username;
     return (
       <View
         key={i}
         style={[
           styles.messagingscreen,
-          {paddingVertical: 15, paddingHorizontal: 10}
+          { paddingVertical: 15, paddingHorizontal: 10 },
         ]}>
         <View>
           <View
             style={
               status
                 ? styles.mmessageWrapper
-                : [styles.mmessageWrapper, {alignItems: "flex-end"}]
+                : [styles.mmessageWrapper, { alignItems: "flex-end" }]
             }>
-            <View style={{flexDirection: "row", alignItems: "center"}}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons
                 name="person-circle-outline"
                 size={30}
@@ -155,15 +106,15 @@ export default function MessageScreen({route, navigation}) {
                   status
                     ? styles.mmessage
                     : [
-                      styles.mmessage,
-                      {backgroundColor: "rgb(194, 243, 194)"}
-                    ]
+                        styles.mmessage,
+                        { backgroundColor: "rgb(194, 243, 194)" },
+                      ]
                 }>
-                <Text>{data.message}</Text>
+                <Text>{data?.message}</Text>
               </View>
             </View>
-            <Text style={{marginLeft: 40}}>
-              {data.date.hour}h{data.date.min}
+            <Text style={{ marginLeft: 40, color: 'white', opacity: 0.5 }}>
+              {data.date.date.hour}h{data.date.date.min}
             </Text>
           </View>
         </View>
@@ -184,27 +135,23 @@ export default function MessageScreen({route, navigation}) {
         : `${new Date().getMinutes()}`;
 
     if (message.length > 0) {
-      // Envoi message vers le back via socket
-      socket.emit("sendMessage", {
-        message: message,
-        roomId: roomNumber,
-        user: user,
-        date: {hour, min}
+      // Envoi le message dans la bdd
+      let request = await fetch(`${BACKEND_URL}/messages/sendForSocket`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: message,
+          roomId: roomNumber,
+          user: user,
+          date: { hour, min },
+        }),
       });
 
-      // Envoi le message dans la bdd
-      (async () => {
-        await fetch(`${BACKEND_URL}/messages/send`, {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            message: message,
-            roomId: roomNumber,
-            user: user,
-            date: {hour, min}
-          })
-        });
-      })();
+      let response = await request.json();
+
+      //Envoi le message envoyé en bdd à socket
+      socket.emit("sendMessage", response.data);
+      setMessage("");
     }
   }
 
@@ -219,9 +166,8 @@ export default function MessageScreen({route, navigation}) {
       <ScrollView
         ref={scrollViewRef}
         onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({animated: true})
+          scrollViewRef.current.scrollToEnd({ animated: true })
         }>
-        {chatMessagesToRender}
         {chatMessagesFromSocket}
       </ScrollView>
 
@@ -229,10 +175,11 @@ export default function MessageScreen({route, navigation}) {
         <TextInput
           style={styles.messageInput}
           onChangeText={(value) => setMessage(value)}
+          value={message}
         />
         <Pressable style={styles.sendButton} onPress={sendMessage}>
           <View>
-            <Text style={{color: "#f2f0f1", fontSize: 20}}>SEND</Text>
+            <Text style={{ color: "#f2f0f1", fontSize: 20 }}>SEND</Text>
           </View>
         </Pressable>
       </View>
@@ -244,7 +191,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#1D2C3B"
+    backgroundColor: "#1D2C3B",
   },
   top: {
     justifyContent: "center",
@@ -253,31 +200,31 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     borderBottomColor: "#CDAB82",
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   titleName: {
     color: "#CDAB82",
-    fontSize: 24
+    fontSize: 24,
   },
   messageInput: {
     backgroundColor: "white",
-    marginTop: "25%",
     width: "80%",
-    minHeight: "3%",
+    minHeight: "4%",
+    marginRight: 5,
     borderWidth: 2,
     borderColor: "#CDAB82",
     borderRadius: 5,
-    padding: 5
+    padding: 5,
   },
   sendButton: {
     backgroundColor: "#CDAB82",
-    marginTop: 10,
+
     padding: 10,
     borderRadius: 10,
     color: "#1D2C3B",
     transition: 1,
     width: "20%",
-    alignItems: "center"
+    alignItems: "center",
   },
   inputContainer: {
     width: "100%",
@@ -289,34 +236,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     borderTopColor: "#CDAB82",
-    borderTopWidth: 1
+    borderTopWidth: 1,
   },
   messagingbuttonContainer: {
     width: "30%",
     backgroundColor: "green",
     borderRadius: 5,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 
   mmessageWrapper: {
     width: "100%",
     alignItems: "flex-start",
-    marginBottom: 15
+    marginBottom: 15,
   },
   mmessage: {
     maxWidth: "50%",
     backgroundColor: "#f5ccc2",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 2
+    marginBottom: 2,
   },
   mvatar: {
-    marginRight: 5
+    marginRight: 5,
   },
   // Bulles messages
-  chatemptyText: {fontWeight: "bold", fontSize: 24, paddingBottom: 30},
+  chatemptyText: { fontWeight: "bold", fontSize: 24, paddingBottom: 30 },
   messagingscreen: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
