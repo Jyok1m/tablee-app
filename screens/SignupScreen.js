@@ -64,8 +64,6 @@ export default function SignupScreen({navigation}) {
       alert(data.error);
     }
 
-    // dispatch(removePhoto());
-    // dispatch(logoutUser());
   }
 
   return (
@@ -112,7 +110,7 @@ export default function SignupScreen({navigation}) {
       />
 
       <TouchableOpacity onPress={() => scanCard()} style={styles.button}>
-        <Text style={styles.text}>Scanner la carte</Text>
+        <Text style={styles.text}>Justificatif de scolarité</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => signup()} style={styles.button}>
         <Text style={styles.text}>S'enregistrer</Text>
@@ -139,9 +137,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "5%",
-    fontSize: RFPercentage(2.3)
+    fontSize: RFPercentage(2)
   },
   button: {
     alignItems: "center",
@@ -152,11 +150,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#CDAB82",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "5%"
   },
   text: {
-    fontSize: RFPercentage(2.3),
+    fontSize: RFPercentage(2),
     fontWeight: "500"
   }
 });

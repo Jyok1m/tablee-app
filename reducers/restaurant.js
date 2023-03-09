@@ -11,9 +11,7 @@ export const restaurantSlice = createSlice({
     sendToken: (state, action) => {
       state.value.token = action.payload;
     },
-    addReviews: (state, action) => {
-      state.value.push(action.payload);
-    }
+    
   },
 });
 

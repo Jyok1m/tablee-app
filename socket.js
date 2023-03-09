@@ -1,3 +1,5 @@
-import { io } from "socket.io-client";
-const socket = io.connect("http://192.168.1.10:3000");
+import {io} from "socket.io-client";
+import {BACKEND_URL} from "./backend_url";
+
+const socket = io.connect("BACKEND_URL");
 export default socket;

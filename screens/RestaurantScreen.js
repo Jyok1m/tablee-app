@@ -61,7 +61,7 @@ export default function RestaurantScreen({navigation}) {
         <Text style={styles.cuisine}>{cuisineTypes}</Text>
         {photos && showPhoto(photos)}
       </View>
-      <ScrollView>
+      <ScrollView style={{width: "100%"}}>
         <View style={styles.inputCard}>
           <Text style={styles.title}>Description</Text>
           <Text style={styles.subtitle}>{description}</Text>
@@ -95,21 +95,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#1D2C3B"
   },
   header: {
-    alignItems: "center",
-    paddingTop: 10
+    alignItems: "center"
   },
   pictures: {
     borderColor: "#fffff",
-    padding: 10,
-    margin: 10
+    paddingVertical: 10,
+    marginVertical: 15,
+    borderRadius: 10
   },
   subtitle: {
-    fontSize: RFPercentage(1.6),
+    fontSize: RFPercentage(2),
     fontWeight: "400",
-    color: "#ffffff"
+    color: "#ffffff",
+    textAlign: "justify"
   },
   title: {
-    fontSize: RFPercentage(2),
+    fontSize: RFPercentage(2.5),
     fontWeight: "500",
     color: "#CDAB82"
   },
@@ -125,13 +126,11 @@ const styles = StyleSheet.create({
     color: "#ffffff"
   },
   inputCard: {
-    width: "100%",
-    minHeight: "2%",
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: "5%",
-    padding: 5
+    padding: 10
   }
 });

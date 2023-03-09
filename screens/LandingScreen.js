@@ -3,8 +3,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  TextInput,
-  View
+  TextInput
 } from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import React, {useState, useEffect} from "react";
@@ -24,7 +23,7 @@ export default function LandingScreen({navigation}) {
     if (user.token) navigation.navigate("TabNavigator");
   }, []);
 
-  // Fonction signin pour login le user
+  // Fonction signin pour login l'utilisateur
   async function signin() {
     const userData = {username, password};
     const response = await fetch(`${BACKEND_URL}/users/signin`, {
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
     maxHeight: "40%",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: 20
   },
   inputBox: {
@@ -113,7 +112,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "5%",
     fontSize: RFPercentage(2)
   },
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#CDAB82",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "5%"
   },
   pressableText: {

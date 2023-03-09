@@ -1,16 +1,16 @@
-import {StyleSheet, Text, View, TextInput, Modal, TouchableOpacity} from "react-native";
+import {StyleSheet, Text, View, TextInput, Modal, TouchableOpacity, ActivityIndicator} from "react-native";
 import React, {useState, useRef, useEffect} from "react";
 import Header from "../components/Header";
 import {RFPercentage} from "react-native-responsive-fontsize";
 import {useDispatch, useSelector} from "react-redux";
 import {BACKEND_URL} from "../backend_url";
+import {refreshComponents} from "../reducers/booking";
 
 const moment = require("moment");
 
 export default function CheckoutScreen({navigation}) {
   const dispatch = useDispatch();
   const booking = useSelector((state) => state.booking.value);
-  const user = useSelector((state) => state.user.value);
   const [visible, setVisible] = useState(true);
   const [directPaymentVisible, setDirectPaymentVisible] = useState(false);
   const [tableePaymentVisible, setTableePaymentVisible] = useState(false);
@@ -22,6 +22,7 @@ export default function CheckoutScreen({navigation}) {
   const [bookingNumber, setBookingNumber] = useState("");
   const [bookerName, setBookerName] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
 
   const booking_id = booking.bookingId;
@@ -43,11 +44,13 @@ export default function CheckoutScreen({navigation}) {
   // Handle close direct payment
   async function handleCloseDirectPaymentModal() {
     setDirectPaymentVisible(false);
+    dispatch(refreshComponents());
     navigation.navigate("TabNavigator");
   }
 
   // Handle tablée payment
   async function handleTableePayment() {
+    setLoading(true);
     const response = await fetch(`${BACKEND_URL}/cards/pay/${booking_id}`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
@@ -55,14 +58,14 @@ export default function CheckoutScreen({navigation}) {
     });
     const data = await response.json();
     setValidationMessage(data.message);
+    setLoading(false);
     setTableePaymentVisible(true);
   }
-
-  console.log(amount);
 
   // Handle close tablee payment
   async function handleCloseTableePaymentModal() {
     setTableePaymentVisible(false);
+    dispatch(refreshComponents());
     navigation.navigate("TabNavigator");
   }
 
@@ -138,6 +141,16 @@ export default function CheckoutScreen({navigation}) {
             >
               <Text style={styles.confModalTextButton}>Retour vers la carte</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={loading} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View>
+              <ActivityIndicator size="large" color="#CDAB82"/>
+            </View>
           </View>
         </View>
       </Modal>
@@ -324,7 +337,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#CDAB82",
     borderColor: "#CDAB82",
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "5%"
   },
   buttonContainer: {

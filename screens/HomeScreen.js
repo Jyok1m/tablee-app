@@ -12,6 +12,7 @@ import MapView, {Marker, PROVIDER_GOOGLE, Callout} from "react-native-maps";
 import {Dimensions} from "react-native";
 import {mapStyle} from "../components/MapStyle";
 import * as Location from "expo-location";
+import {RFPercentage} from "react-native-responsive-fontsize";
 
 import {useDispatch, useSelector} from "react-redux";
 import {sendToken} from "../reducers/restaurant";
@@ -28,8 +29,6 @@ export default function HomeScreen({navigation}) {
   const [visible, setVisible] = useState(false);
 
   const dispatch = useDispatch();
-  //const restoToken = useSelector((state) => state.restaurant.value);
-  //console.log(restoToken)
 
   // Demande de l'autorisation et fetch de la route pour avoir les coordonnées de tous les restaurants
   useEffect(() => {
@@ -65,7 +64,7 @@ export default function HomeScreen({navigation}) {
     }
   }
 
-  // Filtrer les restaurant lors du press sur le boutton recherche
+  // Filtrer les restaurants lors du press sur le bouton recherche
   function handleSearch(resto) {
     let lowercase = resto.toLowerCase();
     let filtered = allRestaurants.filter(
@@ -83,7 +82,7 @@ export default function HomeScreen({navigation}) {
 
   }
 
-  // Affiche les markeurs en fonction de la recherche
+  // Affiche les markers en fonction de la recherche
   let restaurantMarkers;
   if (rechercheInput.length == 0) {
     restaurantMarkers = allRestaurants.map((data, i) => {
@@ -100,11 +99,8 @@ export default function HomeScreen({navigation}) {
         <Marker key={i} coordinate={{latitude, longitude}} title={name}>
           <Callout style={styles.calloutContainer} tooltip={true} onPress={() => handleRestaurantPage(token)}>
             <View style={styles.calloutTop}>
-              <View style={styles.imgPlaceholder}>
-                <Text>Photo</Text>
-              </View>
               <Text style={styles.calloutTitle}>{name}</Text>
-              <View style={styles.calloutinfos}>
+              <View style={styles.calloutInfos}>
                 <Text style={[styles.whiteText, styles.smallText]}>
                   {cuisineTypes}
                 </Text>
@@ -113,8 +109,7 @@ export default function HomeScreen({navigation}) {
                 </Text>
               </View>
             </View>
-
-            <Text style={[styles.calloutDescription, styles.whiteText]}>
+            <Text style={[styles.calloutDescription, styles.whiteText]} numberOfLines={3}>
               {description}
             </Text>
             <Pressable
@@ -143,11 +138,8 @@ export default function HomeScreen({navigation}) {
         <Marker key={i} coordinate={{latitude, longitude}} title={name}>
           <Callout style={styles.calloutContainer} tooltip={true} onPress={() => handleRestaurantPage(token)}>
             <View style={styles.calloutTop}>
-              <View style={styles.imgPlaceholder}>
-                <Text>Photo</Text>
-              </View>
               <Text style={styles.calloutTitle}>{name}</Text>
-              <View style={styles.calloutinfos}>
+              <View style={styles.calloutInfos}>
                 <Text style={[styles.whiteText, styles.smallText]}>
                   {cuisineTypes}
                 </Text>
@@ -178,7 +170,8 @@ export default function HomeScreen({navigation}) {
       <Header/>
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="De quoi avez-vous envie ?"
+          placeholder="De quoi as-tu envie ?"
+          placeholderTextColor="grey"
           style={styles.recherche}
           onChangeText={(value) => setRechercheInput(value)}
         />
@@ -196,13 +189,6 @@ export default function HomeScreen({navigation}) {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421
         }}>
-        {/*{currentPosition && (
-          <Marker
-            coordinate={currentPosition}
-            title="Ma position"
-            pinColor="#fecb2d"
-          />
-        )}*/}
         {restaurantMarkers}
       </MapView>
     </View>
@@ -219,15 +205,14 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
-    borderRadius: 50,
     alignItems: "center"
   },
   inputContainer: {
     width: "100%",
     position: "absolute",
-    top: "5%",
+    top: -5,
     left: "5%",
-    zIndex: 1,
+    zIndex: 3,
     alignItems: "center"
   },
   recherche: {
@@ -237,15 +222,16 @@ const styles = StyleSheet.create({
     minHeight: "3%",
     borderWidth: 2,
     borderColor: "#CDAB82",
-    borderRadius: 3,
-    padding: 5
+    borderRadius: 10,
+    padding: 5,
+    paddingLeft: 10
   },
 
   boutonRecherche: {
     backgroundColor: "#CDAB82",
     marginTop: 10,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     color: "#1D2C3B",
     transition: 1,
     width: "50%",
@@ -256,52 +242,47 @@ const styles = StyleSheet.create({
   },
   calloutContainer: {
     backgroundColor: "#1D2C3B",
-    borderRadius: 5,
+    borderRadius: 10,
     width: 300,
     height: 250,
-    borderWidth: 2,
-    borderColor: "#CDAB82",
-    //justifyContent: 'center',
     alignItems: "center",
-    padding: 10,
-    color: "white"
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    color: "white",
+    justifyContent: "flex-end"
   },
   calloutTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
+    width: "90%",
     marginBottom: 20
   },
-  calloutinfos: {
+  calloutInfos: {
     alignItems: "flex-end",
-    fontSize: 12
-  },
-  imgPlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 100,
-    backgroundColor: "grey",
-    alignItems: "center",
-    justifyContent: "center"
+    fontSize: RFPercentage(2)
   },
   calloutDescription: {
-    marginBottom: 15
+    marginBottom: 20,
+    width: "90%"
   },
   calloutTitle: {
     color: "#CDAB82",
-    fontSize: 16
+    fontSize: RFPercentage(2.5)
   },
   whiteText: {
-    color: "white"
+    color: "white",
+    fontSize: RFPercentage(2),
+    textAlign: "justify"
   },
   smallText: {
-    fontSize: 12
+    fontSize: RFPercentage(1.75),
+    fontStyle: "italic"
   },
   calloutLink: {
     borderWidth: 1,
     borderColor: "#CDAB82",
-    borderRadius: 3,
+    borderRadius: 10,
     padding: 5
   },
   calloutLinkText: {

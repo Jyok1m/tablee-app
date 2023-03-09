@@ -9,9 +9,9 @@ import {
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
-  Image,
+  Image
 } from "react-native";
-import React, { useRef } from "react";
+import React, {useRef} from "react";
 import Header from "../components/Header";
 import {useEffect, useState, useLayoutEffect} from "react";
 import {BACKEND_URL} from "../backend_url";
@@ -19,7 +19,7 @@ import {io} from "socket.io-client";
 import {useSelector} from "react-redux";
 import {Ionicons} from "@expo/vector-icons";
 
-var socket = io(`http://192.168.1.10:3000`);
+var socket = io(BACKEND_URL);
 
 export default function MessageScreen({route, navigation}) {
   const [message, setMessage] = useState("");
@@ -59,16 +59,16 @@ export default function MessageScreen({route, navigation}) {
     console.log(userInfos);
     //Récupere les messages de socket venant du backend
     socket
-      .off("sendMessageFromBack")
-      .on("sendMessageFromBack", (newMessage) => {
-        console.log(newMessage);
-        setSocketMessages([...socketMessages, newMessage]);
-      });
+    .off("sendMessageFromBack")
+    .on("sendMessageFromBack", (newMessage) => {
+      console.log(newMessage);
+      setSocketMessages([...socketMessages, newMessage]);
+    });
 
     // Recupere les messages du chat en bdd
     (async () => {
       const response = await fetch(
-        `http://192.168.1.10:3000/messages/chatRoom/${id}`
+        `${BACKEND_URL}/messages/chatRoom/${id}`
       );
       const data = await response.json();
       if (data) {
@@ -115,7 +115,7 @@ export default function MessageScreen({route, navigation}) {
                 <Text>{data.message}</Text>
               </View>
             </View>
-            <Text style={{ marginLeft: 40 }}>
+            <Text style={{marginLeft: 40}}>
               {data.date.date.hour}h{data.date.date.min}
             </Text>
           </View>
@@ -133,16 +133,16 @@ export default function MessageScreen({route, navigation}) {
         key={i}
         style={[
           styles.messagingscreen,
-          { paddingVertical: 15, paddingHorizontal: 10 },
+          {paddingVertical: 15, paddingHorizontal: 10}
         ]}>
         <View>
           <View
             style={
               status
                 ? styles.mmessageWrapper
-                : [styles.mmessageWrapper, { alignItems: "flex-end" }]
+                : [styles.mmessageWrapper, {alignItems: "flex-end"}]
             }>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
               <Ionicons
                 name="person-circle-outline"
                 size={30}
@@ -155,14 +155,14 @@ export default function MessageScreen({route, navigation}) {
                   status
                     ? styles.mmessage
                     : [
-                        styles.mmessage,
-                        { backgroundColor: "rgb(194, 243, 194)" },
-                      ]
+                      styles.mmessage,
+                      {backgroundColor: "rgb(194, 243, 194)"}
+                    ]
                 }>
                 <Text>{data.message}</Text>
               </View>
             </View>
-            <Text style={{ marginLeft: 40 }}>
+            <Text style={{marginLeft: 40}}>
               {data.date.hour}h{data.date.min}
             </Text>
           </View>
@@ -189,20 +189,20 @@ export default function MessageScreen({route, navigation}) {
         message: message,
         roomId: roomNumber,
         user: user,
-        date: { hour, min },
+        date: {hour, min}
       });
 
       // Envoi le message dans la bdd
       (async () => {
-        await fetch(`http://192.168.1.10:3000/messages/send`, {
+        await fetch(`${BACKEND_URL}/messages/send`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {"Content-Type": "application/json"},
           body: JSON.stringify({
             message: message,
             roomId: roomNumber,
             user: user,
-            date: { hour, min },
-          }),
+            date: {hour, min}
+          })
         });
       })();
     }
@@ -219,7 +219,7 @@ export default function MessageScreen({route, navigation}) {
       <ScrollView
         ref={scrollViewRef}
         onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({ animated: true })
+          scrollViewRef.current.scrollToEnd({animated: true})
         }>
         {chatMessagesToRender}
         {chatMessagesFromSocket}
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   top: {
     justifyContent: "center",
@@ -253,11 +253,11 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     borderBottomColor: "#CDAB82",
-    borderBottomWidth: 1,
+    borderBottomWidth: 1
   },
   titleName: {
     color: "#CDAB82",
-    fontSize: 24,
+    fontSize: 24
   },
   messageInput: {
     backgroundColor: "white",
@@ -266,18 +266,18 @@ const styles = StyleSheet.create({
     minHeight: "3%",
     borderWidth: 2,
     borderColor: "#CDAB82",
-    borderRadius: 3,
+    borderRadius: 5,
     padding: 5
   },
   sendButton: {
     backgroundColor: "#CDAB82",
     marginTop: 10,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     color: "#1D2C3B",
     transition: 1,
     width: "20%",
-    alignItems: "center",
+    alignItems: "center"
   },
   inputContainer: {
     width: "100%",
@@ -289,20 +289,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     borderTopColor: "#CDAB82",
-    borderTopWidth: 1,
-  },
-  messageInput: {
-    borderWidth: 1,
-    padding: 15,
-    flex: 1,
-    marginRight: 10,
-    borderRadius: 20,
-    backgroundColor: "white",
+    borderTopWidth: 1
   },
   messagingbuttonContainer: {
     width: "30%",
     backgroundColor: "green",
-    borderRadius: 3,
+    borderRadius: 5,
     alignItems: "center",
     justifyContent: "center"
   },

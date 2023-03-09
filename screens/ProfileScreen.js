@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  TextInput
+  TextInput, Modal
 } from "react-native";
 import React, {useEffect, useState, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -31,6 +31,14 @@ export default function ProfileScreen({navigation}) {
   const [fieldToDisplay, setFieldToDisplay] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [sendState, setSendState] = useState(false);
+
+  const [cardModalVisible, setCardModalVisible] = useState(false);
+  const [cardHolderName, setCardHolderName] = useState(null);
+  const [cardNumber, setCardNumber] = useState(null);
+  const [cardExpirationMonth, setCardExpirationMonth] = useState(null);
+  const [cardExpirationYear, setCardExpirationYear] = useState(null);
+  const [cardCVV, setCardCVV] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState(null);
 
   const bioRef = useRef();
   const emailRef = useRef();
@@ -122,19 +130,58 @@ export default function ProfileScreen({navigation}) {
     navigation.navigate("Landing");
   }
 
-  /* --------------------------------- Handle restaurant history --------------------------------- */
-  /*
-    const restaurantHistory = history.map((data, i) => {
-      return (
-        <ScrollView style={styles.scrollView}>
-          <Text key={i} style={styles.content}>
-            {`\u2022 ${data.restaurant.name}`}
-          </Text>
-        </ScrollView>
-      );
-    });
+  // Set card details:
+  function showCardModal() {
+    setCardModalVisible(true);
+  }
 
-   */
+  async function handleValidateCard() {
+    if (cardHolderName && cardNumber && cardExpirationYear && cardExpirationMonth && cardCVV && phoneNumber) {
+      setCardModalVisible(false);
+      // Add credit card to Stripe:
+      const cardDetails = {
+        name: cardHolderName,
+        number: cardNumber,
+        exp_month: cardExpirationMonth,
+        exp_year: cardExpirationYear,
+        cvc: cardCVV
+      };
+      await fetch(`${BACKEND_URL}/cards/save/${user.token}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(cardDetails)
+      });
+      alert("Données de carte modifiées !");
+      setCardModalVisible(false);
+      setCardHolderName(null);
+      setCardNumber(null);
+      setCardExpirationMonth(null);
+      setCardExpirationYear(null);
+      setCardCVV(null);
+      setPhoneNumber(null);
+    } else {
+      Toast.show("Un ou plusieurs champ(s) manquant.", {
+        duration: Toast.durations.LONG,
+        position: -10,
+        textColor: "#1D2C3B",
+        opacity: 1,
+        shadow: true,
+        backgroundColor: "#CDAB82",
+        animation: true,
+        delay: 500
+      });
+    }
+  }
+
+  function handleCancelCard() {
+    setCardModalVisible(false);
+    setCardHolderName(null);
+    setCardNumber(null);
+    setCardExpirationMonth(null);
+    setCardExpirationYear(null);
+    setCardCVV(null);
+    setPhoneNumber(null);
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   Return                                   */
@@ -142,19 +189,83 @@ export default function ProfileScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+
+      <Modal visible={cardModalVisible} animationType="fade" transparent>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TextInput
+              style={styles.input}
+              placeholder="Nom sur la carte bancaire"
+              placeholderTextColor="grey"
+              value={cardHolderName}
+              onChangeText={(value) => setCardHolderName(value)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Numéro de carte"
+              placeholderTextColor="grey"
+              value={cardNumber}
+              onChangeText={(value) => setCardNumber(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Mois d'expiration (MM)"
+              placeholderTextColor="grey"
+              value={cardExpirationMonth}
+              onChangeText={(value) => setCardExpirationMonth(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Année d'expiration (AAAA)"
+              placeholderTextColor="grey"
+              value={cardExpirationYear}
+              onChangeText={(value) => setCardExpirationYear(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="CVV"
+              placeholderTextColor="grey"
+              value={cardCVV}
+              onChangeText={(value) => setCardCVV(value)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Numéro de téléphone"
+              placeholderTextColor="grey"
+              value={phoneNumber}
+              onChangeText={(value) => setPhoneNumber(value)}
+              keyboardType="phone-pad"
+            />
+            <TouchableOpacity
+              onPress={() => handleValidateCard()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Ajouter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleCancelCard()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.pressedTextButton}>Annuler</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
 
       <Header/>
-
-      {/* Title container*/}
 
       <View style={styles.titleContainer}>
         <Text style={styles.screenTitle}>
           Bienvenue, {username && <Text>{username} !</Text>}
         </Text>
       </View>
-
-      {/* User container */}
 
       <View style={styles.userContainer}>
         <View style={styles.photoContainer}>
@@ -168,8 +279,6 @@ export default function ProfileScreen({navigation}) {
             <Text style={styles.edit}>Modifier</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Bio container */}
 
         <View style={styles.bioContainer}>
           <View style={styles.inputCard}>
@@ -223,8 +332,6 @@ export default function ProfileScreen({navigation}) {
           </View>
         </View>
       </View>
-
-      {/* Main container */}
 
       <View style={styles.mainContainer}>
         <View style={styles.inputCard}>
@@ -299,28 +406,14 @@ export default function ProfileScreen({navigation}) {
         <View style={styles.inputCard}>
           <View style={styles.cardTop}>
             <Text style={styles.title}>Moyen de paiement</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => showCardModal()}>
               <Text style={styles.edit}>Modifier</Text>
             </TouchableOpacity>
           </View>
           {password && <Text style={styles.content}>********</Text>}
         </View>
 
-        <View style={styles.inputCard}>
-          <View style={styles.cardTop}>
-            <Text style={styles.title}>Historique</Text>
-          </View>
-          {/*history.length ? (
-            restaurantHistory
-          ) : (
-            <ScrollView style={styles.scrollView}>
-              <Text style={styles.noContent}>Pas encore de restaurant...</Text>
-            </ScrollView>
-          )*/}
-        </View>
       </View>
-
-      {/* Bot container = boutons */}
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => logout()}>
@@ -353,7 +446,7 @@ const styles = StyleSheet.create({
     marginBottom: "5%"
   },
   screenTitle: {
-    fontSize: RFPercentage(3.5),
+    fontSize: RFPercentage(4),
     color: "#CDAB82",
     fontWeight: "500"
   },
@@ -392,7 +485,7 @@ const styles = StyleSheet.create({
     height: "100%",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5
+    borderRadius: 10
   },
 
   /* ----------------------------- Main container ----------------------------- */
@@ -400,8 +493,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     width: "100%",
     height: "55%",
-
-    marginBottom: "3%",
     padding: 5
   },
   inputCard: {
@@ -414,17 +505,18 @@ const styles = StyleSheet.create({
   cardTop: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     borderColor: "#CDAB82",
     borderBottomWidth: 1,
     marginBottom: "2%"
   },
   title: {
-    fontSize: RFPercentage(2),
+    fontSize: RFPercentage(3),
     fontWeight: "500",
     color: "#CDAB82"
   },
   edit: {
-    fontSize: RFPercentage(1.6),
+    fontSize: RFPercentage(1.5),
     fontWeight: "500",
     color: "#CDAB82",
     textDecorationLine: "underline",
@@ -445,7 +537,7 @@ const styles = StyleSheet.create({
   editContent: {
     borderBottomWidth: 1,
     borderBottomColor: "#CDAB82",
-    fontSize: RFPercentage(1.6),
+    fontSize: RFPercentage(1.5),
     fontWeight: "400",
     color: "#FFF"
   },
@@ -453,12 +545,12 @@ const styles = StyleSheet.create({
     maxHeight: "80%"
   },
   content: {
-    fontSize: RFPercentage(1.6),
+    fontSize: RFPercentage(2),
     fontWeight: "400",
     color: "#FFF"
   },
   noContent: {
-    fontSize: RFPercentage(1.6),
+    fontSize: RFPercentage(2),
     fontWeight: "400",
     color: "grey",
     fontStyle: "italic"
@@ -477,8 +569,49 @@ const styles = StyleSheet.create({
   },
   pressableText: {
     textDecorationLine: "underline",
-    fontSize: RFPercentage(2),
+    fontSize: RFPercentage(3),
     fontWeight: "500",
     color: "#CDAB82"
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  modalView: {
+    backgroundColor: "#1D2C3B",
+    borderRadius: 10,
+    padding: 30,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  input: {
+    minWidth: 200,
+    borderBottomColor: "#CDAB82",
+    borderBottomWidth: 1,
+    fontSize: 16,
+    color: "white",
+    marginBottom: 10
+  },
+  button: {
+    width: 150,
+    alignItems: "center",
+    marginVertical: 10,
+    paddingTop: 8,
+    backgroundColor: "#CDAB82",
+    borderRadius: 10
+  },
+  pressedTextButton: {
+    color: "#1D2C3B",
+    height: 24,
+    fontWeight: "600",
+    fontSize: 15
   }
 });

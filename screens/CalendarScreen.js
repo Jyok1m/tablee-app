@@ -3,7 +3,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ScrollView, Modal, TextInput
+  ScrollView,
+  Modal
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import Header from "../components/Header";
@@ -16,7 +17,7 @@ import {refreshComponents} from "../reducers/booking";
 export default function CalendarScreen({navigation}) {
   const dispatch = useDispatch();
   const booking = useSelector((state) => state.booking.value);
-  const refresher = booking.refresher;
+  const {refresher} = booking;
   const [responseUpcoming, setResponseUpcoming] = useState([]);
   const [responseHistory, setResponseHistory] = useState([]);
   const [deleteMessage, setDeleteMessage] = useState(null);
@@ -74,8 +75,8 @@ export default function CalendarScreen({navigation}) {
   // handle Map go back:
   async function handleMapGoBack() {
     setDeletedModalVisible(false);
-    navigation.navigate("Home");
     dispatch(refreshComponents());
+    navigation.navigate("Home");
   }
 
   const futuresResa = responseUpcoming.map((data, i) => {
@@ -92,6 +93,15 @@ export default function CalendarScreen({navigation}) {
         </View>
         <Text style={styles.whiteText}>Demande(s): {data.specialRequests}</Text>
         <View style={styles.buttons}>
+          {!data.paid ?
+            <TouchableOpacity onPress={() => handlePayment(data._id)} style={styles.littleButton}>
+              <Text>Prépayer</Text>
+            </TouchableOpacity>
+            :
+            <TouchableOpacity disabled={true} style={styles.reserveButton}>
+              <Text>Prépayé</Text>
+            </TouchableOpacity>
+          }
           <TouchableOpacity onPress={() => handleCancelPress(data._id)} style={styles.littleButton}>
             <Text>Annuler</Text>
           </TouchableOpacity>
@@ -131,8 +141,6 @@ export default function CalendarScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Header/>
-
       <Modal visible={notificationModalVisible} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -156,7 +164,6 @@ export default function CalendarScreen({navigation}) {
           </View>
         </View>
       </Modal>
-
       <Modal visible={deletedModalVisible} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -174,7 +181,9 @@ export default function CalendarScreen({navigation}) {
         </View>
       </Modal>
 
-      <View style={{height: "40%", width: "100%"}}>
+      <Header/>
+
+      <View style={{height: "42%", width: "100%"}}>
         <Text style={styles.title}>Réservations à venir</Text>
         <ScrollView contentContainerStyle={{width: "100%", maxHeight: "10000%"}}>
           {futuresResa}
@@ -183,7 +192,7 @@ export default function CalendarScreen({navigation}) {
 
       <View style={{width: "100%", borderTopColor: "#CDAB82", borderTopWidth: 2, marginVertical: 20}}/>
 
-      <View style={{height: "40%", width: "100%"}}>
+      <View style={{height: "42%", width: "100%"}}>
         <Text style={styles.title}>Historique</Text>
         <ScrollView contentContainerStyle={{width: "100%", maxHeight: "10000%"}}>
           {historiques.length > 0 && historiques}
@@ -219,7 +228,7 @@ const styles = StyleSheet.create({
     width: "40%",
     height: "50%",
     backgroundColor: "#CDAB82",
-    borderRadius: 5,
+    borderRadius: 10,
     marginTop: "2%"
   },
 
@@ -230,13 +239,14 @@ const styles = StyleSheet.create({
     alignItems: "baseline"
   },
   title: {
-    fontSize: RFPercentage(3),
+    fontSize: RFPercentage(4),
     fontWeight: "600",
     color: "#CDAB82",
-    textAlign: "center"
+    textAlign: "center",
+    marginBottom: 10
   },
   name: {
-    fontSize: RFPercentage(2.5),
+    fontSize: RFPercentage(3),
     fontWeight: "600",
     color: "#CDAB82",
     textAlign: "center"
@@ -247,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: "5%",
     marginTop: "5%",
     padding: 5
@@ -284,11 +294,22 @@ const styles = StyleSheet.create({
     color: "#1D2C3B",
     height: 24,
     fontWeight: "600",
-    fontSize: 15
+    fontSize: RFPercentage(2)
   },
   notification: {
     color: "#1D2C3B",
     fontSize: RFPercentage(2),
     fontWeight: "400"
+  },
+  reserveButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40%",
+    height: "50%",
+    color: "#CDAB82",
+    borderColor: "grey",
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: "2%"
   }
 });
