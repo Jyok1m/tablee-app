@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   inputCard: {
     width: "100%",
-    height: 225,
+    maxHeight: 300,
     backgroundColor: "transparent",
     borderColor: "#CDAB82",
     borderWidth: 1,
