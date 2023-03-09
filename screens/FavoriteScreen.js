@@ -10,7 +10,7 @@ export default function FavoriteScreen() {
   const user = useSelector((state) => state.user.value);
   const {token} = user;
   const booking = useSelector((state) => state.booking.value);
-  const {refresh} = booking;
+  const {refresher} = booking;
   const [resto, setResto] = useState([]);
 
   let Resto;
@@ -41,7 +41,7 @@ export default function FavoriteScreen() {
       });
       setResto(Resto);
     })();
-  }, [refresh]);
+  }, [refresher]);
 
   return (
     <View style={styles.container}>

@@ -4,6 +4,10 @@ import {RFPercentage} from "react-native-responsive-fontsize";
 import {NavigationContainer} from "@react-navigation/native";
 import {RootSiblingParent} from "react-native-root-siblings";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {LogBox} from "react-native";
+
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 // Navigation:
 import {createNativeStackNavigator} from "@react-navigation/native-stack";

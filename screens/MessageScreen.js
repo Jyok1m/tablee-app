@@ -9,19 +9,23 @@ import {
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
-  Image,
+  Image
 } from "react-native";
-import React, { useRef } from "react";
+import React, {useRef} from "react";
 import Header from "../components/Header";
-import { useEffect, useState, useLayoutEffect } from "react";
-import { BACKEND_URL } from "../backend_url";
-import { io } from "socket.io-client";
-import { useSelector } from "react-redux";
-import { Ionicons } from "@expo/vector-icons";
+import {useEffect, useState, useLayoutEffect} from "react";
+import {BACKEND_URL} from "../backend_url";
+import {io} from "socket.io-client";
+import {useSelector, useDispatch} from "react-redux";
+import {refreshComponents} from "../reducers/booking";
+import {Ionicons} from "@expo/vector-icons";
 
 var socket = io(BACKEND_URL);
 
-export default function MessageScreen({ route, navigation }) {
+export default function MessageScreen({route, navigation}) {
+  const dispatch = useDispatch();
+  const booking = useSelector((state) => state.booking.value);
+  const {refresher} = booking;
   const [message, setMessage] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const [user, setUser] = useState("");
@@ -35,7 +39,7 @@ export default function MessageScreen({ route, navigation }) {
   const userInfos = useSelector((state) => state.user.value);
 
   // Recupere le nom et l'id de la chatroom
-  const { name, id } = route.params;
+  const {name, id} = route.params;
 
   // Recupere le nom d'utilisateur (puis la photo de profil apres)
   const getUsername = () => {
@@ -49,7 +53,7 @@ export default function MessageScreen({ route, navigation }) {
 
   // Gere l'envoie de messages
   useEffect(() => {
-    navigation.setOptions({ title: name, roomId: id });
+    navigation.setOptions({title: name, roomId: id});
     setRoomNumber(id);
 
     // Recupere les messages du chat en bdd
@@ -61,7 +65,7 @@ export default function MessageScreen({ route, navigation }) {
         setChatMessages(data.chat);
       }
     })();
-  }, []);
+  }, [refresher]);
 
   useEffect(() => {
     //Récupere les messages de socket venant du backend
@@ -71,7 +75,7 @@ export default function MessageScreen({ route, navigation }) {
     return () => {
       socket.off();
     };
-  }, [chatMessages]);
+  }, [chatMessages, refresher]);
 
   console.log("chatMessages", chatMessages[chatMessages.length - 1]);
 
@@ -84,16 +88,16 @@ export default function MessageScreen({ route, navigation }) {
         key={i}
         style={[
           styles.messagingscreen,
-          { paddingVertical: 15, paddingHorizontal: 10 },
+          {paddingVertical: 15, paddingHorizontal: 10}
         ]}>
         <View>
           <View
             style={
               status
                 ? styles.mmessageWrapper
-                : [styles.mmessageWrapper, { alignItems: "flex-end" }]
+                : [styles.mmessageWrapper, {alignItems: "flex-end"}]
             }>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
               <Ionicons
                 name="person-circle-outline"
                 size={30}
@@ -106,14 +110,14 @@ export default function MessageScreen({ route, navigation }) {
                   status
                     ? styles.mmessage
                     : [
-                        styles.mmessage,
-                        { backgroundColor: "rgb(194, 243, 194)" },
-                      ]
+                      styles.mmessage,
+                      {backgroundColor: "rgb(194, 243, 194)"}
+                    ]
                 }>
                 <Text>{data?.message}</Text>
               </View>
             </View>
-            <Text style={{ marginLeft: 40, color: 'white', opacity: 0.5 }}>
+            <Text style={{marginLeft: 40, color: "white", opacity: 0.5}}>
               {data.date.date.hour}h{data.date.date.min}
             </Text>
           </View>
@@ -138,17 +142,17 @@ export default function MessageScreen({ route, navigation }) {
       // Envoi le message dans la bdd
       let request = await fetch(`${BACKEND_URL}/messages/sendForSocket`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           message: message,
           roomId: roomNumber,
           user: user,
-          date: { hour, min },
-        }),
+          date: {hour, min}
+        })
       });
 
       let response = await request.json();
-
+      dispatch(refreshComponents());
       //Envoi le message envoyé en bdd à socket
       socket.emit("sendMessage", response.data);
       setMessage("");
@@ -166,7 +170,7 @@ export default function MessageScreen({ route, navigation }) {
       <ScrollView
         ref={scrollViewRef}
         onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({ animated: true })
+          scrollViewRef.current.scrollToEnd({animated: true})
         }>
         {chatMessagesFromSocket}
       </ScrollView>
@@ -179,7 +183,7 @@ export default function MessageScreen({ route, navigation }) {
         />
         <Pressable style={styles.sendButton} onPress={sendMessage}>
           <View>
-            <Text style={{ color: "#f2f0f1", fontSize: 20 }}>SEND</Text>
+            <Text style={{color: "#f2f0f1", fontSize: 16}}>SEND</Text>
           </View>
         </Pressable>
       </View>
@@ -191,7 +195,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#1D2C3B",
+    backgroundColor: "#1D2C3B"
   },
   top: {
     justifyContent: "center",
@@ -200,11 +204,11 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     borderBottomColor: "#CDAB82",
-    borderBottomWidth: 1,
+    borderBottomWidth: 1
   },
   titleName: {
     color: "#CDAB82",
-    fontSize: 24,
+    fontSize: 24
   },
   messageInput: {
     backgroundColor: "white",
@@ -214,7 +218,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#CDAB82",
     borderRadius: 5,
-    padding: 5,
+    padding: 5
   },
   sendButton: {
     backgroundColor: "#CDAB82",
@@ -224,7 +228,7 @@ const styles = StyleSheet.create({
     color: "#1D2C3B",
     transition: 1,
     width: "20%",
-    alignItems: "center",
+    alignItems: "center"
   },
   inputContainer: {
     width: "100%",
@@ -236,34 +240,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     borderTopColor: "#CDAB82",
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   messagingbuttonContainer: {
     width: "30%",
     backgroundColor: "green",
     borderRadius: 5,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
 
   mmessageWrapper: {
     width: "100%",
     alignItems: "flex-start",
-    marginBottom: 15,
+    marginBottom: 15
   },
   mmessage: {
     maxWidth: "50%",
     backgroundColor: "#f5ccc2",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 2,
+    marginBottom: 2
   },
   mvatar: {
-    marginRight: 5,
+    marginRight: 5
   },
   // Bulles messages
-  chatemptyText: { fontWeight: "bold", fontSize: 24, paddingBottom: 30 },
+  chatemptyText: {fontWeight: "bold", fontSize: 24, paddingBottom: 30},
   messagingscreen: {
-    flex: 1,
-  },
+    flex: 1
+  }
 });

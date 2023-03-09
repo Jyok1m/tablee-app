@@ -11,7 +11,7 @@ import Header from "../components/Header";
 import {RFPercentage} from "react-native-responsive-fontsize";
 import {useSelector, useDispatch} from "react-redux";
 import {BACKEND_URL} from "../backend_url";
-import {useEffect} from "react";
+import {refreshComponents} from "../reducers/booking";
 
 export default function NewReviewScreen() {
   const [inputValue, setInputValue] = useState(null);
@@ -34,9 +34,9 @@ export default function NewReviewScreen() {
     );
     const data = await response.json();
     if (data.result === true) {
-
       setNewReviews(null);
-      alert("commentaire sauvegardé");
+      dispatch(refreshComponents());
+      alert("Commentaire sauvegardé");
     }
   }
 

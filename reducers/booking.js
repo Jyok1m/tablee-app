@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
-  value: {bookingId: null, refresher: false}
+  value: {bookingId: null, refresher: 0}
 };
 
 export const bookingSlice = createSlice({
@@ -15,7 +15,7 @@ export const bookingSlice = createSlice({
       state.value.bookingId = null;
     },
     refreshComponents: (state, action) => {
-      state.value.refresher = !state.value.refresher;
+      state.value.refresher += 1;
     }
   }
 });
